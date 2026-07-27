@@ -41,45 +41,62 @@
 :root {
   --radius: 0.875rem;
 
-  --background: oklch(0.99 0.005 260);
-  --foreground: oklch(0.18 0.03 265);
+  --background: oklch(0.99 0.005 240);
+  --foreground: oklch(0.18 0.04 250);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.03 265);
+  --card-foreground: oklch(0.18 0.04 250);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.03 265);
+  --popover-foreground: oklch(0.18 0.04 250);
 
-  --primary: oklch(0.45 0.18 275);
-  --primary-foreground: oklch(0.99 0.005 260);
-  --primary-glow: oklch(0.62 0.22 285);
+  /* Slate navy primary */
+  --primary: oklch(0.22 0.05 255);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-glow: oklch(0.72 0.16 210); /* electric cyan glow */
 
-  --secondary: oklch(0.96 0.015 270);
-  --secondary-foreground: oklch(0.25 0.05 270);
+  /* Brand accents */
+  --cyan: oklch(0.75 0.16 205);        /* #06B6D4-ish electric cyan */
+  --emerald: oklch(0.72 0.17 160);     /* #10B981-ish emerald */
+  --amber: oklch(0.78 0.17 60);        /* vibrant amber CTA */
+  --coral: oklch(0.72 0.19 35);        /* coral alt CTA */
 
-  --muted: oklch(0.965 0.01 265);
-  --muted-foreground: oklch(0.5 0.03 265);
+  --secondary: oklch(0.965 0.01 240);
+  --secondary-foreground: oklch(0.22 0.05 255);
 
-  --accent: oklch(0.94 0.04 285);
-  --accent-foreground: oklch(0.3 0.12 280);
+  --muted: oklch(0.965 0.01 240);
+  --muted-foreground: oklch(0.5 0.03 250);
 
-  --success: oklch(0.68 0.19 145);
+  --accent: oklch(0.95 0.03 200);
+  --accent-foreground: oklch(0.28 0.08 220);
+
+  --success: oklch(0.72 0.17 160);
   --success-foreground: oklch(0.99 0 0);
 
-  --destructive: oklch(0.6 0.23 27);
+  --destructive: oklch(0.62 0.23 27);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.92 0.015 265);
-  --input: oklch(0.92 0.015 265);
-  --ring: oklch(0.62 0.22 285);
+  --border: oklch(0.92 0.01 240);
+  --input: oklch(0.92 0.01 240);
+  --ring: oklch(0.75 0.16 205);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.32 0.18 278) 0%, oklch(0.45 0.22 285) 50%, oklch(0.55 0.2 300) 100%);
-  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
-  --gradient-subtle: linear-gradient(180deg, oklch(0.99 0.005 260) 0%, oklch(0.96 0.02 275) 100%);
+  /* Deep slate-navy hero with cyan/emerald glow */
+  --gradient-hero: radial-gradient(1200px 600px at 15% 10%, oklch(0.35 0.12 210 / 0.55), transparent 60%),
+                   radial-gradient(900px 500px at 90% 90%, oklch(0.4 0.14 160 / 0.35), transparent 60%),
+                   linear-gradient(180deg, #0B1120 0%, #0F172A 100%);
+  --gradient-primary: linear-gradient(135deg, var(--cyan), var(--emerald));
+  --gradient-cta: linear-gradient(135deg, var(--amber), var(--coral));
+  --gradient-text: linear-gradient(90deg, var(--cyan), var(--emerald));
+  --gradient-subtle: linear-gradient(180deg, oklch(0.99 0.005 240) 0%, oklch(0.96 0.015 220) 100%);
 
-  --shadow-elegant: 0 20px 50px -20px color-mix(in oklab, var(--primary) 35%, transparent);
-  --shadow-glow: 0 0 60px color-mix(in oklab, var(--primary-glow) 40%, transparent);
-  --shadow-card: 0 10px 30px -12px oklch(0.2 0.05 265 / 0.15);
+  --shadow-elegant: 0 20px 60px -20px oklch(0.2 0.08 220 / 0.4);
+  --shadow-glow: 0 0 80px color-mix(in oklab, var(--cyan) 45%, transparent);
+  --shadow-card: 0 10px 30px -12px oklch(0.2 0.04 240 / 0.15);
+
+  /* Subtle tech mesh grid for hero backdrop */
+  --mesh-grid:
+    linear-gradient(to right, oklch(1 0 0 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.05) 1px, transparent 1px);
 }
 
 @layer base {
