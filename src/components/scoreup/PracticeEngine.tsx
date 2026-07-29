@@ -98,7 +98,7 @@ export function PracticeEngine() {
           : "border-border bg-card hover:border-primary/50 hover:bg-accent/40"
       }`;
     }
-    if (i === q.correctIndex) {
+    if (i === q?.correctIndex) {
       return `${base} border-success bg-success/10 text-foreground`;
     }
     if (i === selected) {
@@ -111,28 +111,42 @@ export function PracticeEngine() {
     () => Math.max(0, (timeLeft / QUESTION_SECONDS) * 100),
     [timeLeft]
   );
-  const isCorrect = submitted && selected === q.correctIndex;
+  const isCorrect = submitted && selected === q?.correctIndex;
+
+  if (isPending) {
+    return (
+      <SectionShell>
+        <div
+          className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card px-6 py-20"
+          style={{ boxShadow: "var(--shadow-elegant)" }}
+        >
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">טוען שאלות מהמאגר…</p>
+        </div>
+      </SectionShell>
+    );
+  }
+
+  if (isError || !q) {
+    return (
+      <SectionShell>
+        <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-border bg-card px-6 py-16 text-center">
+          <p className="font-semibold text-foreground">
+            לא הצלחנו לטעון את השאלות כרגע.
+          </p>
+          <p className="mt-2 text-muted-foreground">נסה לרענן את העמוד.</p>
+        </div>
+      </SectionShell>
+    );
+  }
 
   return (
-    <section id="practice" className="bg-background py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
-            <Sparkles className="h-4 w-4" />
-            מנוע התרגול
-          </span>
-          <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-            נסה שאלה אמיתית — עכשיו
-          </h2>
-          <p className="mt-3 text-lg text-muted-foreground">
-            שאלה אמריקאית, טיימר של דקה, ופתרון מלא ברגע שסיימת.
-          </p>
-        </div>
-
+    <SectionShell>
         <div
           className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card"
           style={{ boxShadow: "var(--shadow-elegant)" }}
         >
+
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-secondary/60 px-6 py-4">
             <div className="flex items-center gap-3">
