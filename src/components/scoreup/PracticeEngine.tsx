@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { InlineMath, BlockMath } from "react-katex";
+import { useQuery } from "@tanstack/react-query";
 import {
   Check,
   X,
@@ -8,20 +9,53 @@ import {
   ChevronLeft,
   Sparkles,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
-import { questions } from "@/data/questions";
+import { getQuestions } from "@/lib/questions.functions";
 
 const QUESTION_SECONDS = 60;
 
+function SectionShell({ children }: { children: React.ReactNode }) {
+  return (
+    <section id="practice" className="bg-background py-24">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
+            <Sparkles className="h-4 w-4" />
+            מנוע התרגול
+          </span>
+          <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
+            נסה שאלה אמיתית — עכשיו
+          </h2>
+          <p className="mt-3 text-lg text-muted-foreground">
+            שאלה אמריקאית, טיימר של דקה, ופתרון מלא ברגע שסיימת.
+          </p>
+        </div>
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export function PracticeEngine() {
+  const {
+    data: questions,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["questions"],
+    queryFn: () => getQuestions(),
+  });
+
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
   const [showSolution, setShowSolution] = useState(false);
 
-  const q = questions[index];
-  const total = questions.length;
+  const total = questions?.length ?? 0;
+  const q = questions?.[index];
+
 
   useEffect(() => {
     if (submitted) return;
