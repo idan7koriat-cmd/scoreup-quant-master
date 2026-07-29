@@ -320,7 +320,7 @@ export function PracticeEngine() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </SectionShell>
+
   );
 }
