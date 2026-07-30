@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { InlineMath, BlockMath } from "react-katex";
+import katexPkg from "react-katex";
+
+const { InlineMath } = katexPkg as unknown as typeof import("react-katex");
 import { useQuery } from "@tanstack/react-query";
 import {
   Check,
