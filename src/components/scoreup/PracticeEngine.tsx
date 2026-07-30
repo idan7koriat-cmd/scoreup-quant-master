@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { InlineMath, BlockMath } from "react-katex";
+import katexPkg from "react-katex";
+
+const { InlineMath } = katexPkg as unknown as typeof import("react-katex");
 import { useQuery } from "@tanstack/react-query";
 import {
   Check,
@@ -208,16 +210,11 @@ export function PracticeEngine() {
           {/* Body */}
           <div className="p-6 md:p-8">
             <p className="text-lg leading-relaxed text-foreground">
-              <MathText>{q.prompt}</MathText>
+              <MathText>{q.question}</MathText>
             </p>
-            {q.latex && (
-              <div className="mt-5 overflow-x-auto rounded-2xl bg-secondary/60 px-5 py-6 text-center text-xl">
-                <BlockMath math={q.latex} />
-              </div>
-            )}
 
             <div className="mt-6 grid gap-3">
-              {q.options.map((opt, i) => (
+              {q.answers.map((opt, i) => (
                 <button
                   key={i}
                   onClick={() => pick(i)}
@@ -300,29 +297,20 @@ export function PracticeEngine() {
                   </button>
                   {showSolution && (
                     <div className="rounded-2xl border border-border bg-background p-5">
-                      <ol className="space-y-4">
-                        {q.solutionSteps.map((step, i) => (
-                          <li key={i} className="flex gap-3">
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                              {i + 1}
-                            </span>
-                            <div className="flex-1 text-foreground">
-                              {step.text && (
-                                <p className="leading-relaxed">
-                                  <MathText>{step.text}</MathText>
-                                </p>
-                              )}
-                              {step.math && (
-                                <div className="mt-2 overflow-x-auto rounded-xl bg-secondary/60 px-4 py-3 text-lg">
-                                  <InlineMath math={step.math} />
-                                </div>
-                              )}
-                            </div>
-                          </li>
-                        ))}
-                      </ol>
+                      <div className="space-y-4">
+                        {q.explanation
+                          .split(/\n{2,}/)
+                          .map((para) => para.trim())
+                          .filter(Boolean)
+                          .map((para, i) => (
+                            <p key={i} className="leading-relaxed text-foreground">
+                              <MathText>{para}</MathText>
+                            </p>
+                          ))}
+                      </div>
                     </div>
                   )}
+
 
                   <div className="flex flex-wrap gap-3">
                     <button
