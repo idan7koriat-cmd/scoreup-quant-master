@@ -16,36 +16,33 @@ export type Database = {
     Tables: {
       questions: {
         Row: {
+          answers: Json
           correct_index: number
           created_at: string
           difficulty: string
+          explanation: string
           id: string
-          latex: string | null
-          options: Json
-          prompt: string
-          solution_steps: Json
+          question: string
           topic: string
         }
         Insert: {
+          answers: Json
           correct_index: number
           created_at?: string
           difficulty?: string
+          explanation?: string
           id?: string
-          latex?: string | null
-          options: Json
-          prompt: string
-          solution_steps?: Json
+          question: string
           topic: string
         }
         Update: {
+          answers?: Json
           correct_index?: number
           created_at?: string
           difficulty?: string
+          explanation?: string
           id?: string
-          latex?: string | null
-          options?: Json
-          prompt?: string
-          solution_steps?: Json
+          question?: string
           topic?: string
         }
         Relationships: []
