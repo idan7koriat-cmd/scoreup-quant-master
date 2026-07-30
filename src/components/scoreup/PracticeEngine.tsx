@@ -15,6 +15,28 @@ import { getQuestions } from "@/lib/questions.functions";
 
 const QUESTION_SECONDS = 60;
 
+/** Renders text that may contain inline math, either wrapped in $...$ or raw LaTeX. */
+function MathText({ children }: { children: string }) {
+  const text = children ?? "";
+  const looksLikeRawLatex = !text.includes("$") && /\\[a-zA-Z]+/.test(text);
+  if (looksLikeRawLatex) return <InlineMath math={text} />;
+
+  const parts = text.split(/(\$[^$]+\$)/g);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith("$") && part.endsWith("$") && part.length > 2 ? (
+          <InlineMath key={i} math={part.slice(1, -1)} />
+        ) : (
+          <span key={i} className="whitespace-pre-line">
+            {part}
+          </span>
+        )
+      )}
+    </>
+  );
+}
+
 function SectionShell({ children }: { children: React.ReactNode }) {
   return (
     <section id="practice" className="bg-background py-24">
