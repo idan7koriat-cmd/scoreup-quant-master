@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import katexPkg from "react-katex";
-
-const { InlineMath } = katexPkg as unknown as typeof import("react-katex");
+import katex from "katex";
 import { useQuery } from "@tanstack/react-query";
 import {
   Check,
@@ -17,12 +15,26 @@ import { getQuestions } from "@/lib/questions.functions";
 
 const QUESTION_SECONDS = 60;
 
-/** LTR wrapper so RTL Hebrew context doesn't flip math symbols. */
+/** Renders one LaTeX expression with KaTeX, isolated LTR so RTL text doesn't flip it. */
 function MathSpan({ math }: { math: string }) {
+  const html = useMemo(() => {
+    try {
+      return katex.renderToString(math, {
+        throwOnError: false,
+        displayMode: false,
+        output: "html",
+      });
+    } catch {
+      return math;
+    }
+  }, [math]);
+
   return (
-    <span dir="ltr" className="inline-block align-middle mx-0.5 [unicode-bidi:isolate]">
-      <InlineMath math={math} />
-    </span>
+    <span
+      dir="ltr"
+      className="inline-block align-middle mx-0.5 [unicode-bidi:isolate]"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }
 
