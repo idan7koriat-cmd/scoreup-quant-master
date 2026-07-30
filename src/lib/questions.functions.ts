@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import type { Question, SolutionStep } from "@/data/questions";
+import type { Question } from "@/data/questions";
 
 export const getQuestions = createServerFn({ method: "GET" }).handler(
   async (): Promise<Question[]> => {
@@ -22,7 +22,7 @@ export const getQuestions = createServerFn({ method: "GET" }).handler(
 
     const { data, error } = await supabasePublic
       .from("questions")
-      .select("id, topic, difficulty, prompt, latex, options, correct_index, solution_steps")
+      .select("*")
       .order("created_at", { ascending: true });
 
     if (error) throw new Error(error.message);
@@ -31,11 +31,10 @@ export const getQuestions = createServerFn({ method: "GET" }).handler(
       id: row.id,
       topic: row.topic,
       difficulty: row.difficulty,
-      prompt: row.prompt,
-      latex: row.latex,
-      options: (row.options as string[]) ?? [],
+      question: row.question,
+      answers: (row.answers as string[]) ?? [],
       correctIndex: row.correct_index,
-      solutionSteps: (row.solution_steps as SolutionStep[]) ?? [],
+      explanation: row.explanation ?? "",
     }));
   },
 );
