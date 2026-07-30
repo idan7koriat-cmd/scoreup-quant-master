@@ -244,7 +244,9 @@ export function PracticeEngine() {
                         String.fromCharCode(0x05d0 + i) /* א ב ג ד */
                       )}
                     </span>
-                    <span className="flex-1 text-base">{opt}</span>
+                    <span className="flex-1 text-base">
+                      <MathText>{opt}</MathText>
+                    </span>
                   </div>
                 </button>
               ))}
