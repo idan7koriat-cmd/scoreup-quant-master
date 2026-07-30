@@ -208,7 +208,7 @@ export function PracticeEngine() {
           {/* Body */}
           <div className="p-6 md:p-8">
             <p className="text-lg leading-relaxed text-foreground">
-              {q.prompt}
+              <MathText>{q.prompt}</MathText>
             </p>
             {q.latex && (
               <div className="mt-5 overflow-x-auto rounded-2xl bg-secondary/60 px-5 py-6 text-center text-xl">
