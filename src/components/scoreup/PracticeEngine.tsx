@@ -15,6 +15,28 @@ import { getQuestions } from "@/lib/questions.functions";
 
 const QUESTION_SECONDS = 60;
 
+/** Renders text that may contain inline math, either wrapped in $...$ or raw LaTeX. */
+function MathText({ children }: { children: string }) {
+  const text = children ?? "";
+  const looksLikeRawLatex = !text.includes("$") && /\\[a-zA-Z]+/.test(text);
+  if (looksLikeRawLatex) return <InlineMath math={text} />;
+
+  const parts = text.split(/(\$[^$]+\$)/g);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith("$") && part.endsWith("$") && part.length > 2 ? (
+          <InlineMath key={i} math={part.slice(1, -1)} />
+        ) : (
+          <span key={i} className="whitespace-pre-line">
+            {part}
+          </span>
+        )
+      )}
+    </>
+  );
+}
+
 function SectionShell({ children }: { children: React.ReactNode }) {
   return (
     <section id="practice" className="bg-background py-24">
@@ -186,7 +208,7 @@ export function PracticeEngine() {
           {/* Body */}
           <div className="p-6 md:p-8">
             <p className="text-lg leading-relaxed text-foreground">
-              {q.prompt}
+              <MathText>{q.prompt}</MathText>
             </p>
             {q.latex && (
               <div className="mt-5 overflow-x-auto rounded-2xl bg-secondary/60 px-5 py-6 text-center text-xl">
@@ -222,7 +244,9 @@ export function PracticeEngine() {
                         String.fromCharCode(0x05d0 + i) /* א ב ג ד */
                       )}
                     </span>
-                    <span className="flex-1 text-base">{opt}</span>
+                    <span className="flex-1 text-base">
+                      <MathText>{opt}</MathText>
+                    </span>
                   </div>
                 </button>
               ))}
@@ -284,7 +308,9 @@ export function PracticeEngine() {
                             </span>
                             <div className="flex-1 text-foreground">
                               {step.text && (
-                                <p className="leading-relaxed">{step.text}</p>
+                                <p className="leading-relaxed">
+                                  <MathText>{step.text}</MathText>
+                                </p>
                               )}
                               {step.math && (
                                 <div className="mt-2 overflow-x-auto rounded-xl bg-secondary/60 px-4 py-3 text-lg">
