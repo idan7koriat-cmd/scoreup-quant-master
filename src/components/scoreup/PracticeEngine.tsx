@@ -18,7 +18,7 @@ import { getQuestions } from "@/lib/questions.functions";
 const QUESTION_SECONDS = 60;
 
 /** LTR wrapper so RTL Hebrew context doesn't flip math symbols. */
-function Math({ math }: { math: string }) {
+function MathSpan({ math }: { math: string }) {
   return (
     <span dir="ltr" className="inline-block align-middle mx-0.5 [unicode-bidi:isolate]">
       <InlineMath math={math} />
@@ -30,17 +30,17 @@ function Math({ math }: { math: string }) {
 function MathText({ children }: { children: string }) {
   const text = children ?? "";
   const looksLikeRawLatex = !text.includes("$") && /\\[a-zA-Z]+/.test(text);
-  if (looksLikeRawLatex) return <Math math={text} />;
+  if (looksLikeRawLatex) return <MathSpan math={text} />;
 
   const parts = text.split(/(\$\$[^$]+\$\$|\$[^$]+\$)/g);
   return (
     <>
       {parts.map((part, i) => {
         if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4) {
-          return <Math key={i} math={part.slice(2, -2).trim()} />;
+          return <MathSpan key={i} math={part.slice(2, -2).trim()} />;
         }
         if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
-          return <Math key={i} math={part.slice(1, -1).trim()} />;
+          return <MathSpan key={i} math={part.slice(1, -1).trim()} />;
         }
         return (
           <span key={i} className="whitespace-pre-line">
