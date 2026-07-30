@@ -308,7 +308,9 @@ export function PracticeEngine() {
                             </span>
                             <div className="flex-1 text-foreground">
                               {step.text && (
-                                <p className="leading-relaxed">{step.text}</p>
+                                <p className="leading-relaxed">
+                                  <MathText>{step.text}</MathText>
+                                </p>
                               )}
                               {step.math && (
                                 <div className="mt-2 overflow-x-auto rounded-xl bg-secondary/60 px-4 py-3 text-lg">
