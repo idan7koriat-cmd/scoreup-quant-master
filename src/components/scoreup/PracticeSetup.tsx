@@ -33,7 +33,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart: (config: PracticeConfig) => void }) {
-  const allTopics = FALLBACK_TOPICS;
+  const { data: liveTopics } = useQuery({
+    queryKey: ["topics"],
+    queryFn: () => getTopics(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const allTopics: string[] = topics ?? liveTopics ?? [];
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [count, setCount] = useState(10);
   const [level, setLevel] = useState<number | null>(null);
