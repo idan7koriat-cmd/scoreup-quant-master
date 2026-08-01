@@ -60,9 +60,9 @@ export const getQuestions = createServerFn({ method: "GET" })
       query = query.in("topic", filters.topics);
     }
 
-    // 2. סינון לפי רמת קושי מול העמודה הנכונה ב-Supabase (difficulty)
+    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty_level)
     if (filters.difficultyLevel != null) {
-      query = query.eq("difficulty", filters.difficultyLevel);
+      query = query.eq("difficulty_level", filters.difficultyLevel);
     }
 
     const { data: rows, error } = await query;
