@@ -28,12 +28,12 @@ function client() {
 
 type Row = Database["public"]["Tables"]["questions"]["Row"];
 
-function toQuestion(row: Row): Question {
+function toQuestion(row: Row & { difficulty?: number }): Question {
   return {
     id: row.id,
     topic: row.topic,
-    difficulty: row.difficulty,
-    difficultyLevel: row.difficulty_level ?? null,
+    difficulty: row.difficulty ?? 1,
+    difficultyLevel: row.difficulty ?? null,
     question: row.question,
     answers: (row.answers as string[]) ?? [],
     correctIndex: row.correct_index,
@@ -43,24 +43,25 @@ function toQuestion(row: Row): Question {
 }
 
 /** Distinct topics available in the bank, for the configurator. */
-export const getTopics = createServerFn({ method: "GET" }).handler(
-  async (): Promise<string[]> => {
-    const { data, error } = await client().from("questions").select("topic");
-    if (error) throw new Error(error.message);
-    return Array.from(new Set((data ?? []).map((r) => r.topic))).sort();
-  },
-);
+export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
+  const { data, error } = await client().from("questions").select("topic");
+  if (error) throw new Error(error.message);
+  return Array.from(new Set((data ?? []).map((r) => r.topic))).sort();
+});
 
 export const getQuestions = createServerFn({ method: "GET" })
-  .inputValidator((data: Filters | undefined) => data ?? {})
+  .inputValidator((input: any) => input)
   .handler(async ({ data }): Promise<Question[]> => {
+    // תמיכה גם בקריאה עטופה וגם בקריאה ישירה
+    const filters: Filters = data?.data ? data.data : (data ?? {});
+
     let query = client().from("questions").select("*");
 
-    if (data.topics && data.topics.length > 0) {
-      query = query.in("topic", data.topics);
+    if (filters.topics && filters.topics.length > 0) {
+      query = query.in("topic", filters.topics);
     }
-    if (data.difficultyLevel != null) {
-      query = query.eq("difficulty_level", data.difficultyLevel);
+    if (filters.difficultyLevel != null) {
+      query = query.eq("difficulty", filters.difficultyLevel);
     }
 
     const { data: rows, error } = await query;
@@ -72,8 +73,7 @@ export const getQuestions = createServerFn({ method: "GET" })
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    const limited =
-      data.count && data.count > 0 ? shuffled.slice(0, data.count) : shuffled;
+    const limited = filters.count && filters.count > 0 ? shuffled.slice(0, filters.count) : shuffled;
 
     return limited.map(toQuestion);
   });
