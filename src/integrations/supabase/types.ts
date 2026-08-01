@@ -20,9 +20,11 @@ export type Database = {
           correct_index: number
           created_at: string
           difficulty: string
+          difficulty_level: number | null
           explanation: string
           id: string
           question: string
+          svg_code: string | null
           topic: string
         }
         Insert: {
@@ -30,9 +32,11 @@ export type Database = {
           correct_index: number
           created_at?: string
           difficulty?: string
+          difficulty_level?: number | null
           explanation?: string
           id?: string
           question: string
+          svg_code?: string | null
           topic: string
         }
         Update: {
@@ -40,9 +44,11 @@ export type Database = {
           correct_index?: number
           created_at?: string
           difficulty?: string
+          difficulty_level?: number | null
           explanation?: string
           id?: string
           question?: string
+          svg_code?: string | null
           topic?: string
         }
         Relationships: []
