@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Zap, Timer, Sparkles } from "lucide-react";
+import { getTopics } from "@/lib/questions.functions";
 import type { PracticeConfig, PracticeMode } from "@/data/questions";
 
-const FALLBACK_TOPICS = ["אלגברה", "בעיות", "גיאומטריה", "הסקה מתרשים"];
 const COUNTS = [5, 10, 15, 20];
 const LEVELS: (number | null)[] = [1, 2, 3, 4, null];
 
