@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
 import type { Question } from "@/data/questions";
 
 type Filters = {
@@ -11,7 +10,7 @@ type Filters = {
 
 function client() {
   const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient<Database>(process.env.SUPABASE_URL!, key, {
+  return createClient<any>(process.env.SUPABASE_URL!, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
@@ -26,14 +25,13 @@ function client() {
   });
 }
 
-type Row = Database["public"]["Tables"]["questions"]["Row"];
-
-function toQuestion(row: Row & { difficulty?: number }): Question {
+function toQuestion(row: any): Question {
+  const diff = row.difficulty ?? row.difficulty_level ?? 1;
   return {
     id: row.id,
     topic: row.topic,
-    difficulty: row.difficulty ?? 1,
-    difficultyLevel: row.difficulty ?? null,
+    difficulty: diff,
+    difficultyLevel: diff,
     question: row.question,
     answers: (row.answers as string[]) ?? [],
     correctIndex: row.correct_index,
@@ -46,14 +44,14 @@ function toQuestion(row: Row & { difficulty?: number }): Question {
 export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
   const { data, error } = await client().from("questions").select("topic");
   if (error) throw new Error(error.message);
-  return Array.from(new Set((data ?? []).map((r) => r.topic))).sort();
+  return Array.from(new Set((data ?? []).map((r: any) => r.topic))).sort();
 });
 
 export const getQuestions = createServerFn({ method: "GET" })
-  .inputValidator((input: any) => input)
+  .inputValidator((data: Filters | undefined) => data ?? {})
   .handler(async ({ data }): Promise<Question[]> => {
-    // תמיכה גם בקריאה עטופה וגם בקריאה ישירה
-    const filters: Filters = data?.data ? data.data : (data ?? {});
+    const rawData = (data as any)?.data ? (data as any).data : data;
+    const filters: Filters = rawData ?? {};
 
     let query = client().from("questions").select("*");
 
