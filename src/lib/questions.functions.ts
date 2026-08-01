@@ -70,10 +70,11 @@ export const getQuestions = createServerFn({ method: "GET" })
       query = query.in("topic", filters.topics);
     }
 
-    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty_level)
+    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty)
     if (filters.difficultyLevel != null) {
-      query = query.eq("difficulty_level", filters.difficultyLevel);
+      query = query.eq("difficulty", filters.difficultyLevel);
     }
+
 
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
