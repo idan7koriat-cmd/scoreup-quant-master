@@ -32,15 +32,14 @@ function toQuestion(row: any): Question {
     topic: row.topic,
     difficulty: diff,
     difficultyLevel: diff,
-    question: row.question,
+    question: row.question ?? "",
     answers: (row.answers as string[]) ?? [],
-    correctIndex: row.correct_index,
+    correctIndex: row.correct_index ?? row.correctIndex ?? 0,
     explanation: row.explanation ?? "",
-    svgCode: row.svg_code ?? null,
+    svgCode: row.svg_code ?? row.svgCode ?? null,
   };
 }
 
-/** Distinct topics available in the bank, for the configurator. */
 export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
   const { data, error } = await client().from("questions").select("topic");
   if (error) throw new Error(error.message);
@@ -48,16 +47,20 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
 });
 
 export const getQuestions = createServerFn({ method: "GET" })
-  .inputValidator((data: Filters | undefined) => data ?? {})
+  .inputValidator((input: any) => input)
   .handler(async ({ data }): Promise<Question[]> => {
+    // חילוץ פילטרים גם מקריאה עטופה (data.data) וגם מקריאה ישירה
     const rawData = (data as any)?.data ? (data as any).data : data;
     const filters: Filters = rawData ?? {};
 
     let query = client().from("questions").select("*");
 
+    // 1. סינון לפי נושאים
     if (filters.topics && filters.topics.length > 0) {
       query = query.in("topic", filters.topics);
     }
+
+    // 2. סינון לפי רמת קושי מול העמודה הנכונה ב-Supabase (difficulty)
     if (filters.difficultyLevel != null) {
       query = query.eq("difficulty", filters.difficultyLevel);
     }
