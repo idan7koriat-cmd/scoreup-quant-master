@@ -9,8 +9,8 @@ type Filters = {
 };
 
 function client() {
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient<any>(process.env.SUPABASE_URL!, key, {
+  const key = process.env['EXT_SUPABASE_ANON_KEY']!;
+  return createClient<any>(process.env['EXT_SUPABASE_URL']!, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
@@ -25,12 +25,21 @@ function client() {
   });
 }
 
+const DIFFICULTY_LABELS: Record<number, string> = {
+  1: "קל",
+  2: "בינוני",
+  3: "קשה",
+  4: "מאתגר",
+};
+
 function toQuestion(row: any): Question {
-  const diff = row.difficulty_level ?? 2;
+  const raw = row.difficulty;
+  const level = typeof raw === "number" ? raw : Number(raw);
+  const diff = Number.isFinite(level) ? level : 2;
   return {
     id: row.id,
     topic: row.topic,
-    difficulty: diff,
+    difficulty: DIFFICULTY_LABELS[diff] ?? String(diff),
     difficultyLevel: diff,
     question: row.question ?? "",
     answers: (row.answers as string[]) ?? [],
@@ -39,6 +48,7 @@ function toQuestion(row: any): Question {
     svgCode: row.svg_code ?? row.svgCode ?? null,
   };
 }
+
 
 export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
   const { data, error } = await client().from("questions").select("topic");
@@ -60,10 +70,11 @@ export const getQuestions = createServerFn({ method: "GET" })
       query = query.in("topic", filters.topics);
     }
 
-    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty_level)
+    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty)
     if (filters.difficultyLevel != null) {
-      query = query.eq("difficulty_level", filters.difficultyLevel);
+      query = query.eq("difficulty", filters.difficultyLevel);
     }
+
 
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
