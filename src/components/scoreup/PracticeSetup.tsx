@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Zap, Timer, Sparkles } from "lucide-react";
+import { getTopics } from "@/lib/questions.functions";
 import type { PracticeConfig, PracticeMode } from "@/data/questions";
 
-const FALLBACK_TOPICS = ["אלגברה", "בעיות", "גיאומטריה", "הסקה מתרשים"];
 const COUNTS = [5, 10, 15, 20];
 const LEVELS: (number | null)[] = [1, 2, 3, 4, null];
 
@@ -32,7 +33,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart: (config: PracticeConfig) => void }) {
-  const allTopics = FALLBACK_TOPICS;
+  const { data: liveTopics } = useQuery({
+    queryKey: ["topics"],
+    queryFn: () => getTopics(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const allTopics: string[] = topics ?? liveTopics ?? [];
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [count, setCount] = useState(10);
   const [level, setLevel] = useState<number | null>(null);
