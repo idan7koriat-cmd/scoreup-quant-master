@@ -26,7 +26,7 @@ function client() {
 }
 
 function toQuestion(row: any): Question {
-  const diff = row.difficulty ?? row.difficulty_level ?? 1;
+  const diff = row.difficulty_level ?? 2;
   return {
     id: row.id,
     topic: row.topic,
