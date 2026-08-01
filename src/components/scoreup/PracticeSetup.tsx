@@ -2,19 +2,11 @@ import { useState } from "react";
 import { Zap, Timer, Sparkles } from "lucide-react";
 import type { PracticeConfig, PracticeMode } from "@/data/questions";
 
-const FALLBACK_TOPICS = ["אלגברה", "בעיות", "גיאומטריה"];
+const FALLBACK_TOPICS = ["אלגברה", "בעיות", "גיאומטריה", "הסקה מתרשים"];
 const COUNTS = [5, 10, 15, 20];
 const LEVELS: (number | null)[] = [1, 2, 3, 4, null];
 
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
@@ -39,14 +31,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-export function PracticeSetup({
-  topics,
-  onStart,
-}: {
-  topics?: string[];
-  onStart: (config: PracticeConfig) => void;
-}) {
-  const allTopics = topics && topics.length ? topics : FALLBACK_TOPICS;
+export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart: (config: PracticeConfig) => void }) {
+  const allTopics = FALLBACK_TOPICS;
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [count, setCount] = useState(10);
   const [level, setLevel] = useState<number | null>(null);
@@ -54,9 +40,7 @@ export function PracticeSetup({
   const [mode, setMode] = useState<PracticeMode>("study");
 
   const toggleTopic = (t: string) =>
-    setSelectedTopics((prev) =>
-      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
-    );
+    setSelectedTopics((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
 
   const startCustom = () =>
     onStart({
@@ -91,9 +75,7 @@ export function PracticeSetup({
             <Zap className="h-5 w-5 text-primary" />
             חימום מהיר
           </span>
-          <p className="mt-2 text-sm text-muted-foreground">
-            5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה</p>
         </button>
 
         <button
@@ -113,9 +95,7 @@ export function PracticeSetup({
             <Timer className="h-5 w-5 text-primary" />
             מבחן אמיתי
           </span>
-          <p className="mt-2 text-sm text-muted-foreground">
-            20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום</p>
         </button>
       </div>
 
@@ -129,18 +109,12 @@ export function PracticeSetup({
       <div className="space-y-6">
         <Field label="נושאים">
           {allTopics.map((t) => (
-            <Chip
-              key={t}
-              active={selectedTopics.includes(t)}
-              onClick={() => toggleTopic(t)}
-            >
+            <Chip key={t} active={selectedTopics.includes(t)} onClick={() => toggleTopic(t)}>
               {t}
             </Chip>
           ))}
           {selectedTopics.length === 0 && (
-            <span className="self-center text-xs text-muted-foreground">
-              (לא נבחר — כל הנושאים)
-            </span>
+            <span className="self-center text-xs text-muted-foreground">(לא נבחר — כל הנושאים)</span>
           )}
         </Field>
 
