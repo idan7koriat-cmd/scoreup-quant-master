@@ -79,13 +79,47 @@ export const getQuestions = createServerFn({ method: "GET" })
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
 
-    const shuffled = [...(rows ?? [])];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // קיבוץ לפי group_id (שאלה ללא קבוצה = קבוצה של אחת)
+    const groups = new Map<string, any[]>();
+    for (const row of rows ?? []) {
+      const gid =
+        row.group_id != null && String(row.group_id).trim() !== ""
+          ? `g:${row.group_id}`
+          : `s:${row.id}`;
+      const list = groups.get(gid);
+      if (list) list.push(row);
+      else groups.set(gid, [row]);
     }
 
-    const limited = filters.count && filters.count > 0 ? shuffled.slice(0, filters.count) : shuffled;
+    // מיון פנימי לפי group_order (null בסוף)
+    const ordered = Array.from(groups.values()).map((list) =>
+      [...list].sort((a, b) => {
+        const av = a.group_order == null ? Number.POSITIVE_INFINITY : Number(a.group_order);
+        const bv = b.group_order == null ? Number.POSITIVE_INFINITY : Number(b.group_order);
+        return av - bv;
+      }),
+    );
 
-    return limited.map(toQuestion);
+    // ערבוב ברמת קבוצה
+    for (let i = ordered.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ordered[i], ordered[j]] = [ordered[j], ordered[i]];
+    }
+
+    let selected: any[] = [];
+    if (filters.count && filters.count > 0) {
+      for (const group of ordered) {
+        if (selected.length >= filters.count) break;
+        if (selected.length + group.length <= filters.count) selected.push(...group);
+      }
+      // אם שום קבוצה לא נכנסה במכסה, ניקח את הקבוצה הקטנה ביותר
+      if (selected.length === 0 && ordered.length > 0) {
+        const smallest = [...ordered].sort((a, b) => a.length - b.length)[0];
+        selected = [...smallest];
+      }
+    } else {
+      selected = ordered.flat();
+    }
+
+    return selected.map(toQuestion);
   });
