@@ -2,7 +2,6 @@ import { Sigma } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const links = [
-  { href: "#practice", label: "טעימה חינם" },
   { href: "#why", label: "יתרונות" },
   { href: "#how", label: "איך זה עובד" },
 ];
