@@ -39,6 +39,8 @@ function Index() {
         <WhyScoreUp />
         <DemoPractice />
         <HowItWorks />
+        <FinalCTA />
+
       </main>
       <Footer />
     </div>
