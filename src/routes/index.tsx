@@ -4,7 +4,9 @@ import { Hero } from "@/components/scoreup/Hero";
 import { WhyScoreUp } from "@/components/scoreup/WhyScoreUp";
 import { HowItWorks } from "@/components/scoreup/HowItWorks";
 import { DemoPractice } from "@/components/scoreup/DemoPractice";
+import { FinalCTA } from "@/components/scoreup/FinalCTA";
 import { Footer } from "@/components/scoreup/Footer";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
