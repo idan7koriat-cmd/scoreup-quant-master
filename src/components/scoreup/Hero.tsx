@@ -1,4 +1,6 @@
 import { ArrowLeft, TrendingUp, Database, Timer, Zap } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+
 
 const stats = [
   { icon: TrendingUp, label: "+20-40 נקודות לשיפור" },
