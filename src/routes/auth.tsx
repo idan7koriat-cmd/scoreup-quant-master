@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sigma, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+
+type AuthMode = "signin" | "signup";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): { mode: AuthMode } => ({
+    mode: search.mode === "signin" ? "signin" : "signup",
+  }),
   head: () => ({
     meta: [
       { title: "הרשמה והתחברות — ScoreUp" },
