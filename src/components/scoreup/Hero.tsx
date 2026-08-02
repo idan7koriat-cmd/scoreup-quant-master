@@ -1,4 +1,6 @@
 import { ArrowLeft, TrendingUp, Database, Timer, Zap } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+
 
 const stats = [
   { icon: TrendingUp, label: "+20-40 נקודות לשיפור" },
@@ -65,28 +67,29 @@ export function Hero() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#practice"
+            <Link
+              to="/auth"
               className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-bold text-slate-950 shadow-xl transition-all hover:scale-[1.03]"
               style={{
                 background: "var(--gradient-cta)",
                 boxShadow: "0 20px 50px -12px oklch(0.72 0.17 60 / 0.5)",
               }}
             >
-              התחל לתרגל חינם
+              הירשם עכשיו — התחל בחינם
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-            </a>
+            </Link>
             <a
-              href="#why"
+              href="#practice"
               className="inline-flex items-center gap-2 rounded-full border px-8 py-4 text-base font-semibold text-white backdrop-blur-xl transition-colors"
               style={{
                 background: "rgba(255,255,255,0.06)",
                 borderColor: "rgba(255,255,255,0.14)",
               }}
             >
-              למה ScoreUp?
+              נסה 5 שאלות חינם
             </a>
           </div>
+
 
           <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map((s, i) => (
