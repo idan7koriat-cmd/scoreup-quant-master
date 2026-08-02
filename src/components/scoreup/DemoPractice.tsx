@@ -260,6 +260,7 @@ export function DemoPractice() {
             </p>
             <Link
               to="/auth"
+              search={{ mode: "signup" as const }}
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.02]"
               style={{ background: "var(--gradient-cta)" }}
             >
