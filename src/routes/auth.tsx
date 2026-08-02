@@ -228,8 +228,9 @@ function AuthPage() {
             style={{ background: "var(--gradient-cta)" }}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {mode === "signup" ? "הירשם עכשיו" : "התחבר"}
+            {mode === "signup" ? "ההרשמה עכשיו" : "התחבר"}
           </button>
+
         </form>
 
         <button
