@@ -56,16 +56,14 @@ export function DemoPractice() {
     <section id="practice" className="bg-background py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
+          <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-accent-foreground">
             <Sparkles className="h-4 w-4" />
-            טעימה חינם
           </span>
           <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-            5 שאלות לדוגמה — בלי הרשמה
+            5 שאלות לדוגמה — ללא הרשמה
           </h2>
           <p className="mt-3 text-lg text-muted-foreground">
-            פתור, קבל משוב מיידי וראה פתרון מלא שלב-אחר-שלב. המאגר המלא נפתח לאחר
-            הרשמה.
+            פתור, קבל משוב מיידי וראה פתרון מלא שלב-אחר-שלב.
           </p>
         </div>
 

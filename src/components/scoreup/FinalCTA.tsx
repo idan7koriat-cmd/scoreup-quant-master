@@ -34,7 +34,7 @@ export function FinalCTA() {
           </Link>
           <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300">
             <ShieldCheck className="h-4 w-4" />
-            התחלה חינמית — ללא כרטיס אשראי
+            {"\n"}
           </span>
         </div>
       </div>

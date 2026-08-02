@@ -75,7 +75,7 @@ export function Hero() {
                 boxShadow: "0 20px 50px -12px oklch(0.72 0.17 60 / 0.5)",
               }}
             >
-              הירשם עכשיו — התחל בחינם
+              הירשם עכשיו
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
             </Link>
             <a
