@@ -3,7 +3,7 @@ import { Navbar } from "@/components/scoreup/Navbar";
 import { Hero } from "@/components/scoreup/Hero";
 import { WhyScoreUp } from "@/components/scoreup/WhyScoreUp";
 import { HowItWorks } from "@/components/scoreup/HowItWorks";
-import { PracticeEngine } from "@/components/scoreup/PracticeEngine";
+import { DemoPractice } from "@/components/scoreup/DemoPractice";
 import { Footer } from "@/components/scoreup/Footer";
 
 export const Route = createFileRoute("/")({
