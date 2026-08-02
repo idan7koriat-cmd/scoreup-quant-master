@@ -44,17 +44,20 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             to="/auth"
+            search={{ mode: "signin" as const }}
             className="rounded-full px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
           >
             התחברות
           </Link>
           <Link
             to="/auth"
+            search={{ mode: "signup" as const }}
             className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
             style={{ background: "var(--gradient-cta)" }}
           >
             הרשמה
           </Link>
+
         </div>
       </div>
     </header>
