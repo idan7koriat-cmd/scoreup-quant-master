@@ -35,7 +35,7 @@ function Index() {
       <main>
         <Hero />
         <WhyScoreUp />
-        <PracticeEngine />
+        <DemoPractice />
         <HowItWorks />
       </main>
       <Footer />
