@@ -31,12 +31,34 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const { mode } = Route.useSearch();
+  const navigate = useNavigate();
+  const setMode = (m: AuthMode) =>
+    navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+
+  const googleSignIn = async () => {
+    setErr(null);
+    setMsg(null);
+    setGoogleLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setErr("ההתחברות עם Google נכשלה, נסה שוב.");
+      setGoogleLoading(false);
+      return;
+    }
+    if (result.redirected) return;
+    setGoogleLoading(false);
+    setMsg("התחברת בהצלחה!");
+  };
+
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
