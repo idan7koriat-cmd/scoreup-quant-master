@@ -33,6 +33,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { session } = useSession();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) navigate({ to: "/dashboard", replace: true });
+  }, [session, navigate]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
