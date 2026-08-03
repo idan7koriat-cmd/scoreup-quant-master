@@ -3,7 +3,7 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 // האימות מתבצע מול פרויקט ה-Supabase החיצוני, לכן מצרפים את הטוקן שלו.
 import { attachExtAuth } from "@/lib/extAuthAttacher";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
