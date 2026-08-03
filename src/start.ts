@@ -1,7 +1,8 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+// האימות מתבצע מול פרויקט ה-Supabase החיצוני, לכן מצרפים את הטוקן שלו.
+import { attachExtAuth } from "@/lib/extAuthAttacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
