@@ -66,40 +66,52 @@ export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart:
       <div className="grid gap-4 md:grid-cols-2">
         <button
           type="button"
-          onClick={() =>
+          onClick={() => {
+            if (!isPremium && quickLocked) return;
             onStart({
               topics: [],
               count: 5,
               difficultyLevel: null,
               totalSeconds: null,
               mode: "study",
-            })
-          }
-          className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md"
+              quick: true,
+            });
+          }}
+          disabled={!isPremium && quickLocked}
+          className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span className="flex items-center gap-2 text-lg font-extrabold text-foreground">
             <Zap className="h-5 w-5 text-primary" />
             חימום מהיר
           </span>
-          <p className="mt-2 text-sm text-muted-foreground">5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {!isPremium && quickLocked
+              ? "השתמשת בחימום המהיר היומי שלך — חזור מחר או שדרג למסלול 700+"
+              : "5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה"}
+          </p>
         </button>
 
         <button
           type="button"
-          onClick={() =>
+          onClick={() => {
+            if (!isPremium) {
+              onUpgrade?.();
+              return;
+            }
             onStart({
               topics: [],
               count: 20,
               difficultyLevel: null,
               totalSeconds: 20 * 60,
               mode: "exam",
-            })
-          }
+              simulation: true,
+            });
+          }}
           className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md"
         >
           <span className="flex items-center gap-2 text-lg font-extrabold text-foreground">
-            <Timer className="h-5 w-5 text-primary" />
-            מבחן אמיתי
+            {isPremium ? <Timer className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
+            סימולציית פרק מלאה
           </span>
           <p className="mt-2 text-sm text-muted-foreground">20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום</p>
         </button>
@@ -111,6 +123,26 @@ export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart:
         <Sparkles className="h-5 w-5 text-primary" />
         בניית תרגול מותאם אישית
       </h3>
+
+      <div className="relative">
+        {!isPremium && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-card/80 p-6 text-center backdrop-blur-sm">
+            <Lock className="h-8 w-8 text-primary" />
+            <p className="max-w-xs text-base font-extrabold text-foreground">
+              תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
+            </p>
+            <button
+              type="button"
+              onClick={onUpgrade}
+              className="rounded-2xl px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+              style={{ background: "var(--gradient-cta)" }}
+            >
+              שדרג למסלול 700+ ⚡
+            </button>
+          </div>
+        )}
+        <div className={!isPremium ? "pointer-events-none select-none opacity-40" : undefined}>
+
 
       <div className="space-y-6">
         <Field label="נושאים">
