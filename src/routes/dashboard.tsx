@@ -231,39 +231,36 @@ function Dashboard() {
                   סטטוס חשבון
                 </p>
                 <p className="mt-1 text-xl font-extrabold text-foreground">
-                  סטטוס: מסלול התנסות
+                  {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול חימום בסיסי"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל.
+                  {isPremium
+                    ? "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                    : "יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל."}
                 </p>
               </div>
-              <button
-                onClick={() => setUpgrade(true)}
-                className="inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
-                style={{ background: "var(--gradient-cta)" }}
-              >
-                פתיחת גישה מלאה לכל השאלות וה-AI ⚡
-              </button>
             </div>
           </div>
 
-          {/* Full simulation - locked */}
+          {/* Full simulation */}
           <div className="relative overflow-hidden rounded-3xl border border-border bg-secondary/40 p-6">
             <span className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
               <Lock className="h-3.5 w-3.5" />
-              נעול
+              {isPremium ? "פתוח" : "נעול"}
             </span>
             <h3 className="mt-3 text-lg font-extrabold text-foreground">
-              סימולציית פרק מלאה 🔒
+              סימולציית פרק מלאה {isPremium ? "" : "🔒"}
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
               פרק כמותי מלא בתנאי מבחן אמיתיים, כולל ניקוד וניתוח מלא.
             </p>
             <button
-              onClick={() => setUpgrade(true)}
-              className="mt-4 w-full rounded-2xl border-2 border-primary/40 bg-card py-3 text-sm font-bold text-foreground transition-colors hover:border-primary"
+              onClick={startSimulation}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+              style={{ background: "var(--gradient-cta)" }}
             >
-              זמין במסלול 700+ ללא הגבלה
+              <Zap className="h-4 w-4" />
+              {isPremium ? "התחל סימולציית פרק מלאה" : "שדרג למסלול 700+ ללא הגבלה ⚡"}
             </button>
           </div>
         </div>
@@ -276,8 +273,14 @@ function Dashboard() {
           <p className="mt-2 text-muted-foreground">
             בחר נושאים, כמות שאלות, רמת קושי וטיימר — ותתחיל לפתור.
           </p>
-          <PracticeSetup onStart={start} />
+          <PracticeSetup
+            onStart={start}
+            isPremium={isPremium}
+            quickLocked={quickLocked}
+            onUpgrade={() => setUpgrade(true)}
+          />
         </div>
+
       </main>
     </div>
   );
