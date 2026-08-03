@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sigma, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { useSession } from "@/hooks/useSession";
 
 type AuthMode = "signin" | "signup";
 
@@ -33,6 +34,11 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const { mode } = Route.useSearch();
   const navigate = useNavigate();
+  const { session } = useSession();
+
+  useEffect(() => {
+    if (session) navigate({ to: "/dashboard", replace: true });
+  }, [session, navigate]);
   const setMode = (m: AuthMode) =>
     navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
