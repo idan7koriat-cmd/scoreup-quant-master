@@ -225,15 +225,15 @@ function Dashboard() {
         </p>
 
         {/* Account status */}
-        <div className="mt-8 grid gap-4 lg:grid-cols-3">
-          <div className="rounded-3xl border border-border bg-card p-6 lg:col-span-2">
+        <div className="mt-8">
+          <div className="rounded-3xl border border-border bg-card p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-muted-foreground">
                   סטטוס חשבון
                 </p>
                 <p className="mt-1 text-xl font-extrabold text-foreground">
-                  {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול חימום בסיסי"}
+                  {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {isPremium
@@ -241,29 +241,17 @@ function Dashboard() {
                     : "יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל."}
                 </p>
               </div>
+              {!isPremium && (
+                <button
+                  onClick={() => setUpgrade(true)}
+                  className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+                  style={{ background: "var(--gradient-cta)" }}
+                >
+                  <Zap className="h-4 w-4" />
+                  שדרג למסלול 700+ ללא הגבלה ⚡
+                </button>
+              )}
             </div>
-          </div>
-
-          {/* Full simulation */}
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-secondary/40 p-6">
-            <span className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-              <Lock className="h-3.5 w-3.5" />
-              {isPremium ? "פתוח" : "נעול"}
-            </span>
-            <h3 className="mt-3 text-lg font-extrabold text-foreground">
-              סימולציית פרק מלאה {isPremium ? "" : "🔒"}
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              פרק כמותי מלא בתנאי מבחן אמיתיים, כולל ניקוד וניתוח מלא.
-            </p>
-            <button
-              onClick={startSimulation}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
-              style={{ background: "var(--gradient-cta)" }}
-            >
-              <Zap className="h-4 w-4" />
-              {isPremium ? "התחל סימולציית פרק מלאה" : "שדרג למסלול 700+ ללא הגבלה ⚡"}
-            </button>
           </div>
         </div>
 
