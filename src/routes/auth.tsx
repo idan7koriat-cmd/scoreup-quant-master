@@ -50,7 +50,7 @@ function AuthPage() {
     setMsg(null);
     setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/dashboard`,
+      redirect_uri: window.location.origin,
     });
     if (result.error) {
       setErr("ההתחברות עם Google נכשלה, נסה שוב.");
@@ -74,8 +74,12 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { exam_date: examDate, target_degree: targetDegree },
+          },
         });
+
         if (error) throw error;
         setMsg("נשלח אליך מייל אימות — אשר אותו כדי להשלים את ההרשמה.");
       } else {
