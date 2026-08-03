@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireExtAuth } from "@/lib/extAuth.server";
 import type { Question } from "@/data/questions";
 
 type Filters = {
@@ -89,7 +89,7 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
 });
 
 export const getQuestions = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireExtAuth])
   .inputValidator((input: any) => input)
   .handler(async ({ data, context }): Promise<Question[]> => {
     const rawData = (data as any)?.data ? (data as any).data : data;

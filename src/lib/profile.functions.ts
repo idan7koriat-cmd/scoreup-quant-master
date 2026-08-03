@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireExtAuth } from "@/lib/extAuth.server";
 
 export type Profile = {
   examDate: string | null;
@@ -9,7 +9,7 @@ export type Profile = {
 };
 
 export const getMyProfile = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireExtAuth])
   .handler(async ({ context }): Promise<Profile> => {
     const { data } = await context.supabase
       .from("profiles")
@@ -26,7 +26,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
   });
 
 export const markQuickPractice = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireExtAuth])
   .handler(async ({ context }) => {
     const today = new Date().toISOString().slice(0, 10);
     await context.supabase
@@ -36,7 +36,7 @@ export const markQuickPractice = createServerFn({ method: "POST" })
   });
 
 export const recordSolvedQuestion = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireExtAuth])
   .inputValidator((input: { questionId: string; isCorrect: boolean }) => input)
   .handler(async ({ data, context }) => {
     const payload = (data as any)?.data ?? data;
