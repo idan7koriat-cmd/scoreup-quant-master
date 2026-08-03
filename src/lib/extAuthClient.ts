@@ -31,9 +31,18 @@ export function getExtSupabase(): Promise<SupabaseClient<any>> {
   return clientPromise;
 }
 
-export async function getExtAccessToken(): Promise<string | null> {
+/**
+ * קורא את הטוקן ישירות מ-localStorage ולא דרך הלקוח —
+ * אתחול הלקוח תלוי בפונקציית שרת, וקריאה לו מתוך מידלוור של פונקציות שרת יוצרת תקיעה מעגלית.
+ */
+export function getExtAccessToken(): string | null {
   if (typeof window === "undefined") return null;
-  const supabase = await getExtSupabase();
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
+  try {
+    const raw = window.localStorage.getItem("scoreup-ext-auth");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { access_token?: string };
+    return parsed?.access_token ?? null;
+  } catch {
+    return null;
+  }
 }
