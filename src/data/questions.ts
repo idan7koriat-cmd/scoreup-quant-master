@@ -20,4 +20,8 @@ export type PracticeConfig = {
   /** total block seconds, null = untimed */
   totalSeconds: number | null;
   mode: PracticeMode;
+  /** חימום מהיר (מוגבל לפעם ביום למשתמש חינמי) */
+  quick?: boolean;
+  /** סימולציית פרק מלאה (20 שאלות במבנה בחינה) */
+  simulation?: boolean;
 };

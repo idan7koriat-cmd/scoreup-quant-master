@@ -10,6 +10,7 @@ type PracticeSearch = {
   level: number;
   seconds: number;
   mode: PracticeMode;
+  sim: number;
 };
 
 export const Route = createFileRoute("/practice")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/practice")({
     level: Number(search.level) > 0 ? Number(search.level) : 0,
     seconds: Number(search.seconds) > 0 ? Number(search.seconds) : 0,
     mode: search.mode === "exam" ? "exam" : "study",
+    sim: Number(search.sim) === 1 ? 1 : 0,
   }),
   head: () => ({
     meta: [
@@ -65,6 +67,7 @@ function PracticePage() {
     difficultyLevel: search.level > 0 ? search.level : null,
     totalSeconds: search.seconds > 0 ? search.seconds : null,
     mode: search.mode,
+    simulation: search.sim === 1,
   };
 
   return (

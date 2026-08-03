@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Question } from "@/data/questions";
 
 type Filters = {
   topics?: string[];
   count?: number;
   difficultyLevel?: number | null;
+  examMode?: boolean;
 };
 
 function client() {
@@ -32,6 +34,8 @@ const DIFFICULTY_LABELS: Record<number, string> = {
   4: "מאתגר",
 };
 
+const EXAM_TOPICS = ["אלגברה", "בעיות", "גיאומטריה"];
+
 function toQuestion(row: any): Question {
   const raw = row.difficulty;
   const level = typeof raw === "number" ? raw : Number(raw);
@@ -49,6 +53,34 @@ function toQuestion(row: any): Question {
   };
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function groupRows(rows: any[]): any[][] {
+  const groups = new Map<string, any[]>();
+  for (const row of rows) {
+    const gid =
+      row.group_id != null && String(row.group_id).trim() !== ""
+        ? `g:${row.group_id}`
+        : `s:${row.id}`;
+    const list = groups.get(gid);
+    if (list) list.push(row);
+    else groups.set(gid, [row]);
+  }
+  return Array.from(groups.values()).map((list) =>
+    [...list].sort((a, b) => {
+      const av = a.group_order == null ? Number.POSITIVE_INFINITY : Number(a.group_order);
+      const bv = b.group_order == null ? Number.POSITIVE_INFINITY : Number(b.group_order);
+      return av - bv;
+    }),
+  );
+}
 
 export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
   const { data, error } = await client().from("questions").select("topic");
@@ -57,53 +89,40 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
 });
 
 export const getQuestions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: any) => input)
-  .handler(async ({ data }): Promise<Question[]> => {
-    // חילוץ פילטרים גם מקריאה עטופה (data.data) וגם מקריאה ישירה
+  .handler(async ({ data, context }): Promise<Question[]> => {
     const rawData = (data as any)?.data ? (data as any).data : data;
     const filters: Filters = rawData ?? {};
 
+    // שאלות שהמשתמש כבר פתר — לא נציג אותן שוב
+    const { data: solvedRows } = await context.supabase
+      .from("solved_questions")
+      .select("question_id")
+      .eq("user_id", context.userId);
+    const solved = new Set((solvedRows ?? []).map((r: any) => String(r.question_id)));
+
     let query = client().from("questions").select("*");
-
-    // 1. סינון לפי נושאים
-    if (filters.topics && filters.topics.length > 0) {
-      query = query.in("topic", filters.topics);
+    if (!filters.examMode) {
+      if (filters.topics && filters.topics.length > 0) {
+        query = query.in("topic", filters.topics);
+      }
+      if (filters.difficultyLevel != null) {
+        query = query.eq("difficulty", filters.difficultyLevel);
+      }
     }
 
-    // 2. סינון לפי רמת קושי (עמודה מספרית difficulty)
-    if (filters.difficultyLevel != null) {
-      query = query.eq("difficulty", filters.difficultyLevel);
-    }
-
-
-    const { data: rows, error } = await query;
+    const { data: allRows, error } = await query;
     if (error) throw new Error(error.message);
 
-    // קיבוץ לפי group_id (שאלה ללא קבוצה = קבוצה של אחת)
-    const groups = new Map<string, any[]>();
-    for (const row of rows ?? []) {
-      const gid =
-        row.group_id != null && String(row.group_id).trim() !== ""
-          ? `g:${row.group_id}`
-          : `s:${row.id}`;
-      const list = groups.get(gid);
-      if (list) list.push(row);
-      else groups.set(gid, [row]);
-    }
+    let rows = (allRows ?? []).filter((r: any) => !solved.has(String(r.id)));
+    // אם לא נותרו מספיק שאלות חדשות, נאפשר חזרה על שאלות קיימות
+    if (rows.length === 0) rows = allRows ?? [];
 
-    // מיון פנימי לפי group_order (null בסוף)
-    const ordered = Array.from(groups.values()).map((list) =>
-      [...list].sort((a, b) => {
-        const av = a.group_order == null ? Number.POSITIVE_INFINITY : Number(a.group_order);
-        const bv = b.group_order == null ? Number.POSITIVE_INFINITY : Number(b.group_order);
-        return av - bv;
-      }),
-    );
+    const ordered = shuffle(groupRows(rows));
 
-    // ערבוב ברמת קבוצה
-    for (let i = ordered.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [ordered[i], ordered[j]] = [ordered[j], ordered[i]];
+    if (filters.examMode) {
+      return buildExam(ordered).map(toQuestion);
     }
 
     let selected: any[] = [];
@@ -112,7 +131,6 @@ export const getQuestions = createServerFn({ method: "GET" })
         if (selected.length >= filters.count) break;
         if (selected.length + group.length <= filters.count) selected.push(...group);
       }
-      // אם שום קבוצה לא נכנסה במכסה, ניקח את הקבוצה הקטנה ביותר
       if (selected.length === 0 && ordered.length > 0) {
         const smallest = [...ordered].sort((a, b) => a.length - b.length)[0];
         selected = [...smallest];
@@ -123,3 +141,52 @@ export const getQuestions = createServerFn({ method: "GET" })
 
     return selected.map(toQuestion);
   });
+
+/** סימולציית פרק מלאה: מקבץ תרשים אחד (4-5 שאלות) + שאר השאלות מחולקות בין הנושאים */
+function buildExam(groups: any[][]): any[] {
+  const TOTAL = 20;
+  const diagramGroups = groups.filter(
+    (g) => g.length >= 4 && g.length <= 5 && g[0].group_id != null,
+  );
+  const cluster = diagramGroups[0] ?? [];
+  const used = new Set(cluster.map((r) => String(r.id)));
+
+  const singles = groups
+    .flat()
+    .filter((r) => !used.has(String(r.id)));
+
+  const byTopic = new Map<string, any[]>();
+  for (const topic of EXAM_TOPICS) byTopic.set(topic, []);
+  const rest: any[] = [];
+  for (const row of singles) {
+    const list = byTopic.get(row.topic);
+    if (list) list.push(row);
+    else rest.push(row);
+  }
+
+  const remaining = TOTAL - cluster.length;
+  const picked: any[] = [];
+  let i = 0;
+  while (picked.length < remaining) {
+    let added = false;
+    for (const topic of EXAM_TOPICS) {
+      const list = byTopic.get(topic)!;
+      if (list[i]) {
+        picked.push(list[i]);
+        added = true;
+        if (picked.length >= remaining) break;
+      }
+    }
+    if (!added) break;
+    i++;
+  }
+  // השלמה משאלות מנושאים אחרים אם חסר
+  for (const row of rest) {
+    if (picked.length >= remaining) break;
+    picked.push(row);
+  }
+
+  // התרשים מוצג כמקבץ רציף באמצע הפרק
+  const half = Math.floor(picked.length / 2);
+  return [...picked.slice(0, half), ...cluster, ...picked.slice(half)];
+}

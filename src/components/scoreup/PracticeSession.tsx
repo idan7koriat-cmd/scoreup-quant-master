@@ -12,6 +12,7 @@ import {
   Flag,
 } from "lucide-react";
 import { getQuestions } from "@/lib/questions.functions";
+import { recordSolvedQuestion } from "@/lib/profile.functions";
 import type { PracticeConfig } from "@/data/questions";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
@@ -41,6 +42,7 @@ export function PracticeSession({
           topics: config.topics,
           count: config.count,
           difficultyLevel: config.difficultyLevel,
+          examMode: config.simulation ?? false,
         },
       }),
     staleTime: Infinity,
@@ -53,6 +55,20 @@ export function PracticeSession({
   const [showSolution, setShowSolution] = useState(false);
   const [finished, setFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(config.totalSeconds ?? 0);
+
+  const record = (qid: string, isCorrect: boolean) => {
+    void recordSolvedQuestion({ data: { questionId: qid, isCorrect } }).catch(() => {});
+  };
+
+  const [recorded, setRecorded] = useState(false);
+  useEffect(() => {
+    if (!finished || recorded || !questions) return;
+    setRecorded(true);
+    questions.forEach((qq, i) => {
+      const a = answers[i];
+      if (a != null) record(qq.id, a === qq.correctIndex);
+    });
+  }, [finished, recorded, questions, answers]);
 
   const q = questions?.[index];
   const selected = answers[index] ?? null;
@@ -307,7 +323,8 @@ export function PracticeSession({
               <button
                 onClick={() =>
                   selected !== null &&
-                  setChecked((prev) => ({ ...prev, [index]: true }))
+                  (setChecked((prev) => ({ ...prev, [index]: true })),
+                  q && record(q.id, selected === q.correctIndex))
                 }
                 disabled={selected === null}
                 className="w-full rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40"

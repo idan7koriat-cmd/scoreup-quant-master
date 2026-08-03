@@ -37,17 +37,20 @@ function AuthPage() {
     navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [examDate, setExamDate] = useState("");
+  const [targetDegree, setTargetDegree] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+
 
   const googleSignIn = async () => {
     setErr(null);
     setMsg(null);
     setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/dashboard`,
+      redirect_uri: window.location.origin,
     });
     if (result.error) {
       setErr("ההתחברות עם Google נכשלה, נסה שוב.");
@@ -71,8 +74,12 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { exam_date: examDate, target_degree: targetDegree },
+          },
         });
+
         if (error) throw error;
         setMsg("נשלח אליך מייל אימות — אשר אותו כדי להשלים את ההרשמה.");
       } else {
@@ -211,6 +218,37 @@ function AuthPage() {
               placeholder="••••••••"
             />
           </div>
+
+          {mode === "signup" && (
+            <>
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  תאריך בחינה מתוכנן
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={examDate}
+                  onChange={(e) => setExamDate(e.target.value)}
+                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  תחום לימודים מבוקש
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={targetDegree}
+                  onChange={(e) => setTargetDegree(e.target.value)}
+                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                  placeholder="הנדסה, רפואה, מדעי המחשב…"
+                />
+              </div>
+            </>
+          )}
+
 
           {err && (
             <p className="rounded-xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
