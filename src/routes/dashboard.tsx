@@ -157,20 +157,8 @@ function Dashboard() {
     });
   };
 
-  const startSimulation = () => {
-    if (!isPremium) {
-      setUpgrade(true);
-      return;
-    }
-    start({
-      topics: [],
-      count: 20,
-      difficultyLevel: null,
-      totalSeconds: 20 * 60,
-      mode: "exam",
-      simulation: true,
-    });
-  };
+
+
 
 
   return (
