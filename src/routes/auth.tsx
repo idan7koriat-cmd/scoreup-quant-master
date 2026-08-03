@@ -47,7 +47,7 @@ function AuthPage() {
     setMsg(null);
     setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/dashboard`,
     });
     if (result.error) {
       setErr("ההתחברות עם Google נכשלה, נסה שוב.");
@@ -57,6 +57,7 @@ function AuthPage() {
     if (result.redirected) return;
     setGoogleLoading(false);
     setMsg("התחברת בהצלחה!");
+    navigate({ to: "/dashboard" });
   };
 
 
@@ -81,6 +82,7 @@ function AuthPage() {
         });
         if (error) throw error;
         setMsg("התחברת בהצלחה!");
+        navigate({ to: "/dashboard" });
       }
     } catch (e) {
       setErr(e instanceof Error ? e.message : "אירעה שגיאה, נסה שוב.");
