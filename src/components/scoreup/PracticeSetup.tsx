@@ -138,22 +138,28 @@ export function PracticeSetup({
 
       <div className="relative">
         {!isPremium && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-card/80 p-6 text-center backdrop-blur-sm">
-            <Lock className="h-8 w-8 text-primary" />
-            <p className="max-w-xs text-base font-extrabold text-foreground">
-              תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
-            </p>
-            <button
-              type="button"
-              onClick={onUpgrade}
-              className="rounded-2xl px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
-              style={{ background: "var(--gradient-cta)" }}
-            >
-              שדרג למסלול 700+ ⚡
-            </button>
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-background/60 p-6 text-center backdrop-blur-sm">
+            <span className="flex flex-col items-center gap-3 rounded-2xl bg-card/90 px-6 py-5 shadow-lg">
+              <Lock className="h-8 w-8 text-primary" />
+              <p className="max-w-xs text-base font-extrabold text-foreground">
+                תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
+              </p>
+              <button
+                type="button"
+                onClick={onUpgrade}
+                className="rounded-2xl px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+                style={{ background: "var(--gradient-cta)" }}
+              >
+                שדרג למסלול 700+ ⚡
+              </button>
+            </span>
           </div>
         )}
-        <div className={!isPremium ? "pointer-events-none select-none opacity-40" : undefined}>
+        <div
+          aria-hidden={!isPremium}
+          {...(!isPremium ? { inert: "" as unknown as boolean } : {})}
+          className={!isPremium ? "pointer-events-none select-none" : undefined}
+        >
 
 
       <div className="space-y-6">
