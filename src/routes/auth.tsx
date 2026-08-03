@@ -87,7 +87,7 @@ function AuthPage() {
         });
 
         if (error) throw error;
-        setMsg("נשלח אליך מייל אימות — אשר אותו כדי להשלים את ההרשמה.");
+        navigate({ to: "/dashboard" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -97,6 +97,7 @@ function AuthPage() {
         setMsg("התחברת בהצלחה!");
         navigate({ to: "/dashboard" });
       }
+
     } catch (e) {
       setErr(e instanceof Error ? e.message : "אירעה שגיאה, נסה שוב.");
     } finally {
