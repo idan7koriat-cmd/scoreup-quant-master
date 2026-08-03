@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Navbar } from "@/components/scoreup/Navbar";
 import { Hero } from "@/components/scoreup/Hero";
 import { WhyScoreUp } from "@/components/scoreup/WhyScoreUp";
@@ -6,6 +7,7 @@ import { HowItWorks } from "@/components/scoreup/HowItWorks";
 import { DemoPractice } from "@/components/scoreup/DemoPractice";
 import { FinalCTA } from "@/components/scoreup/FinalCTA";
 import { Footer } from "@/components/scoreup/Footer";
+import { useSession } from "@/hooks/useSession";
 
 
 export const Route = createFileRoute("/")({
