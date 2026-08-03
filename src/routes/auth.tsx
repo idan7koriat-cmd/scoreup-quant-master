@@ -37,10 +37,13 @@ function AuthPage() {
     navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [examDate, setExamDate] = useState("");
+  const [targetDegree, setTargetDegree] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+
 
   const googleSignIn = async () => {
     setErr(null);
