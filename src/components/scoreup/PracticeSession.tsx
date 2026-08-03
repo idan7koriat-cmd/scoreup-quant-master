@@ -413,7 +413,7 @@ export function PracticeSession({
         {/* Navigation */}
         <div className="mt-6 flex flex-wrap gap-3">
           <button
-            onClick={() => setIndex((i) => Math.max(0, i - 1))}
+            onClick={() => goTo(Math.max(0, index - 1))}
             disabled={index === 0}
             className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-5 py-4 text-base font-semibold text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
           >
@@ -422,7 +422,7 @@ export function PracticeSession({
           </button>
           {index < total - 1 ? (
             <button
-              onClick={() => setIndex((i) => Math.min(total - 1, i + 1))}
+              onClick={() => goTo(Math.min(total - 1, index + 1))}
               className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
               style={{ background: "var(--gradient-primary)" }}
             >
