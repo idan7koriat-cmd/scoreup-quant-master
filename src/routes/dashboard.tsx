@@ -10,8 +10,10 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getMyProfile, markQuickPractice } from "@/lib/profile.functions";
+
 import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
 import type { PracticeConfig } from "@/data/questions";
