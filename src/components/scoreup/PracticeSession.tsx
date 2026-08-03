@@ -235,35 +235,50 @@ export function PracticeSession({
       style={{ boxShadow: "var(--shadow-elegant)" }}
     >
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/60 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-            {q.topic}
-          </span>
-          <span className="text-sm font-medium text-muted-foreground">
-            שאלה {index + 1} מתוך {total}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {config.totalSeconds != null && (
+      <div className="border-b border-border bg-secondary/60 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+              {q.topic}
+            </span>
+            <span className="text-sm font-medium text-muted-foreground">
+              שאלה {index + 1} מתוך {total}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
             <span
               className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold tabular-nums ${
-                timeLeft <= 60
+                config.totalSeconds != null && timeLeft <= 60
                   ? "bg-destructive/10 text-destructive"
                   : "bg-primary/10 text-primary"
               }`}
             >
               <Clock className="h-4 w-4" />
-              {fmt(timeLeft)}
+              {fmt(config.totalSeconds != null ? timeLeft : elapsed)}
             </span>
-          )}
-          <button
-            onClick={() => setFinished(true)}
-            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-secondary"
-          >
-            <Flag className="h-3.5 w-3.5" />
-            סיים
-          </button>
+            <button
+              onClick={() => {
+                const a = answers[index];
+                if (a != null) record(q.id, a === q.correctIndex);
+                setFinished(true);
+              }}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-secondary"
+            >
+              <Flag className="h-3.5 w-3.5" />
+              סיום תרגול
+            </button>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-border">
+          <div
+            className="h-full rounded-full transition-all duration-300"
+            style={{
+              width: `${((index + 1) / total) * 100}%`,
+              background: "var(--gradient-primary)",
+            }}
+          />
         </div>
       </div>
 
@@ -274,7 +289,7 @@ export function PracticeSession({
           return (
             <button
               key={i}
-              onClick={() => setIndex(i)}
+              onClick={() => goTo(i)}
               className={`h-9 w-9 rounded-lg border-2 text-sm font-bold transition-all ${
                 i === index
                   ? "border-primary bg-primary text-primary-foreground"
