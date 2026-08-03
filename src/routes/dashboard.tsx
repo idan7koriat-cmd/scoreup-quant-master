@@ -98,6 +98,13 @@ function Dashboard() {
   const queryClient = useQueryClient();
   const [upgrade, setUpgrade] = useState(false);
 
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getMyProfile(),
+    enabled: !!session,
+    staleTime: 60 * 1000,
+  });
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -119,6 +126,10 @@ function Dashboard() {
     "תלמיד";
   const streak = 1;
 
+  const isPremium = profile?.isPremium ?? false;
+  const today = new Date().toISOString().slice(0, 10);
+  const quickLocked = !isPremium && profile?.lastQuickPractice === today;
+
   const signOut = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();
@@ -126,7 +137,11 @@ function Dashboard() {
     navigate({ to: "/", replace: true });
   };
 
-  const start = (config: PracticeConfig) =>
+  const start = async (config: PracticeConfig) => {
+    if (config.quick && !isPremium) {
+      await markQuickPractice();
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    }
     navigate({
       to: "/practice",
       search: {
@@ -135,8 +150,26 @@ function Dashboard() {
         level: config.difficultyLevel ?? 0,
         seconds: config.totalSeconds ?? 0,
         mode: config.mode,
+        sim: config.simulation ? 1 : 0,
       },
     });
+  };
+
+  const startSimulation = () => {
+    if (!isPremium) {
+      setUpgrade(true);
+      return;
+    }
+    start({
+      topics: [],
+      count: 20,
+      difficultyLevel: null,
+      totalSeconds: 20 * 60,
+      mode: "exam",
+      simulation: true,
+    });
+  };
+
 
   return (
     <div className="min-h-screen bg-background">
