@@ -55,10 +55,29 @@ export function PracticeSession({
   const [showSolution, setShowSolution] = useState(false);
   const [finished, setFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(config.totalSeconds ?? 0);
+  const [elapsed, setElapsed] = useState(0);
+  const [sent] = useState<Set<string>>(() => new Set());
 
   const record = (qid: string, isCorrect: boolean) => {
+    if (sent.has(qid)) return;
+    sent.add(qid);
     void recordSolvedQuestion({ data: { questionId: qid, isCorrect } }).catch(() => {});
   };
+
+  /** Save the current answer before leaving the question. */
+  const goTo = (i: number) => {
+    const cur = questions?.[index];
+    const a = answers[index];
+    if (cur && a != null) record(cur.id, a === cur.correctIndex);
+    setIndex(i);
+  };
+
+  useEffect(() => {
+    if (config.totalSeconds != null || finished) return;
+    const t = setTimeout(() => setElapsed((s) => s + 1), 1000);
+    return () => clearTimeout(t);
+  }, [elapsed, finished, config.totalSeconds]);
+
 
   const [recorded, setRecorded] = useState(false);
   useEffect(() => {
