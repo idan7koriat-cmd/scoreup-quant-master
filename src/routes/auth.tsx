@@ -215,6 +215,37 @@ function AuthPage() {
             />
           </div>
 
+          {mode === "signup" && (
+            <>
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  תאריך בחינה מתוכנן
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={examDate}
+                  onChange={(e) => setExamDate(e.target.value)}
+                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  תחום לימודים מבוקש
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={targetDegree}
+                  onChange={(e) => setTargetDegree(e.target.value)}
+                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                  placeholder="הנדסה, רפואה, מדעי המחשב…"
+                />
+              </div>
+            </>
+          )}
+
+
           {err && (
             <p className="rounded-xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
               {err}
