@@ -5,7 +5,7 @@ import {
   Flame,
   LogOut,
   Zap,
-  Lock,
+  
   Sparkles,
   X,
   Loader2,
