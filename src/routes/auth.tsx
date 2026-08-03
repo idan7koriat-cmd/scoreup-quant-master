@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sigma, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+import { getExtSupabase } from "@/lib/extAuthClient";
 import { useSession } from "@/hooks/useSession";
 
 type AuthMode = "signin" | "signup";
@@ -55,18 +54,15 @@ function AuthPage() {
     setErr(null);
     setMsg(null);
     setGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const supabase = await getExtSupabase();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/dashboard` },
     });
-    if (result.error) {
-      setErr("ההתחברות עם Google נכשלה, נסה שוב.");
+    if (error) {
+      setErr("ההתחברות עם Google נכשלה. ודא שספק Google מופעל בפרויקט.");
       setGoogleLoading(false);
-      return;
     }
-    if (result.redirected) return;
-    setGoogleLoading(false);
-    setMsg("התחברת בהצלחה!");
-    navigate({ to: "/dashboard" });
   };
 
 
@@ -76,6 +72,7 @@ function AuthPage() {
     setErr(null);
     setMsg(null);
     try {
+      const supabase = await getExtSupabase();
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,

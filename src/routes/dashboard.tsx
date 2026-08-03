@@ -11,7 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getExtSupabase } from "@/lib/extAuthClient";
 import { getMyProfile, markQuickPractice } from "@/lib/profile.functions";
 
 import { useSession } from "@/hooks/useSession";
@@ -135,7 +135,7 @@ function Dashboard() {
   const signOut = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();
-    await supabase.auth.signOut();
+    await (await getExtSupabase()).auth.signOut();
     navigate({ to: "/", replace: true });
   };
 
