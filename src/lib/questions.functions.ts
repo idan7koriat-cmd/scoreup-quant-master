@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
-import { requireExtAuth } from "@/lib/extAuth.server";
+import { requireExtAuth } from "@/lib/extAuth.middleware";
 import type { Question } from "@/data/questions";
 
 type Filters = {
