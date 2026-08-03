@@ -60,6 +60,16 @@ export function PracticeSession({
     void recordSolvedQuestion({ data: { questionId: qid, isCorrect } }).catch(() => {});
   };
 
+  const [recorded, setRecorded] = useState(false);
+  useEffect(() => {
+    if (!finished || recorded || !questions) return;
+    setRecorded(true);
+    questions.forEach((qq, i) => {
+      const a = answers[i];
+      if (a != null) record(qq.id, a === qq.correctIndex);
+    });
+  }, [finished, recorded, questions, answers]);
+
   const q = questions?.[index];
   const selected = answers[index] ?? null;
   const submitted = config.mode === "study" ? !!checked[index] : false;
