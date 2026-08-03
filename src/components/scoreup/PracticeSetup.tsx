@@ -138,8 +138,8 @@ export function PracticeSetup({
 
       <div className="relative">
         {!isPremium && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-background/60 p-6 text-center backdrop-blur-sm">
-            <span className="flex flex-col items-center gap-3 rounded-2xl bg-card/90 px-6 py-5 shadow-lg">
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center p-4">
+            <span className="pointer-events-auto sticky top-24 flex flex-col items-center gap-3 rounded-2xl border border-border bg-card/85 px-6 py-5 text-center shadow-lg">
               <Lock className="h-8 w-8 text-primary" />
               <p className="max-w-xs text-base font-extrabold text-foreground">
                 תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
