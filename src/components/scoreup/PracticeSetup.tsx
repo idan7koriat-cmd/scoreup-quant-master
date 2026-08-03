@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Zap, Timer, Sparkles } from "lucide-react";
+import { Zap, Timer, Sparkles, Lock } from "lucide-react";
 import { getTopics } from "@/lib/questions.functions";
 import type { PracticeConfig, PracticeMode } from "@/data/questions";
 
@@ -32,7 +32,19 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart: (config: PracticeConfig) => void }) {
+export function PracticeSetup({
+  topics,
+  onStart,
+  isPremium = true,
+  quickLocked = false,
+  onUpgrade,
+}: {
+  topics?: string[];
+  onStart: (config: PracticeConfig) => void;
+  isPremium?: boolean;
+  quickLocked?: boolean;
+  onUpgrade?: () => void;
+}) {
   const { data: liveTopics } = useQuery({
     queryKey: ["topics"],
     queryFn: () => getTopics(),
