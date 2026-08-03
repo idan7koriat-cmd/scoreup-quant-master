@@ -1,26 +1,19 @@
-## מטרה
-שאלות עם אותו `group_id` יישלפו ויוצגו תמיד ברצף, לפי `group_order`.
+# עדכון חיבור Supabase ל-project_id חדש
 
-## שינוי יחיד: `src/lib/questions.functions.ts`
+## מצב נוכחי
+- `VITE_SUPABASE_URL`: `https://fbmfaptomlugkipkfknf.supabase.co`
+- `VITE_SUPABASE_PROJECT_ID`: `fbmfaptomlugkipkfknf`
+- `project_id` ב-`supabase/config.toml`: `fbmfaptomlugkipkfknf`
 
-1. **שליפה** — להשאיר `select("*")` (העמודות החדשות יגיעו אוטומטית) ולהוסיף מיון בסיסי `order("group_order")` כדי שהסדר בתוך קבוצה יהיה יציב.
+## יעד
+לעדכן את כל הערכים לפרויקט `dhixjetdnrxksdpjmct`:
+- `VITE_SUPABASE_URL` = `https://dhixjetdnrxksdpjmct.supabase.co`
+- `VITE_SUPABASE_PROJECT_ID` = `dhixjetdnrxksdpjmct`
+- `SUPABASE_URL` = `https://dhixjetdnrxksdpjmct.supabase.co`
+- `SUPABASE_PROJECT_ID` = `dhixjetdnrxksdpjmct`
+- `project_id` ב-`supabase/config.toml` = `dhixjetdnrxksdpjmct`
 
-2. **ערבוב ברמת קבוצה** במקום ברמת שאלה:
-   - כל שורה עם `group_id` ריק/null נחשבת "קבוצה של אחת" (מפתח ייחודי לפי id).
-   - בונים מפה `group_id -> שאלות`, ממיינים כל קבוצה לפי `group_order` (עולה, ערכי null בסוף).
-   - מערבבים את רשימת **הקבוצות**, ואז משטחים חזרה לרשימה אחת — כך חברי קבוצה תמיד צמודים ובסדר הנכון.
-
-3. **הגבלת כמות (`count`) בלי לשבור קבוצות**:
-   - עוברים על הקבוצות המעורבבות ומוסיפים קבוצה שלמה כל עוד היא נכנסת במכסה.
-   - אם קבוצה גדולה מדי — מדלגים עליה וממשיכים לקבוצה הבאה (במקום לחתוך אותה באמצע).
-   - התוצאה עשויה להיות מעט פחות משאלות מהמבוקש כשאין התאמה מדויקת — עדיף על קבוצה קטועה.
-
-4. **סינון** (נושאים/רמת קושי) נשאר כמו שהוא, ומופעל לפני הקיבוץ.
-
-## פרטים טכניים
-- מיפוי `toQuestion` לא משתנה; אין צורך לשנות את טיפוס `Question` כי הקיבוץ מתבצע בשרת והפלט נשאר מערך שאלות מסודר.
-- `PracticeSession` ו-`PracticeSetup` לא משתנים — הם כבר מציגים לפי סדר המערך.
-
-## אימות
-- הרצת typecheck.
-- שליפה מהמאגר של הקבוצות הקיימות ובדיקה שהשאלות באותה קבוצה יוצאות רצופות ובסדר `group_order`.
+## פעולות
+1. עדכן את `.env` — החלף את כל המופעים של `fbmfaptomlugkipkfknf` ב-`dhixjetdnrxksdpjmct`.
+2. עדכן את `supabase/config.toml` — החלף את `project_id` ל-`dhixjetdnrxksdpjmct`.
+3. בדוק build בסיסי לאחר השינוי.
