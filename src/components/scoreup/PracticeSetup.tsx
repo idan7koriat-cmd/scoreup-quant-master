@@ -191,14 +191,17 @@ export function PracticeSetup({ topics, onStart }: { topics?: string[]; onStart:
         </Field>
       </div>
 
-      <button
-        type="button"
-        onClick={startCustom}
-        className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
-        style={{ background: "var(--gradient-primary)" }}
-      >
-        התחל תרגול
-      </button>
+          <button
+            type="button"
+            onClick={startCustom}
+            className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
+            style={{ background: "var(--gradient-primary)" }}
+          >
+            התחל תרגול
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
