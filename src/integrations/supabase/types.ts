@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          created_at: string
+          exam_date: string | null
+          id: string
+          is_premium: boolean
+          last_quick_practice: string | null
+          target_degree: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exam_date?: string | null
+          id: string
+          is_premium?: boolean
+          last_quick_practice?: string | null
+          target_degree?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exam_date?: string | null
+          id?: string
+          is_premium?: boolean
+          last_quick_practice?: string | null
+          target_degree?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       questions: {
         Row: {
           answers: Json
@@ -50,6 +80,30 @@ export type Database = {
           question?: string
           svg_code?: string | null
           topic?: string
+        }
+        Relationships: []
+      }
+      solved_questions: {
+        Row: {
+          created_at: string
+          id: string
+          is_correct: boolean
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string
+          user_id?: string
         }
         Relationships: []
       }
