@@ -192,9 +192,12 @@ function Dashboard() {
               <Flame className="h-4 w-4 text-orange-500" />
               {streak} ימי רצף
             </span>
-            <span className="hidden text-sm font-semibold text-foreground sm:inline">
+            <Link
+              to="/profile"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary sm:inline"
+            >
               {name}
-            </span>
+            </Link>
             <button
               onClick={signOut}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
