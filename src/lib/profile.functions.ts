@@ -71,9 +71,15 @@ export type ProfilePage = {
   byTopic: TopicStat[];
 };
 
-export const getProfilePage = createServerFn({ method: "GET" })
+export const getProfilePage = createServerFn({ method: "POST" })
   .middleware([requireExtAuth])
-  .handler(async ({ context }): Promise<ProfilePage> => {
+  .inputValidator((input?: { from?: string | null; to?: string | null }) => input ?? {})
+  .handler(async ({ data, context }): Promise<ProfilePage> => {
+    const payload = ((data as any)?.data ?? data ?? {}) as {
+      from?: string | null;
+      to?: string | null;
+    };
+
     const { data: row } = await context.supabase
       .from("profiles")
       .select("*")
@@ -85,10 +91,16 @@ export const getProfilePage = createServerFn({ method: "GET" })
     const fullName =
       (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
-    const { data: solved } = await context.supabase
+    let solvedQuery = context.supabase
       .from("solved_questions")
-      .select("question_id, is_correct")
+      .select("question_id, is_correct, created_at")
       .eq("user_id", context.userId);
+
+    if (payload.from) solvedQuery = solvedQuery.gte("created_at", `${payload.from}T00:00:00`);
+    if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
+
+    const { data: solved } = await solvedQuery;
+
 
     const rows = (solved as any[]) ?? [];
     const ids = [...new Set(rows.map((r) => String(r.question_id)))];
@@ -145,5 +157,16 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       await context.supabase.auth.updateUser({ data: { full_name: fullName } });
     }
 
+    return { ok: true };
+  });
+
+export const resetMyStats = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .handler(async ({ context }) => {
+    const { error } = await context.supabase
+      .from("solved_questions")
+      .delete()
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });

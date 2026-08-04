@@ -70,7 +70,7 @@ function PracticePage() {
       ? {
           launch: "warmup",
           topics: [],
-          count: 5,
+          count: 3,
           difficultyLevel: null,
           totalSeconds: null,
           mode: "study",

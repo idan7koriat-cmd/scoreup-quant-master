@@ -9,10 +9,12 @@ import {
   Sparkles,
   Target,
   Zap,
+  KeyRound,
+  RotateCcw,
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getExtSupabase } from "@/lib/extAuthClient";
-import { getProfilePage, updateMyProfile } from "@/lib/profile.functions";
+import { getProfilePage, resetMyStats, updateMyProfile } from "@/lib/profile.functions";
 
 export const Route = createFileRoute("/profile")({
   ssr: false,
@@ -61,10 +63,13 @@ function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [examDate, setExamDate] = useState("");
   const [saved, setSaved] = useState(false);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [notice, setNotice] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["profile-page"],
-    queryFn: () => getProfilePage(),
+    queryKey: ["profile-page", from, to],
+    queryFn: () => getProfilePage({ data: { from: from || null, to: to || null } }),
     enabled: !!session,
   });
 
@@ -86,6 +91,26 @@ function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
+
+  const reset = useMutation({
+    mutationFn: () => resetMyStats(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile-page"] });
+      setNotice("הסטטיסטיקה אופסה ✓");
+      setTimeout(() => setNotice(""), 2500);
+    },
+  });
+
+  const changePassword = async () => {
+    const email = data?.email ?? session?.user.email;
+    if (!email) return;
+    const supabase = await getExtSupabase();
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?mode=signin`,
+    });
+    setNotice("נשלח אליך מייל לאיפוס סיסמה 📧");
+    setTimeout(() => setNotice(""), 4000);
+  };
 
   if (loading || (session && isLoading)) {
     return (
@@ -188,7 +213,7 @@ function ProfilePage() {
                 id="fullName"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="לדוגמה: עידן כוריאט"
+                placeholder="השם המלא שלך"
                 className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
               />
             </div>
@@ -231,10 +256,20 @@ function ProfilePage() {
               {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               שמור שינויים
             </button>
+            <button
+              onClick={changePassword}
+              className="inline-flex items-center gap-2 rounded-2xl border border-border px-5 py-3 text-sm font-bold text-foreground transition-colors hover:bg-secondary"
+            >
+              <KeyRound className="h-4 w-4" />
+              שינוי סיסמה
+            </button>
             {saved && (
               <span className="text-sm font-semibold text-emerald-600">
                 השינויים נשמרו ✓
               </span>
+            )}
+            {notice && (
+              <span className="text-sm font-semibold text-primary">{notice}</span>
             )}
           </div>
         </section>
@@ -280,9 +315,56 @@ function ProfilePage() {
 
         {/* סיכום תרגול */}
         <section className="mt-8">
-          <h2 className="text-xl font-extrabold text-foreground">
-            סיכום התרגול שלי
-          </h2>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 className="text-xl font-extrabold text-foreground">
+              סיכום התרגול שלי
+            </h2>
+            <div className="flex flex-wrap items-end gap-3">
+              <div>
+                <label htmlFor="from" className="text-xs font-semibold text-muted-foreground">
+                  מתאריך
+                </label>
+                <input
+                  id="from"
+                  type="date"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  className="mt-1 block rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label htmlFor="to" className="text-xs font-semibold text-muted-foreground">
+                  עד תאריך
+                </label>
+                <input
+                  id="to"
+                  type="date"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  className="mt-1 block rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              {(from || to) && (
+                <button
+                  onClick={() => {
+                    setFrom("");
+                    setTo("");
+                  }}
+                  className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-secondary"
+                >
+                  הצג הכל
+                </button>
+              )}
+              <button
+                onClick={() => reset.mutate()}
+                disabled={reset.isPending}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
+              >
+                <RotateCcw className="h-4 w-4" />
+                איפוס סטטיסטיקה
+              </button>
+            </div>
+          </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <StatCard label="שאלות שנפתרו" value={String(total)} />
             <StatCard label="תשובות נכונות" value={String(correct)} />
