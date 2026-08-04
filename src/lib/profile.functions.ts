@@ -17,12 +17,20 @@ export const getMyProfile = createServerFn({ method: "GET" })
       .eq("id", context.userId)
       .maybeSingle();
 
+    // משתמשים שנכנסו דרך Google מגיעים בלי שורת פרופיל — יוצרים אותה בכניסה הראשונה.
+    if (!data) {
+      await context.supabase
+        .from("profiles")
+        .upsert({ id: context.userId } as any, { onConflict: "id" });
+    }
+
     return {
       examDate: (data as any)?.exam_date ?? null,
       targetDegree: (data as any)?.target_degree ?? null,
       isPremium: Boolean((data as any)?.is_premium),
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
     };
+
   });
 
 export const markQuickPractice = createServerFn({ method: "POST" })
