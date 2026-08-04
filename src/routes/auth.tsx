@@ -36,7 +36,16 @@ function AuthPage() {
   const { session } = useSession();
 
   useEffect(() => {
-    if (session) navigate({ to: "/dashboard", replace: true });
+    if (!session) return;
+    let dest = "/dashboard";
+    try {
+      const saved = window.sessionStorage.getItem("scoreup-post-auth");
+      if (saved && saved.startsWith("/") && !saved.startsWith("//")) dest = saved;
+      window.sessionStorage.removeItem("scoreup-post-auth");
+    } catch {
+      /* ללא אחסון — יעד ברירת המחדל */
+    }
+    navigate({ to: dest, replace: true });
   }, [session, navigate]);
   const setMode = (m: AuthMode) =>
     navigate({ to: "/auth", search: { mode: m } });
@@ -54,16 +63,28 @@ function AuthPage() {
     setErr(null);
     setMsg(null);
     setGoogleLoading(true);
+    try {
+      window.sessionStorage.setItem("scoreup-post-auth", "/dashboard");
+    } catch {
+      /* אחסון חסום — נמשיך ליעד ברירת המחדל */
+    }
     const supabase = await getExtSupabase();
+    // חוזרים לכתובת ציבורית ולא ישירות למסך מוגן, כדי שהסשן יספיק להיטען.
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo: `${window.location.origin}/auth?mode=signin` },
     });
     if (error) {
-      setErr("ההתחברות עם Google נכשלה. ודא שספק Google מופעל בפרויקט.");
+      const raw = error.message ?? "";
+      setErr(
+        /provider is not enabled|Unsupported provider/i.test(raw)
+          ? "התחברות עם Google אינה מופעלת כרגע. אפשר להתחבר עם אימייל וסיסמה."
+          : "ההתחברות עם Google נכשלה. נסה שוב או התחבר עם אימייל וסיסמה.",
+      );
       setGoogleLoading(false);
     }
   };
+
 
 
   const submit = async (e: React.FormEvent) => {
