@@ -208,7 +208,7 @@ function Dashboard() {
 
       <main className="container mx-auto px-4 py-10">
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-          שלום {name} 👋
+          היי {name} 👋
         </h1>
         <p className="mt-2 text-muted-foreground">
           בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.
