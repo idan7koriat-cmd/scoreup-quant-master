@@ -159,3 +159,14 @@ export const updateMyProfile = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+export const resetMyStats = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .handler(async ({ context }) => {
+    const { error } = await context.supabase
+      .from("solved_questions")
+      .delete()
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
