@@ -4,25 +4,31 @@ import { useSession } from "@/hooks/useSession";
 import { PracticeSession } from "@/components/scoreup/PracticeSession";
 import type { PracticeConfig, PracticeMode } from "@/data/questions";
 
+type LauncherMode = "warmup" | "custom" | "simulation";
+
 type PracticeSearch = {
+  mode: LauncherMode;
   topics: string[];
   count: number;
   level: number;
   seconds: number;
-  mode: PracticeMode;
-  sim: number;
+  style: PracticeMode;
 };
 
 export const Route = createFileRoute("/practice")({
   ssr: false,
   validateSearch: (search: Record<string, unknown>): PracticeSearch => ({
+    mode:
+      search.mode === "warmup" || search.mode === "simulation"
+        ? search.mode
+        : "custom",
     topics: Array.isArray(search.topics) ? (search.topics as string[]) : [],
     count: Number(search.count) > 0 ? Number(search.count) : 10,
     level: Number(search.level) > 0 ? Number(search.level) : 0,
     seconds: Number(search.seconds) > 0 ? Number(search.seconds) : 0,
-    mode: search.mode === "exam" ? "exam" : "study",
-    sim: Number(search.sim) === 1 ? 1 : 0,
+    style: search.style === "exam" ? "exam" : "study",
   }),
+
   head: () => ({
     meta: [
       { title: "תרגול חשיבה כמותית — ScoreUp" },
