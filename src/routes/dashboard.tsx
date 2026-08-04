@@ -65,7 +65,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
         </h3>
         <p className="mt-2 text-sm text-muted-foreground">
           כל מאגר השאלות, סימולציות פרק מלאות, פתרונות AI מותאמים אישית וניתוח
-          ביצועים מתקדם — במסלול 150 עגול.
+          ביצועים מתקדם — במסלול 700+.
         </p>
         <ul className="mt-5 space-y-2 text-start text-sm font-semibold text-foreground">
           {[
@@ -84,7 +84,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           className="mt-6 w-full rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.01]"
           style={{ background: "var(--gradient-cta)" }}
         >
-          שדרג עכשיו למסלול 150 עגול
+          שדרג עכשיו למסלול 700+
         </button>
         <p className="mt-3 text-xs text-muted-foreground">
           הסליקה תיפתח בקרוב — נעדכן אותך במייל.
@@ -192,9 +192,12 @@ function Dashboard() {
               <Flame className="h-4 w-4 text-orange-500" />
               {streak} ימי רצף
             </span>
-            <span className="hidden text-sm font-semibold text-foreground sm:inline">
+            <Link
+              to="/profile"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary sm:inline"
+            >
               {name}
-            </span>
+            </Link>
             <button
               onClick={signOut}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -223,7 +226,7 @@ function Dashboard() {
                   סטטוס חשבון
                 </p>
                 <p className="mt-1 text-xl font-extrabold text-foreground">
-                  {isPremium ? "סטטוס: מסלול 150 עגול" : "סטטוס: מסלול בסיסי"}
+                  {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {isPremium
@@ -238,7 +241,7 @@ function Dashboard() {
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   <Zap className="h-4 w-4" />
-                  שדרג למסלול 150 עגול ללא הגבלה ⚡
+                  שדרג למסלול 700+ ללא הגבלה ⚡
                 </button>
               )}
             </div>
