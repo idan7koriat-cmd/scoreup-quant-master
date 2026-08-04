@@ -83,7 +83,7 @@ export function PracticeSetup({
             if (!isPremium && quickLocked) return;
             onStart({
               topics: [],
-              count: 5,
+              count: 3,
               difficultyLevel: null,
               totalSeconds: null,
               mode: "study",
@@ -101,7 +101,7 @@ export function PracticeSetup({
           <p className="mt-2 text-sm text-muted-foreground">
             {!isPremium && quickLocked
               ? "השתמשת בחימום המהיר היומי שלך — חזור מחר או שדרג למסלול 700+"
-              : "5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה"}
+              : "3 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה"}
           </p>
         </button>
 
