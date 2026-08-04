@@ -67,6 +67,7 @@ export function PracticeSetup({
       difficultyLevel: level,
       totalSeconds: timed ? count * 60 : null,
       mode,
+      launch: "custom",
     });
 
   return (
@@ -87,6 +88,7 @@ export function PracticeSetup({
               totalSeconds: null,
               mode: "study",
               quick: true,
+              launch: "warmup",
             });
           }}
           disabled={!isPremium && quickLocked}
@@ -98,7 +100,7 @@ export function PracticeSetup({
           </span>
           <p className="mt-2 text-sm text-muted-foreground">
             {!isPremium && quickLocked
-              ? "השתמשת בחימום המהיר היומי שלך — חזור מחר או שדרג למסלול 700+"
+              ? "השתמשת בחימום המהיר היומי שלך — חזור מחר או שדרג למסלול 150 עגול"
               : "5 שאלות אקראיות · ללא הגבלת זמן · פתרון מיד אחרי כל שאלה"}
           </p>
         </button>
@@ -117,6 +119,7 @@ export function PracticeSetup({
               totalSeconds: 20 * 60,
               mode: "exam",
               simulation: true,
+              launch: "simulation",
             });
           }}
           className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md"
@@ -142,7 +145,7 @@ export function PracticeSetup({
             <span className="pointer-events-auto sticky top-24 flex flex-col items-center gap-3 rounded-2xl border border-border bg-card/85 px-6 py-5 text-center shadow-lg">
               <Lock className="h-8 w-8 text-primary" />
               <p className="max-w-xs text-base font-extrabold text-foreground">
-                תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
+                תרגול מותאם אישית פתוח למנויי מסלול 150 עגול בלבד 🔒
               </p>
               <button
                 type="button"
@@ -150,7 +153,7 @@ export function PracticeSetup({
                 className="rounded-2xl px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
                 style={{ background: "var(--gradient-cta)" }}
               >
-                שדרג למסלול 700+ ⚡
+                שדרג למסלול 150 עגול ⚡
               </button>
             </span>
           </div>

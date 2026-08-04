@@ -426,7 +426,7 @@ export function PracticeSession({
               className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
               style={{ background: "var(--gradient-primary)" }}
             >
-              הבא
+              לשאלה הבאה
               <ChevronLeft className="h-5 w-5" />
             </button>
           ) : (
