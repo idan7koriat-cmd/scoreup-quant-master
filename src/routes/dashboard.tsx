@@ -121,11 +121,13 @@ function Dashboard() {
   }
 
   const user = session.user;
-  const name =
+  const fullName =
     (user.user_metadata?.full_name as string | undefined) ??
     (user.user_metadata?.name as string | undefined) ??
     user.email?.split("@")[0] ??
     "תלמיד";
+  // שם פרטי בלבד — כדי שהפנייה תרגיש אישית
+  const name = fullName.trim().split(/[\s._-]+/)[0] || fullName;
   const streak = 1;
 
   const isPremium = profile?.isPremium ?? false;
@@ -206,7 +208,7 @@ function Dashboard() {
 
       <main className="container mx-auto px-4 py-10">
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-          שלום {name} 👋
+          היי {name} 👋
         </h1>
         <p className="mt-2 text-muted-foreground">
           בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.

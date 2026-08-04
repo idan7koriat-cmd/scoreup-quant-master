@@ -256,7 +256,7 @@ export function DemoPractice() {
               הירשם עכשיו לקבלת גישה למאגר השאלות המלא ולניתוח ביצועים ב-AI!
             </p>
             <p className="mt-4 text-sm font-semibold text-foreground">
-              בטעימה ענית נכון על {score} מתוך {total} שאלות
+              בתרגול החינם ענית נכון על {score} מתוך {total} שאלות
             </p>
             <Link
               to="/auth"
@@ -276,7 +276,7 @@ export function DemoPractice() {
               className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card py-3 font-semibold text-foreground hover:bg-secondary"
             >
               <RotateCcw className="h-4 w-4" />
-              התחל את הטעימה מחדש
+              התחל את התרגול מחדש
             </button>
           </div>
         </div>

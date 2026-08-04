@@ -1,6 +1,6 @@
 import type { Question } from "./questions";
 
-/** 5 שאלות דמו קבועות ל"טעימה חינם" — ללא קריאה למסד הנתונים. */
+/** 5 שאלות דמו קבועות ל"תרגול חינם" — ללא קריאה למסד הנתונים. */
 export const demoQuestions: Question[] = [
   {
     id: "demo-1",
