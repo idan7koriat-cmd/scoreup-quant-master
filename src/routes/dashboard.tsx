@@ -149,12 +149,12 @@ function Dashboard() {
     navigate({
       to: "/practice",
       search: {
+        mode: config.launch ?? "custom",
         topics: config.topics,
         count: config.count,
         level: config.difficultyLevel ?? 0,
         seconds: config.totalSeconds ?? 0,
-        mode: config.mode,
-        sim: config.simulation ? 1 : 0,
+        style: config.mode,
       },
     });
   };

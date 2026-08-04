@@ -12,7 +12,11 @@ export type Question = {
 
 export type PracticeMode = "study" | "exam";
 
+export type LauncherMode = "warmup" | "custom" | "simulation";
+
 export type PracticeConfig = {
+  /** מאיזו כרטיסייה בדשבורד הופעל התרגול */
+  launch?: LauncherMode;
   topics: string[];
   count: number;
   /** null = משולב */

@@ -67,6 +67,7 @@ export function PracticeSetup({
       difficultyLevel: level,
       totalSeconds: timed ? count * 60 : null,
       mode,
+      launch: "custom",
     });
 
   return (
@@ -87,6 +88,7 @@ export function PracticeSetup({
               totalSeconds: null,
               mode: "study",
               quick: true,
+              launch: "warmup",
             });
           }}
           disabled={!isPremium && quickLocked}
@@ -117,6 +119,7 @@ export function PracticeSetup({
               totalSeconds: 20 * 60,
               mode: "exam",
               simulation: true,
+              launch: "simulation",
             });
           }}
           className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md"

@@ -2,9 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Sigma, Loader2 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { PracticeSession } from "@/components/scoreup/PracticeSession";
-import type { PracticeConfig, PracticeMode } from "@/data/questions";
-
-type LauncherMode = "warmup" | "custom" | "simulation";
+import type { PracticeConfig, PracticeMode, LauncherMode } from "@/data/questions";
 
 type PracticeSearch = {
   mode: LauncherMode;
@@ -67,14 +65,35 @@ function PracticePage() {
     return null;
   }
 
-  const config: PracticeConfig = {
-    topics: search.topics,
-    count: search.count,
-    difficultyLevel: search.level > 0 ? search.level : null,
-    totalSeconds: search.seconds > 0 ? search.seconds : null,
-    mode: search.mode,
-    simulation: search.sim === 1,
-  };
+  const config: PracticeConfig =
+    search.mode === "warmup"
+      ? {
+          launch: "warmup",
+          topics: [],
+          count: 5,
+          difficultyLevel: null,
+          totalSeconds: null,
+          mode: "study",
+          quick: true,
+        }
+      : search.mode === "simulation"
+        ? {
+            launch: "simulation",
+            topics: [],
+            count: 20,
+            difficultyLevel: null,
+            totalSeconds: 20 * 60,
+            mode: "exam",
+            simulation: true,
+          }
+        : {
+            launch: "custom",
+            topics: search.topics,
+            count: search.count,
+            difficultyLevel: search.level > 0 ? search.level : null,
+            totalSeconds: search.seconds > 0 ? search.seconds : null,
+            mode: search.style,
+          };
 
   return (
     <div className="min-h-screen bg-background">
