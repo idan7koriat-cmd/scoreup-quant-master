@@ -58,3 +58,92 @@ export const recordSolvedQuestion = createServerFn({ method: "POST" })
     );
     return { ok: true };
   });
+
+export type TopicStat = { topic: string; total: number; correct: number };
+export type ProfilePage = {
+  email: string | null;
+  fullName: string;
+  examDate: string | null;
+  targetDegree: string | null;
+  isPremium: boolean;
+  total: number;
+  correct: number;
+  byTopic: TopicStat[];
+};
+
+export const getProfilePage = createServerFn({ method: "GET" })
+  .middleware([requireExtAuth])
+  .handler(async ({ context }): Promise<ProfilePage> => {
+    const { data: row } = await context.supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    const user = (context as any).user;
+    const meta = user?.user_metadata ?? {};
+    const fullName =
+      (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
+
+    const { data: solved } = await context.supabase
+      .from("solved_questions")
+      .select("question_id, is_correct")
+      .eq("user_id", context.userId);
+
+    const rows = (solved as any[]) ?? [];
+    const ids = [...new Set(rows.map((r) => String(r.question_id)))];
+    let topics = new Map<string, string>();
+    if (ids.length) {
+      const { data: qs } = await context.supabase
+        .from("questions")
+        .select("id, topic")
+        .in("id", ids);
+      topics = new Map(((qs as any[]) ?? []).map((q) => [String(q.id), q.topic]));
+    }
+
+    const map = new Map<string, TopicStat>();
+    let correct = 0;
+    for (const r of rows) {
+      if (r.is_correct) correct++;
+      const topic = topics.get(String(r.question_id)) ?? "אחר";
+      const cur = map.get(topic) ?? { topic, total: 0, correct: 0 };
+      cur.total++;
+      if (r.is_correct) cur.correct++;
+      map.set(topic, cur);
+    }
+
+    return {
+      email: user?.email ?? null,
+      fullName,
+      examDate: (row as any)?.exam_date ?? null,
+      targetDegree: (row as any)?.target_degree ?? null,
+      isPremium: Boolean((row as any)?.is_premium),
+      total: rows.length,
+      correct,
+      byTopic: [...map.values()].sort((a, b) => b.total - a.total),
+    };
+  });
+
+export const updateMyProfile = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .inputValidator((input: { fullName: string; examDate: string | null }) => input)
+  .handler(async ({ data, context }) => {
+    const payload = (data as any)?.data ?? data;
+    const fullName = String(payload.fullName ?? "").trim();
+    const examDate = payload.examDate ? String(payload.examDate) : null;
+
+    const base = { id: context.userId, exam_date: examDate } as any;
+    const withName = { ...base, full_name: fullName };
+
+    const { error } = await context.supabase
+      .from("profiles")
+      .upsert(withName, { onConflict: "id" });
+
+    if (error) {
+      // בפרויקטים שבהם אין עמודת full_name — שומרים את השם על המשתמש עצמו
+      await context.supabase.from("profiles").upsert(base, { onConflict: "id" });
+      await context.supabase.auth.updateUser({ data: { full_name: fullName } });
+    }
+
+    return { ok: true };
+  });
