@@ -130,6 +130,15 @@ function Dashboard() {
   const name = fullName.trim().split(/[\s._-]+/)[0] || fullName;
   const streak = 1;
 
+  const examDate = profile?.examDate ?? null;
+  const daysToExam = examDate
+    ? Math.ceil(
+        (new Date(`${examDate}T00:00:00`).getTime() -
+          new Date(new Date().toDateString()).getTime()) /
+          86400000,
+      )
+    : null;
+
   const isPremium = profile?.isPremium ?? false;
   const today = new Date().toISOString().slice(0, 10);
   const quickLocked = !isPremium && profile?.lastQuickPractice === today;
@@ -196,7 +205,7 @@ function Dashboard() {
               to="/profile"
               className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary sm:inline"
             >
-              {name}
+              פרופיל
             </Link>
             <button
               onClick={signOut}
@@ -216,6 +225,15 @@ function Dashboard() {
         <p className="mt-2 text-muted-foreground">
           בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.
         </p>
+        {daysToExam !== null && (
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">
+            {daysToExam > 0
+              ? `עוד ${daysToExam} ימים עד הבחינה הפסיכומטרית`
+              : daysToExam === 0
+                ? "הבחינה הפסיכומטרית היום — בהצלחה!"
+                : "תאריך הבחינה חלף — עדכן תאריך חדש בפרופיל"}
+          </p>
+        )}
 
         {/* Account status */}
         <div className="mt-8">
