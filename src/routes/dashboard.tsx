@@ -5,8 +5,6 @@ import {
   LogOut,
   Zap,
   
-  Sparkles,
-  X,
   Loader2,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

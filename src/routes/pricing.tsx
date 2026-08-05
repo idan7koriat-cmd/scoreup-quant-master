@@ -9,9 +9,36 @@ import {
   Sparkles,
   Zap,
   Loader2,
+  Brain,
+  Database,
+  BookOpen,
+  LineChart,
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getMyProfile } from "@/lib/profile.functions";
+
+const valueCards = [
+  {
+    icon: Brain,
+    title: "למידה מותאמת אישית",
+    text: "אלגוריתם חכם המתאים את קצב השאלות לפי נקודות התורפה שלך בחשיבה כמותית.",
+  },
+  {
+    icon: Database,
+    title: "בנק שאלות עצום",
+    text: "מאות שאלות ברמת המבחן הפסיכומטרי האמיתי, מחולקות לפי נושאים (גיאומטריה, אלגברה, בעיות, תרשימים).",
+  },
+  {
+    icon: BookOpen,
+    title: "הסברים מפורטים",
+    text: "פתרון מלא, מובנה ושלב-אחר-שלב לכל שאלה — כדי שתבין את השיטה, לא רק את התשובה.",
+  },
+  {
+    icon: LineChart,
+    title: "מעקב התקדמות וסטטיסטיקה",
+    text: "ניתוח מדויק של זמנים, אחוזי דיוק ורמות קושי כדי להבטיח שיפור מתמיד.",
+  },
+];
 
 export const Route = createFileRoute("/pricing")({
   ssr: false,
@@ -322,6 +349,41 @@ function PricingPage() {
             </p>
           </div>
         </div>
+
+        {/* Value grid */}
+        <section className="mx-auto mt-20 max-w-5xl">
+          <h2 className="text-center text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            מה בדיוק אתה מקבל במנוי ל-
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "var(--gradient-text)" }}
+            >
+              700+
+            </span>
+            ?
+          </h2>
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {valueCards.map((c) => (
+              <div
+                key={c.title}
+                className="glass-panel rounded-3xl p-7 transition-transform hover:-translate-y-1"
+              >
+                <span
+                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  <c.icon className="h-6 w-6" />
+                </span>
+                <h3 className="mt-5 text-xl font-extrabold text-foreground">
+                  {c.title}
+                </h3>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  {c.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
