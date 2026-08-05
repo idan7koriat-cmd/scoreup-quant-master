@@ -42,63 +42,70 @@
 :root {
   --radius: 0.875rem;
 
-  --background: oklch(0.99 0.005 240);
-  --foreground: oklch(0.18 0.04 250);
+  /* Dark & Neon Tech */
+  --background: oklch(0.17 0.032 260);   /* #0b0f19 */
+  --foreground: oklch(0.97 0.01 240);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.04 250);
+  --card: oklch(0.22 0.035 258 / 0.72);  /* glass panel */
+  --card-foreground: oklch(0.97 0.01 240);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.04 250);
+  --popover: oklch(0.2 0.035 258);
+  --popover-foreground: oklch(0.97 0.01 240);
 
-  /* Slate navy primary */
-  --primary: oklch(0.22 0.05 255);
-  --primary-foreground: oklch(0.99 0 0);
-  --primary-glow: oklch(0.72 0.16 210); /* electric cyan glow */
+  /* Neon cyan primary */
+  --primary: oklch(0.79 0.14 213);       /* #00d2ff */
+  --primary-foreground: oklch(0.16 0.03 260);
+  --primary-glow: oklch(0.62 0.2 253);   /* #0072ff */
 
   /* Brand accents */
-  --cyan: oklch(0.75 0.16 205);        /* #06B6D4-ish electric cyan */
-  --emerald: oklch(0.72 0.17 160);     /* #10B981-ish emerald */
-  --amber: oklch(0.78 0.17 60);        /* vibrant amber CTA */
-  --coral: oklch(0.72 0.19 35);        /* coral alt CTA */
+  --cyan: oklch(0.79 0.14 213);
+  --emerald: oklch(0.62 0.2 253);
+  --amber: oklch(0.79 0.14 213);
+  --coral: oklch(0.62 0.2 253);
 
-  --secondary: oklch(0.965 0.01 240);
-  --secondary-foreground: oklch(0.22 0.05 255);
+  --secondary: oklch(0.26 0.035 258);
+  --secondary-foreground: oklch(0.96 0.01 240);
 
-  --muted: oklch(0.965 0.01 240);
-  --muted-foreground: oklch(0.5 0.03 250);
+  --muted: oklch(0.26 0.035 258);
+  --muted-foreground: oklch(0.72 0.025 250);
 
-  --accent: oklch(0.95 0.03 200);
-  --accent-foreground: oklch(0.28 0.08 220);
+  --accent: oklch(0.31 0.06 245);
+  --accent-foreground: oklch(0.93 0.05 210);
 
-  --success: oklch(0.72 0.17 160);
-  --success-foreground: oklch(0.99 0 0);
+  --success: oklch(0.75 0.17 160);
+  --success-foreground: oklch(0.16 0.03 260);
 
-  --destructive: oklch(0.62 0.23 27);
-  --destructive-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.63 0.21 25);
+  --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.92 0.01 240);
-  --input: oklch(0.92 0.01 240);
-  --ring: oklch(0.75 0.16 205);
+  --border: oklch(0.79 0.14 213 / 0.18);
+  --input: oklch(0.79 0.14 213 / 0.22);
+  --ring: oklch(0.79 0.14 213);
 
-  /* Deep slate-navy hero with cyan/emerald glow */
-  --gradient-hero: radial-gradient(1200px 600px at 15% 10%, oklch(0.35 0.12 210 / 0.55), transparent 60%),
-                   radial-gradient(900px 500px at 90% 90%, oklch(0.4 0.14 160 / 0.35), transparent 60%),
-                   linear-gradient(180deg, #0B1120 0%, #0F172A 100%);
-  --gradient-primary: linear-gradient(135deg, var(--cyan), var(--emerald));
-  --gradient-cta: linear-gradient(135deg, var(--amber), var(--coral));
-  --gradient-text: linear-gradient(90deg, var(--cyan), var(--emerald));
-  --gradient-subtle: linear-gradient(180deg, oklch(0.99 0.005 240) 0%, oklch(0.96 0.015 220) 100%);
+  --gradient-hero: radial-gradient(1200px 600px at 15% 10%, oklch(0.62 0.2 253 / 0.45), transparent 60%),
+                   radial-gradient(900px 500px at 90% 90%, oklch(0.79 0.14 213 / 0.28), transparent 60%),
+                   linear-gradient(180deg, #070b14 0%, #0b0f19 100%);
+  --gradient-primary: linear-gradient(135deg, #00d2ff, #0072ff);
+  --gradient-cta: linear-gradient(135deg, #00d2ff, #0072ff);
+  --gradient-text: linear-gradient(90deg, #00d2ff, #4facfe);
+  --gradient-subtle: linear-gradient(180deg, #0b0f19 0%, #0e1524 100%);
 
-  --shadow-elegant: 0 20px 60px -20px oklch(0.2 0.08 220 / 0.4);
-  --shadow-glow: 0 0 80px color-mix(in oklab, var(--cyan) 45%, transparent);
-  --shadow-card: 0 10px 30px -12px oklch(0.2 0.04 240 / 0.15);
+  --shadow-elegant: 0 24px 70px -24px oklch(0.62 0.2 253 / 0.55);
+  --shadow-glow: 0 0 60px color-mix(in oklab, var(--cyan) 35%, transparent);
+  --shadow-card: 0 10px 40px -18px oklch(0.62 0.2 253 / 0.5);
 
-  /* Subtle tech mesh grid for hero backdrop */
   --mesh-grid:
     linear-gradient(to right, oklch(1 0 0 / 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, oklch(1 0 0 / 0.05) 1px, transparent 1px);
 }
+
+@utility glass-panel {
+  background: color-mix(in oklab, #0f172a 72%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in oklab, #00d2ff 22%, transparent);
+  box-shadow: 0 18px 50px -24px color-mix(in oklab, #0072ff 70%, transparent);
+}
+
 
 @layer base {
   * {
