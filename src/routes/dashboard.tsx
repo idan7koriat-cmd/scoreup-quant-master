@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Sigma,
@@ -40,65 +39,10 @@ export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
-function UpgradeModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
-      <div
-        className="relative w-full max-w-md rounded-3xl border border-border bg-card p-8 text-center"
-        style={{ boxShadow: "var(--shadow-elegant)" }}
-      >
-        <button
-          onClick={onClose}
-          aria-label="סגור"
-          className="absolute end-4 top-4 text-muted-foreground hover:text-foreground"
-        >
-          <X className="h-5 w-5" />
-        </button>
-        <span
-          className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-white"
-          style={{ background: "var(--gradient-primary)" }}
-        >
-          <Sparkles className="h-7 w-7" />
-        </span>
-        <h3 className="mt-5 text-2xl font-extrabold text-foreground">
-          פתיחת גישה מלאה
-        </h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          כל מאגר השאלות, סימולציות פרק מלאות, פתרונות AI מותאמים אישית וניתוח
-          ביצועים מתקדם — במסלול 700+.
-        </p>
-        <ul className="mt-5 space-y-2 text-start text-sm font-semibold text-foreground">
-          {[
-            "מאגר שאלות מלא ומעודכן",
-            "סימולציות פרק ללא הגבלה",
-            "מורה AI שמסביר כל טעות",
-            "מעקב התקדמות ונקודות תורפה",
-          ].map((t) => (
-            <li key={t} className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              {t}
-            </li>
-          ))}
-        </ul>
-        <button
-          className="mt-6 w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
-          style={{ background: "var(--gradient-cta)" }}
-        >
-          שדרג עכשיו למסלול 700+
-        </button>
-        <p className="mt-3 text-xs text-muted-foreground">
-          הסליקה תיפתח בקרוב — נעדכן אותך במייל.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function Dashboard() {
   const { session, loading } = useSession();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [upgrade, setUpgrade] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -174,8 +118,6 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {upgrade && <UpgradeModal onClose={() => setUpgrade(false)} />}
-
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-between gap-3 px-4">
           <Link to="/" className="flex items-center gap-2.5">
@@ -253,14 +195,14 @@ function Dashboard() {
                 </p>
               </div>
               {!isPremium && (
-                <button
-                  onClick={() => setUpgrade(true)}
+                <Link
+                  to="/pricing"
                   className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   <Zap className="h-4 w-4" />
                   שדרג למסלול 700+ ללא הגבלה ⚡
-                </button>
+                </Link>
               )}
             </div>
           </div>
@@ -278,7 +220,7 @@ function Dashboard() {
             onStart={start}
             isPremium={isPremium}
             quickLocked={quickLocked}
-            onUpgrade={() => setUpgrade(true)}
+            onUpgrade={() => navigate({ to: "/pricing" })}
           />
         </div>
 
