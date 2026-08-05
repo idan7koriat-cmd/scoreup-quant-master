@@ -126,7 +126,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
               />
               <button
                 type="submit"
-                className="w-full rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.01]"
+                className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 שלח ופתח גישה
@@ -239,7 +239,7 @@ function PricingPage() {
             style={{ boxShadow: "var(--shadow-elegant)" }}
           >
             <span
-              className="absolute start-8 top-0 rounded-b-xl px-3 py-1 text-xs font-bold text-slate-950"
+              className="absolute start-8 top-0 rounded-b-xl px-3 py-1 text-xs font-bold text-white"
               style={{ background: "var(--gradient-cta)" }}
             >
               המסלול המומלץ
@@ -311,7 +311,7 @@ function PricingPage() {
             ) : (
               <button
                 onClick={() => setModal(true)}
-                className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.01]"
+                className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 שדרג עכשיו ל-700+

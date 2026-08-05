@@ -81,7 +81,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           ))}
         </ul>
         <button
-          className="mt-6 w-full rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.01]"
+          className="mt-6 w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
           style={{ background: "var(--gradient-cta)" }}
         >
           שדרג עכשיו למסלול 700+
@@ -255,7 +255,7 @@ function Dashboard() {
               {!isPremium && (
                 <button
                   onClick={() => setUpgrade(true)}
-                  className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+                  className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   <Zap className="h-4 w-4" />

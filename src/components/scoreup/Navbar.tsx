@@ -51,7 +51,7 @@ export function Navbar() {
           <Link
             to="/auth"
             search={{ mode: "signup" as const }}
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
             style={{ background: "var(--gradient-cta)" }}
           >
             הרשמה

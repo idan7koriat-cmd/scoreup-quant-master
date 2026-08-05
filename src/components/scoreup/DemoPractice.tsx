@@ -219,7 +219,7 @@ export function DemoPractice() {
               ) : (
                 <button
                   onClick={() => setPaywall(true)}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-all hover:scale-[1.01]"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-md transition-all hover:scale-[1.01]"
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   המשך
@@ -261,7 +261,7 @@ export function DemoPractice() {
             <Link
               to="/auth"
               search={{ mode: "signup" as const }}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.02]"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.02]"
               style={{ background: "var(--gradient-cta)" }}
             >
               הירשם עכשיו

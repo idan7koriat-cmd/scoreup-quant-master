@@ -289,7 +289,7 @@ function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.01] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01] disabled:opacity-50"
             style={{ background: "var(--gradient-cta)" }}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}

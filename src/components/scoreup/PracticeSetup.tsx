@@ -150,7 +150,7 @@ export function PracticeSetup({
               <button
                 type="button"
                 onClick={onUpgrade}
-                className="rounded-2xl px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-transform hover:scale-[1.03]"
+                className="rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 שדרג למסלול 700+ ⚡
