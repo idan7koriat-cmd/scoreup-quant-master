@@ -302,7 +302,7 @@ function ProfilePage() {
             </div>
             {!isPremium && (
               <Link
-                to="/dashboard"
+                to="/pricing"
                 className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
                 style={{ background: "var(--gradient-cta)" }}
               >
