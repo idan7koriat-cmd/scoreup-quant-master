@@ -73,10 +73,10 @@ export function Hero() {
               className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-bold text-white shadow-xl transition-all hover:scale-[1.03]"
               style={{
                 background: "var(--gradient-cta)",
-                boxShadow: "0 20px 50px -12px oklch(0.72 0.17 60 / 0.5)",
+                boxShadow: "0 20px 50px -12px oklch(0.62 0.2 253 / 0.6)",
               }}
             >
-              הירשם עכשיו
+              התחל לתרגל
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
             </Link>
             <a
