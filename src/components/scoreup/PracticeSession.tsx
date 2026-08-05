@@ -10,9 +10,11 @@ import {
   Loader2,
   RotateCcw,
   Flag,
+  Megaphone,
 } from "lucide-react";
 import { getQuestions } from "@/lib/questions.functions";
-import { recordSolvedQuestion } from "@/lib/profile.functions";
+import { recordSolvedQuestion, reportQuestion } from "@/lib/profile.functions";
+import { toast } from "sonner";
 import type { PracticeConfig } from "@/data/questions";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
@@ -21,6 +23,81 @@ function fmt(sec: number) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+
+const REPORT_REASONS = [
+  "יש טעות תחבירית / טעות במבנה השאלה",
+  "אין תשובה נכונה / התשובה המוצגת אינה נכונה",
+  "דירוג הקושי לא מתאים",
+];
+
+function ReportModal({
+  questionId,
+  onClose,
+}: {
+  questionId: string;
+  onClose: () => void;
+}) {
+  const [reason, setReason] = useState(REPORT_REASONS[0]!);
+  const [sending, setSending] = useState(false);
+
+  const submit = async () => {
+    setSending(true);
+    try {
+      await reportQuestion({ data: { questionId, reason } });
+      toast.success("תודה! הדיווח התקבל ונבדוק אותו במידי");
+      onClose();
+    } catch {
+      toast.error("לא הצלחנו לשלוח את הדיווח כרגע, נסה שוב");
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 p-4 backdrop-blur-sm">
+      <div className="glass-panel w-full max-w-md rounded-3xl p-7">
+        <h3 className="text-xl font-extrabold text-foreground">השאלה בעייתית כי:</h3>
+        <div className="mt-5 space-y-3">
+          {REPORT_REASONS.map((r) => (
+            <label
+              key={r}
+              className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 text-sm font-semibold transition-colors ${
+                reason === r
+                  ? "border-primary bg-accent text-foreground"
+                  : "border-border text-muted-foreground hover:border-primary/50"
+              }`}
+            >
+              <input
+                type="radio"
+                name="report-reason"
+                className="mt-1 accent-[var(--primary)]"
+                checked={reason === r}
+                onChange={() => setReason(r)}
+              />
+              {r}
+            </label>
+          ))}
+        </div>
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
+          >
+            ביטול
+          </button>
+          <button
+            onClick={submit}
+            disabled={sending}
+            className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:opacity-60"
+            style={{ background: "var(--gradient-cta)" }}
+          >
+            {sending ? "שולח…" : "שלח דיווח"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function PracticeSession({
@@ -57,6 +134,7 @@ export function PracticeSession({
   const [timeLeft, setTimeLeft] = useState(config.totalSeconds ?? 0);
   const [elapsed, setElapsed] = useState(0);
   const [sent] = useState<Set<string>>(() => new Set());
+  const [reportOpen, setReportOpen] = useState(false);
 
   const record = (qid: string, isCorrect: boolean) => {
     if (sent.has(qid)) return;
@@ -234,6 +312,9 @@ export function PracticeSession({
       className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card"
       style={{ boxShadow: "var(--shadow-elegant)" }}
     >
+      {reportOpen && (
+        <ReportModal questionId={q.id} onClose={() => setReportOpen(false)} />
+      )}
       {/* Header */}
       <div className="border-b border-border bg-secondary/60 px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -256,6 +337,13 @@ export function PracticeSession({
               <Clock className="h-4 w-4" />
               {fmt(config.totalSeconds != null ? timeLeft : elapsed)}
             </span>
+            <button
+              onClick={() => setReportOpen(true)}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
+            >
+              <Megaphone className="h-3.5 w-3.5" />
+              דיווח
+            </button>
             <button
               onClick={() => {
                 const a = answers[index];
