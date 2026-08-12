@@ -138,13 +138,16 @@ export const getProfilePage = createServerFn({ method: "POST" })
 
 export const updateMyProfile = createServerFn({ method: "POST" })
   .middleware([requireExtAuth])
-  .inputValidator((input: { fullName: string; examDate: string | null }) => input)
+  .inputValidator(
+    (input: { fullName: string; examDate: string | null; targetDegree?: string | null }) => input,
+  )
   .handler(async ({ data, context }) => {
     const payload = (data as any)?.data ?? data;
     const fullName = String(payload.fullName ?? "").trim();
     const examDate = payload.examDate ? String(payload.examDate) : null;
+    const targetDegree = String(payload.targetDegree ?? "").trim() || null;
 
-    const base = { id: context.userId, exam_date: examDate } as any;
+    const base = { id: context.userId, exam_date: examDate, target_degree: targetDegree } as any;
     const withName = { ...base, full_name: fullName };
 
     const { error } = await context.supabase

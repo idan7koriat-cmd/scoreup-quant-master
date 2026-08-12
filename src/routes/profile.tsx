@@ -62,6 +62,7 @@ function ProfilePage() {
   const queryClient = useQueryClient();
   const [fullName, setFullName] = useState("");
   const [examDate, setExamDate] = useState("");
+  const [targetDegree, setTargetDegree] = useState("");
   const [saved, setSaved] = useState(false);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -77,12 +78,13 @@ function ProfilePage() {
     if (!data) return;
     setFullName(data.fullName ?? "");
     setExamDate(data.examDate ?? "");
+    setTargetDegree(data.targetDegree ?? "");
   }, [data]);
 
   const save = useMutation({
     mutationFn: () =>
       updateMyProfile({
-        data: { fullName, examDate: examDate || null },
+        data: { fullName, examDate: examDate || null, targetDegree: targetDegree || null },
       }),
     onSuccess: () => {
       setSaved(true);
@@ -235,13 +237,18 @@ function ProfilePage() {
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label
+                htmlFor="targetDegree"
+                className="text-sm font-semibold text-muted-foreground"
+              >
                 תחום לימודים מבוקש
               </label>
               <input
-                value={data?.targetDegree ?? "—"}
-                disabled
-                className="mt-1.5 w-full rounded-2xl border border-border bg-secondary/50 px-4 py-3 text-sm font-semibold text-muted-foreground"
+                id="targetDegree"
+                value={targetDegree}
+                onChange={(e) => setTargetDegree(e.target.value)}
+                placeholder="הנדסה, רפואה, מדעי המחשב…"
+                className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
               />
             </div>
           </div>
