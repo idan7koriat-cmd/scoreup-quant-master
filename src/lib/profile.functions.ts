@@ -7,7 +7,26 @@ export type Profile = {
   targetDegree: string | null;
   isPremium: boolean;
   lastQuickPractice: string | null;
+  streak: number;
 };
+
+/** ימי רצף רצופים שבהם נפתרה לפחות שאלה אחת, כולל "יום חסד": אם עוד לא תרגלת היום, הרצף עדיין נספר עד חצות. */
+function computeStreak(practicedDates: Set<string>): number {
+  const toKey = (d: Date) => d.toISOString().slice(0, 10);
+  const cursor = new Date();
+
+  if (!practicedDates.has(toKey(cursor))) {
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    if (!practicedDates.has(toKey(cursor))) return 0;
+  }
+
+  let streak = 0;
+  while (practicedDates.has(toKey(cursor))) {
+    streak++;
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+  }
+  return streak;
+}
 
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireExtAuth])
@@ -28,12 +47,21 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const meta = (context as any).user?.user_metadata ?? {};
     const fullName = (data as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
+    const { data: solved } = await context.supabase
+      .from("solved_questions")
+      .select("created_at")
+      .eq("user_id", context.userId);
+    const practicedDates = new Set(
+      ((solved as any[]) ?? []).map((r) => new Date(r.created_at).toISOString().slice(0, 10)),
+    );
+
     return {
       fullName,
       examDate: (data as any)?.exam_date ?? null,
       targetDegree: (data as any)?.target_degree ?? null,
       isPremium: Boolean((data as any)?.is_premium),
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
+      streak: computeStreak(practicedDates),
     };
 
   });

@@ -71,7 +71,7 @@ function Dashboard() {
     "תלמיד";
   // שם פרטי בלבד — כדי שהפנייה תרגיש אישית
   const name = fullName.trim().split(/[\s._-]+/)[0] || fullName;
-  const streak = 1;
+  const streak = profile?.streak ?? 0;
 
   const examDate = profile?.examDate ?? null;
   const daysToExam = examDate
@@ -138,10 +138,12 @@ function Dashboard() {
           </Link>
 
           <div className="flex items-center gap-2 md:gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-sm font-bold text-accent-foreground">
-              <Flame className="h-4 w-4 text-orange-500" />
-              {streak} ימי רצף
-            </span>
+            {streak > 0 && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-sm font-bold text-accent-foreground">
+                <Flame className="h-4 w-4 text-orange-500" />
+                {streak} ימי רצף
+              </span>
+            )}
             <Link
               to="/profile"
               className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary sm:inline"
