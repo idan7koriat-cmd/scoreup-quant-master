@@ -73,13 +73,19 @@ function groupRows(rows: any[]): any[][] {
     if (list) list.push(row);
     else groups.set(gid, [row]);
   }
-  return Array.from(groups.values()).map((list) =>
-    [...list].sort((a, b) => {
+  return Array.from(groups.values()).map((list) => {
+    const sorted = [...list].sort((a, b) => {
       const av = a.group_order == null ? Number.POSITIVE_INFINITY : Number(a.group_order);
       const bv = b.group_order == null ? Number.POSITIVE_INFINITY : Number(b.group_order);
       return av - bv;
-    }),
-  );
+    });
+    // בחלק מהתרשימים המשותפים ה-svg נשמר רק בשאלה הראשונה של הקבוצה — נפיץ אותו לכל חברות הקבוצה.
+    const sharedSvg = sorted.find((r) => r.svg_code)?.svg_code ?? null;
+    if (sharedSvg) {
+      for (const r of sorted) if (!r.svg_code) r.svg_code = sharedSvg;
+    }
+    return sorted;
+  });
 }
 
 export const getTopics = createServerFn({ method: "GET" }).handler(async (): Promise<string[]> => {
