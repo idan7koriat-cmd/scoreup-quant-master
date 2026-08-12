@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireExtAuth } from "@/lib/extAuth.middleware";
 
 export type Profile = {
+  fullName: string;
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
@@ -13,7 +14,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<Profile> => {
     const { data } = await context.supabase
       .from("profiles")
-      .select("exam_date, target_degree, is_premium, last_quick_practice")
+      .select("full_name, exam_date, target_degree, is_premium, last_quick_practice")
       .eq("id", context.userId)
       .maybeSingle();
 
@@ -24,7 +25,11 @@ export const getMyProfile = createServerFn({ method: "GET" })
         .upsert({ id: context.userId } as any, { onConflict: "id" });
     }
 
+    const meta = (context as any).user?.user_metadata ?? {};
+    const fullName = (data as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
+
     return {
+      fullName,
       examDate: (data as any)?.exam_date ?? null,
       targetDegree: (data as any)?.target_degree ?? null,
       isPremium: Boolean((data as any)?.is_premium),
