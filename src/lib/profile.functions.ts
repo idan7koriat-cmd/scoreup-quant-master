@@ -173,13 +173,15 @@ export const resetMyStats = createServerFn({ method: "POST" })
 
 export const reportQuestion = createServerFn({ method: "POST" })
   .middleware([requireExtAuth])
-  .inputValidator((input: { questionId: string; reason: string }) => input)
+  .inputValidator((input: { questionId: string; reason: string; details?: string }) => input)
   .handler(async ({ data, context }) => {
     const payload = (data as any)?.data ?? data;
+    const details = typeof payload.details === "string" ? payload.details.trim() : "";
     const { error } = await context.supabase.from("question_reports").insert({
       user_id: context.userId,
       question_id: String(payload.questionId),
       reason: String(payload.reason),
+      details: details || null,
     } as any);
     if (error) throw new Error(error.message);
     return { ok: true };

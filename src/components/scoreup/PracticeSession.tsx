@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import type { PracticeConfig } from "@/data/questions";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
+import { Textarea } from "@/components/ui/textarea";
 
 function fmt(sec: number) {
   const m = Math.floor(sec / 60);
@@ -40,12 +41,13 @@ function ReportModal({
   onClose: () => void;
 }) {
   const [reason, setReason] = useState(REPORT_REASONS[0]!);
+  const [details, setDetails] = useState("");
   const [sending, setSending] = useState(false);
 
   const submit = async () => {
     setSending(true);
     try {
-      await reportQuestion({ data: { questionId, reason } });
+      await reportQuestion({ data: { questionId, reason, details } });
       toast.success("תודה! הדיווח התקבל ונבדוק אותו במידי");
       onClose();
     } catch {
@@ -78,6 +80,18 @@ function ReportModal({
               {r}
             </label>
           ))}
+        </div>
+        <div className="mt-5">
+          <label htmlFor="report-details" className="mb-2 block text-sm font-semibold text-foreground">
+            פרטים נוספים (לא חובה)
+          </label>
+          <Textarea
+            id="report-details"
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            placeholder="ספר לנו עוד על הבעיה..."
+            className="min-h-[90px] resize-none"
+          />
         </div>
         <div className="mt-6 flex gap-3">
           <button
