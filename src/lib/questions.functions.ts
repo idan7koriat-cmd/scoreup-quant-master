@@ -102,10 +102,11 @@ export const getQuestions = createServerFn({ method: "GET" })
     const filters: Filters = rawData ?? {};
 
     // שאלות שהמשתמש כבר פתר — לא נציג אותן שוב
-    const { data: solvedRows } = await context.supabase
+    const { data: solvedRows, error: solvedError } = await context.supabase
       .from("solved_questions")
       .select("question_id")
       .eq("user_id", context.userId);
+    if (solvedError) throw new Error(solvedError.message);
     const solved = new Set((solvedRows ?? []).map((r: any) => String(r.question_id)));
 
     let query = client().from("questions").select("*");

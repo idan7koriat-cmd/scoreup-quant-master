@@ -153,7 +153,10 @@ export function PracticeSession({
   const record = (qid: string, isCorrect: boolean) => {
     if (sent.has(qid)) return;
     sent.add(qid);
-    void recordSolvedQuestion({ data: { questionId: qid, isCorrect } }).catch(() => {});
+    void recordSolvedQuestion({ data: { questionId: qid, isCorrect } }).catch(() => {
+      sent.delete(qid);
+      toast.error("לא הצלחנו לשמור את ההתקדמות בשאלה הזו");
+    });
   };
 
   /** Save the current answer before leaving the question. */

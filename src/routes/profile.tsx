@@ -38,6 +38,42 @@ export const Route = createFileRoute("/profile")({
   component: ProfilePage,
 });
 
+type StatsRange = "today" | "yesterday" | "week" | "month" | "all";
+
+const RANGE_OPTIONS: { value: StatsRange; label: string }[] = [
+  { value: "today", label: "היום" },
+  { value: "yesterday", label: "אתמול" },
+  { value: "week", label: "שבוע אחרון" },
+  { value: "month", label: "חודש אחרון" },
+  { value: "all", label: "מתחילת השימוש" },
+];
+
+function rangeToDates(range: StatsRange): { from: string | null; to: string | null } {
+  const toKey = (d: Date) => d.toISOString().slice(0, 10);
+  const today = new Date();
+  if (range === "today") {
+    const k = toKey(today);
+    return { from: k, to: k };
+  }
+  if (range === "yesterday") {
+    const d = new Date(today);
+    d.setUTCDate(d.getUTCDate() - 1);
+    const k = toKey(d);
+    return { from: k, to: k };
+  }
+  if (range === "week") {
+    const from = new Date(today);
+    from.setUTCDate(from.getUTCDate() - 6);
+    return { from: toKey(from), to: toKey(today) };
+  }
+  if (range === "month") {
+    const from = new Date(today);
+    from.setUTCDate(from.getUTCDate() - 29);
+    return { from: toKey(from), to: toKey(today) };
+  }
+  return { from: null, to: null };
+}
+
 function StatCard({
   label,
   value,
@@ -64,13 +100,13 @@ function ProfilePage() {
   const [examDate, setExamDate] = useState("");
   const [targetDegree, setTargetDegree] = useState("");
   const [saved, setSaved] = useState(false);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [range, setRange] = useState<StatsRange>("all");
   const [notice, setNotice] = useState("");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["profile-page", from, to],
-    queryFn: () => getProfilePage({ data: { from: from || null, to: to || null } }),
+  const { from, to } = rangeToDates(range);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["profile-page", range],
+    queryFn: () => getProfilePage({ data: { from, to } }),
     enabled: !!session,
   });
 
@@ -326,66 +362,54 @@ function ProfilePage() {
             <h2 className="text-xl font-extrabold text-foreground">
               סיכום התרגול שלי
             </h2>
-            <div className="flex flex-wrap items-end gap-3">
-              <div>
-                <label htmlFor="from" className="text-xs font-semibold text-muted-foreground">
-                  מתאריך
-                </label>
-                <input
-                  id="from"
-                  type="date"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                  className="mt-1 block rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:border-primary"
-                />
-              </div>
-              <div>
-                <label htmlFor="to" className="text-xs font-semibold text-muted-foreground">
-                  עד תאריך
-                </label>
-                <input
-                  id="to"
-                  type="date"
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                  className="mt-1 block rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground outline-none focus:border-primary"
-                />
-              </div>
-              {(from || to) && (
-                <button
-                  onClick={() => {
-                    setFrom("");
-                    setTo("");
-                  }}
-                  className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-secondary"
-                >
-                  הצג הכל
-                </button>
-              )}
-              <button
-                onClick={() => reset.mutate()}
-                disabled={reset.isPending}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
-              >
-                <RotateCcw className="h-4 w-4" />
-                איפוס סטטיסטיקה
-              </button>
-            </div>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <StatCard label="שאלות שנפתרו" value={String(total)} />
-            <StatCard label="תשובות נכונות" value={String(correct)} />
-            <StatCard
-              label="אחוז דיוק"
-              value={`${accuracy}%`}
-              hint={total ? undefined : "עדיין אין נתונים"}
-            />
+            <button
+              onClick={() => reset.mutate()}
+              disabled={reset.isPending}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
+            >
+              <RotateCcw className="h-4 w-4" />
+              איפוס סטטיסטיקה
+            </button>
           </div>
 
-          <h3 className="mt-8 text-lg font-extrabold text-foreground">
-            פילוח לפי נושאים
-          </h3>
-          {data && data.byTopic.length > 0 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {RANGE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setRange(opt.value)}
+                className={`rounded-xl border-2 px-3.5 py-2 text-sm font-bold transition-colors ${
+                  range === opt.value
+                    ? "border-primary bg-accent text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {isError ? (
+            <p className="mt-4 rounded-2xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
+              לא הצלחנו לטעון את הסטטיסטיקה כרגע. נסה לרענן את הדף.
+            </p>
+          ) : (
+            <>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <StatCard label="שאלות שנפתרו" value={String(total)} />
+                <StatCard label="תשובות נכונות" value={String(correct)} />
+                <StatCard
+                  label="אחוז דיוק"
+                  value={`${accuracy}%`}
+                  hint={total ? undefined : "עדיין אין נתונים"}
+                />
+              </div>
+
+              <h3 className="mt-8 text-lg font-extrabold text-foreground">
+                פילוח לפי נושאים
+              </h3>
+            </>
+          )}
+          {!isError && data && data.byTopic.length > 0 ? (
             <div className="mt-4 space-y-3">
               {data.byTopic.map((t) => {
                 const pct = t.total ? Math.round((t.correct / t.total) * 100) : 0;
@@ -413,11 +437,11 @@ function ProfilePage() {
                 );
               })}
             </div>
-          ) : (
+          ) : !isError ? (
             <p className="mt-3 text-sm text-muted-foreground">
               עדיין לא פתרת שאלות — התחל תרגול ונתחיל לאסוף נתונים.
             </p>
-          )}
+          ) : null}
         </section>
       </main>
     </div>

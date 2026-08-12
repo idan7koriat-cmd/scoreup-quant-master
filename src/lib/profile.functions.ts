@@ -81,7 +81,7 @@ export const recordSolvedQuestion = createServerFn({ method: "POST" })
   .inputValidator((input: { questionId: string; isCorrect: boolean }) => input)
   .handler(async ({ data, context }) => {
     const payload = (data as any)?.data ?? data;
-    await context.supabase.from("solved_questions").upsert(
+    const { error } = await context.supabase.from("solved_questions").upsert(
       {
         user_id: context.userId,
         question_id: String(payload.questionId),
@@ -89,6 +89,7 @@ export const recordSolvedQuestion = createServerFn({ method: "POST" })
       } as any,
       { onConflict: "user_id,question_id" },
     );
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
@@ -132,8 +133,8 @@ export const getProfilePage = createServerFn({ method: "POST" })
     if (payload.from) solvedQuery = solvedQuery.gte("created_at", `${payload.from}T00:00:00`);
     if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
 
-    const { data: solved } = await solvedQuery;
-
+    const { data: solved, error: solvedError } = await solvedQuery;
+    if (solvedError) throw new Error(solvedError.message);
 
     const rows = (solved as any[]) ?? [];
     const ids = [...new Set(rows.map((r) => String(r.question_id)))];
