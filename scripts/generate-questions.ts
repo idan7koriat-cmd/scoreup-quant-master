@@ -19,7 +19,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { AGENT_1_SYSTEM_PROMPT, AGENT_2_SYSTEM_PROMPT } from "./prompts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
