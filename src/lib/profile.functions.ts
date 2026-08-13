@@ -103,6 +103,7 @@ export type ProfilePage = {
   total: number;
   correct: number;
   byTopic: TopicStat[];
+  statsError: string | null;
 };
 
 export const getProfilePage = createServerFn({ method: "POST" })
@@ -134,9 +135,8 @@ export const getProfilePage = createServerFn({ method: "POST" })
     if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
 
     const { data: solved, error: solvedError } = await solvedQuery;
-    if (solvedError) throw new Error(solvedError.message);
-
-    const rows = (solved as any[]) ?? [];
+    // כשל בשליפת הסטטיסטיקה לא אמור להפיל את שאר פרטי הפרופיל — מדווחים בנפרד.
+    const rows = solvedError ? [] : ((solved as any[]) ?? []);
     const ids = [...new Set(rows.map((r) => String(r.question_id)))];
     let topics = new Map<string, string>();
     if (ids.length) {
@@ -167,6 +167,7 @@ export const getProfilePage = createServerFn({ method: "POST" })
       total: rows.length,
       correct,
       byTopic: [...map.values()].sort((a, b) => b.total - a.total),
+      statsError: solvedError ? solvedError.message : null,
     };
   });
 

@@ -104,7 +104,7 @@ function ProfilePage() {
   const [notice, setNotice] = useState("");
 
   const { from, to } = rangeToDates(range);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["profile-page", range],
     queryFn: () => getProfilePage({ data: { from, to } }),
     enabled: !!session,
@@ -174,6 +174,7 @@ function ProfilePage() {
   const correct = data?.correct ?? 0;
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
   const isPremium = data?.isPremium ?? false;
+  const statsError = data?.statsError ?? null;
 
   return (
     <div dir="rtl" className="min-h-screen bg-background">
@@ -388,9 +389,12 @@ function ProfilePage() {
             ))}
           </div>
 
-          {isError ? (
+          {statsError ? (
             <p className="mt-4 rounded-2xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
-              לא הצלחנו לטעון את הסטטיסטיקה כרגע. נסה לרענן את הדף.
+              לא הצלחנו לטעון את הסטטיסטיקה כרגע.
+              <span dir="ltr" className="mt-1 block font-mono text-xs font-normal opacity-80">
+                {statsError}
+              </span>
             </p>
           ) : (
             <>
@@ -409,7 +413,7 @@ function ProfilePage() {
               </h3>
             </>
           )}
-          {!isError && data && data.byTopic.length > 0 ? (
+          {!statsError && data && data.byTopic.length > 0 ? (
             <div className="mt-4 space-y-3">
               {data.byTopic.map((t) => {
                 const pct = t.total ? Math.round((t.correct / t.total) * 100) : 0;
@@ -437,7 +441,7 @@ function ProfilePage() {
                 );
               })}
             </div>
-          ) : !isError ? (
+          ) : !statsError ? (
             <p className="mt-3 text-sm text-muted-foreground">
               עדיין לא פתרת שאלות — התחל תרגול ונתחיל לאסוף נתונים.
             </p>

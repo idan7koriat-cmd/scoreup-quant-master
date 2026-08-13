@@ -101,12 +101,13 @@ export const getQuestions = createServerFn({ method: "GET" })
     const rawData = (data as any)?.data ? (data as any).data : data;
     const filters: Filters = rawData ?? {};
 
-    // שאלות שהמשתמש כבר פתר — לא נציג אותן שוב
+    // שאלות שהמשתמש כבר פתר — לא נציג אותן שוב.
+    // כשל כאן לא אמור לחסום את טעינת השאלות עצמה — רק שהסינון לא יעבוד הפעם.
     const { data: solvedRows, error: solvedError } = await context.supabase
       .from("solved_questions")
       .select("question_id")
       .eq("user_id", context.userId);
-    if (solvedError) throw new Error(solvedError.message);
+    if (solvedError) console.error("[getQuestions] solved_questions fetch failed:", solvedError.message);
     const solved = new Set((solvedRows ?? []).map((r: any) => String(r.question_id)));
 
     let query = client().from("questions").select("*");
