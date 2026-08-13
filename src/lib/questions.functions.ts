@@ -95,7 +95,7 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
 });
 
 /** כלי בדיקה זמני (להסרה לפני ההשקה): שולף שאלה בודדת לפי id, לצורך QA ידני אחרי עריכה ב-DB. */
-export const getQuestionById = createServerFn({ method: "GET" })
+export const getQuestionById = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string } | { data: { id: string } }) => input)
   .handler(async ({ data }): Promise<Question | null> => {
     const payload = (data as any)?.data ?? data;
