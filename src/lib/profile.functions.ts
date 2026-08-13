@@ -57,10 +57,10 @@ export const getMyProfile = createServerFn({ method: "GET" })
     try {
       const { data: solved } = await context.supabase
         .from("solved_questions")
-        .select("created_at")
+        .select("solved_at")
         .eq("user_id", context.userId);
       practicedDates = new Set(
-        ((solved as any[]) ?? []).map((r) => new Date(r.created_at).toISOString().slice(0, 10)),
+        ((solved as any[]) ?? []).map((r) => new Date(r.solved_at).toISOString().slice(0, 10)),
       );
     } catch {
       // רצף שלא ניתן לחישוב עדיף על הפלת כל הפרופיל.
@@ -151,11 +151,11 @@ export const getProfilePage = createServerFn({ method: "POST" })
     try {
       let solvedQuery = context.supabase
         .from("solved_questions")
-        .select("question_id, is_correct, created_at")
+        .select("question_id, is_correct, solved_at")
         .eq("user_id", context.userId);
 
-      if (payload.from) solvedQuery = solvedQuery.gte("created_at", `${payload.from}T00:00:00`);
-      if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
+      if (payload.from) solvedQuery = solvedQuery.gte("solved_at", `${payload.from}T00:00:00`);
+      if (payload.to) solvedQuery = solvedQuery.lte("solved_at", `${payload.to}T23:59:59`);
 
       const { data: solved, error: solvedError } = await solvedQuery;
       if (solvedError) statsErrorMessage = solvedError.message;
