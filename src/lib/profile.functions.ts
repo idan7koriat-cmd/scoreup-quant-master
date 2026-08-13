@@ -31,29 +31,40 @@ function computeStreak(practicedDates: Set<string>): number {
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireExtAuth])
   .handler(async ({ context }): Promise<Profile> => {
-    const { data } = await context.supabase
-      .from("profiles")
-      .select("full_name, exam_date, target_degree, is_premium, last_quick_practice")
-      .eq("id", context.userId)
-      .maybeSingle();
-
-    // משתמשים שנכנסו דרך Google מגיעים בלי שורת פרופיל — יוצרים אותה בכניסה הראשונה.
-    if (!data) {
-      await context.supabase
+    let data: any = null;
+    try {
+      const res = await context.supabase
         .from("profiles")
-        .upsert({ id: context.userId } as any, { onConflict: "id" });
+        .select("full_name, exam_date, target_degree, is_premium, last_quick_practice")
+        .eq("id", context.userId)
+        .maybeSingle();
+      data = res.data;
+
+      // משתמשים שנכנסו דרך Google מגיעים בלי שורת פרופיל — יוצרים אותה בכניסה הראשונה.
+      if (!data) {
+        await context.supabase
+          .from("profiles")
+          .upsert({ id: context.userId } as any, { onConflict: "id" });
+      }
+    } catch {
+      // ממשיכים עם ברירות מחדל מה-auth metadata במקום להפיל את כל הבקשה.
     }
 
     const meta = (context as any).user?.user_metadata ?? {};
     const fullName = (data as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
-    const { data: solved } = await context.supabase
-      .from("solved_questions")
-      .select("created_at")
-      .eq("user_id", context.userId);
-    const practicedDates = new Set(
-      ((solved as any[]) ?? []).map((r) => new Date(r.created_at).toISOString().slice(0, 10)),
-    );
+    let practicedDates = new Set<string>();
+    try {
+      const { data: solved } = await context.supabase
+        .from("solved_questions")
+        .select("created_at")
+        .eq("user_id", context.userId);
+      practicedDates = new Set(
+        ((solved as any[]) ?? []).map((r) => new Date(r.created_at).toISOString().slice(0, 10)),
+      );
+    } catch {
+      // רצף שלא ניתן לחישוב עדיף על הפלת כל הפרופיל.
+    }
 
     return {
       fullName,
@@ -115,28 +126,44 @@ export const getProfilePage = createServerFn({ method: "POST" })
       to?: string | null;
     };
 
-    const { data: row } = await context.supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", context.userId)
-      .maybeSingle();
+    let row: any = null;
+    try {
+      const res = await context.supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", context.userId)
+        .maybeSingle();
+      row = res.data;
+    } catch {
+      // אם שליפת הפרופיל עצמה נכשלת, ממשיכים עם ברירות מחדל מה-auth metadata
+      // במקום להפיל את כל הבקשה.
+    }
 
     const user = (context as any).user;
     const meta = user?.user_metadata ?? {};
     const fullName =
       (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
-    let solvedQuery = context.supabase
-      .from("solved_questions")
-      .select("question_id, is_correct, created_at")
-      .eq("user_id", context.userId);
+    // כשל כאן (כולל חריגה שאינה object של {error}, כמו כשל רשת) לא אמור להפיל
+    // את שאר פרטי הפרופיל — נתפוס אותו כאן ונדווח עליו בנפרד דרך statsError.
+    let rows: any[] = [];
+    let statsErrorMessage: string | null = null;
+    try {
+      let solvedQuery = context.supabase
+        .from("solved_questions")
+        .select("question_id, is_correct, created_at")
+        .eq("user_id", context.userId);
 
-    if (payload.from) solvedQuery = solvedQuery.gte("created_at", `${payload.from}T00:00:00`);
-    if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
+      if (payload.from) solvedQuery = solvedQuery.gte("created_at", `${payload.from}T00:00:00`);
+      if (payload.to) solvedQuery = solvedQuery.lte("created_at", `${payload.to}T23:59:59`);
 
-    const { data: solved, error: solvedError } = await solvedQuery;
-    // כשל בשליפת הסטטיסטיקה לא אמור להפיל את שאר פרטי הפרופיל — מדווחים בנפרד.
-    const rows = solvedError ? [] : ((solved as any[]) ?? []);
+      const { data: solved, error: solvedError } = await solvedQuery;
+      if (solvedError) statsErrorMessage = solvedError.message;
+      else rows = (solved as any[]) ?? [];
+    } catch (e) {
+      statsErrorMessage = e instanceof Error ? e.message : String(e);
+    }
+
     const ids = [...new Set(rows.map((r) => String(r.question_id)))];
     let topics = new Map<string, string>();
     if (ids.length) {
@@ -167,7 +194,7 @@ export const getProfilePage = createServerFn({ method: "POST" })
       total: rows.length,
       correct,
       byTopic: [...map.values()].sort((a, b) => b.total - a.total),
-      statsError: solvedError ? solvedError.message : null,
+      statsError: statsErrorMessage,
     };
   });
 
