@@ -20,6 +20,10 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Question-generation script — local working files (may contain exam content)
+scripts/input/source-questions.txt
+scripts/output/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
