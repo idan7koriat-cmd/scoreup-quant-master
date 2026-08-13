@@ -28,4 +28,6 @@ export type PracticeConfig = {
   quick?: boolean;
   /** סימולציית פרק מלאה (20 שאלות במבנה בחינה) */
   simulation?: boolean;
+  /** כלי בדיקה זמני: כשמוגדר, טוען את השאלה הזו בלבד לפי id (במקום הבחירה הרגילה). להסרה לפני ההשקה. */
+  questionId?: string;
 };

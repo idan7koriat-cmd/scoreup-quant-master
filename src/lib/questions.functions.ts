@@ -94,6 +94,19 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
   return Array.from(new Set((data ?? []).map((r: any) => r.topic))).sort();
 });
 
+/** כלי בדיקה זמני (להסרה לפני ההשקה): שולף שאלה בודדת לפי id, לצורך QA ידני אחרי עריכה ב-DB. */
+export const getQuestionById = createServerFn({ method: "GET" })
+  .inputValidator((input: { id: string } | { data: { id: string } }) => input)
+  .handler(async ({ data }): Promise<Question | null> => {
+    const payload = (data as any)?.data ?? data;
+    const id = String(payload.id ?? "").trim();
+    if (!id) return null;
+
+    const { data: row, error } = await client().from("questions").select("*").eq("id", id).maybeSingle();
+    if (error) throw new Error(error.message);
+    return row ? toQuestion(row) : null;
+  });
+
 export const getQuestions = createServerFn({ method: "GET" })
   .middleware([requireExtAuth])
   .inputValidator((input: any) => input)

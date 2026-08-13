@@ -56,9 +56,24 @@ export function PracticeSetup({
   const [level, setLevel] = useState<number | null>(null);
   const [timed, setTimed] = useState(false);
   const [mode, setMode] = useState<PracticeMode>("study");
+  const [byId, setById] = useState("");
 
   const toggleTopic = (t: string) =>
     setSelectedTopics((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
+
+  const startById = () => {
+    const id = byId.trim();
+    if (!id) return;
+    onStart({
+      topics: [],
+      count: 1,
+      difficultyLevel: null,
+      totalSeconds: null,
+      mode: "study",
+      launch: "custom",
+      questionId: id,
+    });
+  };
 
   const startCustom = () =>
     onStart({
@@ -130,6 +145,30 @@ export function PracticeSetup({
           </span>
           <p className="mt-2 text-sm text-muted-foreground">20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום</p>
         </button>
+      </div>
+
+      {/* כלי בדיקה זמני — להסרה לפני ההשקה */}
+      <div className="mt-6 rounded-2xl border-2 border-dashed border-amber-500/50 bg-amber-500/5 p-4">
+        <p className="mb-2 text-xs font-bold text-amber-600">🔧 כלי בדיקה זמני — טעינת שאלה לפי ID</p>
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="text"
+            value={byId}
+            onChange={(e) => setById(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && startById()}
+            placeholder="הדבק כאן id של שאלה מ-Supabase"
+            dir="ltr"
+            className="min-w-0 flex-1 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          />
+          <button
+            type="button"
+            onClick={startById}
+            disabled={!byId.trim()}
+            className="rounded-xl border-2 border-amber-500/50 px-4 py-2 text-sm font-bold text-amber-700 transition-colors hover:bg-amber-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            טען שאלה
+          </button>
+        </div>
       </div>
 
       <div className="my-8 h-px w-full bg-border" />

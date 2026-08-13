@@ -12,7 +12,7 @@ import {
   Flag,
   Megaphone,
 } from "lucide-react";
-import { getQuestions } from "@/lib/questions.functions";
+import { getQuestions, getQuestionById } from "@/lib/questions.functions";
 import { recordSolvedQuestion, reportQuestion } from "@/lib/profile.functions";
 import { toast } from "sonner";
 import type { PracticeConfig } from "@/data/questions";
@@ -127,15 +127,21 @@ export function PracticeSession({
     isError,
   } = useQuery({
     queryKey: ["questions", config],
-    queryFn: () =>
-      getQuestions({
+    queryFn: async () => {
+      // כלי בדיקה זמני: שאלה בודדת לפי id (להסרה לפני ההשקה).
+      if (config.questionId) {
+        const q = await getQuestionById({ data: { id: config.questionId } });
+        return q ? [q] : [];
+      }
+      return getQuestions({
         data: {
           topics: config.topics,
           count: config.count,
           difficultyLevel: config.difficultyLevel,
           examMode: config.simulation ?? false,
         },
-      }),
+      });
+    },
     staleTime: Infinity,
   });
 
