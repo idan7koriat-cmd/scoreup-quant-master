@@ -107,6 +107,7 @@ function Dashboard() {
         level: config.difficultyLevel ?? 0,
         seconds: config.totalSeconds ?? 0,
         style: config.mode,
+        questionId: config.questionId ?? "",
       },
     });
   };

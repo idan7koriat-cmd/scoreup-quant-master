@@ -11,6 +11,7 @@ type PracticeSearch = {
   level: number;
   seconds: number;
   style: PracticeMode;
+  questionId: string;
 };
 
 export const Route = createFileRoute("/practice")({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/practice")({
     level: Number(search.level) > 0 ? Number(search.level) : 0,
     seconds: Number(search.seconds) > 0 ? Number(search.seconds) : 0,
     style: search.style === "exam" ? "exam" : "study",
+    questionId: typeof search.questionId === "string" ? search.questionId : "",
   }),
 
   head: () => ({
@@ -65,8 +67,17 @@ function PracticePage() {
     return null;
   }
 
-  const config: PracticeConfig =
-    search.mode === "warmup"
+  const config: PracticeConfig = search.questionId
+    ? {
+        launch: "custom",
+        topics: [],
+        count: 1,
+        difficultyLevel: null,
+        totalSeconds: null,
+        mode: "study",
+        questionId: search.questionId,
+      }
+    : search.mode === "warmup"
       ? {
           launch: "warmup",
           topics: [],
