@@ -1,7 +1,5 @@
 import { Sigma } from "lucide-react";
 
-const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL as string;
-
 export function Footer() {
   return (
     <footer
@@ -26,12 +24,6 @@ export function Footer() {
             </span>
           </span>
         </div>
-        <a
-          href={`mailto:${SUPPORT_EMAIL}`}
-          className="text-sm font-semibold text-slate-300 transition-colors hover:text-white"
-        >
-          צור קשר
-        </a>
         <p className="text-sm text-slate-400">
           © {new Date().getFullYear()} ScoreUp — כל הזכויות שמורות.
         </p>

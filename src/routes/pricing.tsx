@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getMyProfile } from "@/lib/profile.functions";
+import { SUPPORT_EMAIL } from "@/lib/support";
 
 const valueCards = [
   {
@@ -204,13 +205,21 @@ function PricingPage() {
             </span>
           </Link>
 
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            <ArrowRight className="h-4 w-4" />
-            חזרה לדשבורד
-          </Link>
+          <div className="flex items-center gap-2">
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              צור קשר
+            </a>
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <ArrowRight className="h-4 w-4" />
+              חזרה לדשבורד
+            </Link>
+          </div>
         </div>
       </header>
 

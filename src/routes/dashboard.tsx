@@ -4,7 +4,7 @@ import {
   Flame,
   LogOut,
   Zap,
-  
+
   Loader2,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import { getMyProfile, markQuickPractice } from "@/lib/profile.functions";
 import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
 import type { PracticeConfig } from "@/data/questions";
+import { SUPPORT_EMAIL } from "@/lib/support";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -115,7 +116,6 @@ function Dashboard() {
 
 
 
-
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
@@ -151,6 +151,12 @@ function Dashboard() {
             >
               פרופיל
             </Link>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              צור קשר
+            </a>
             <button
               onClick={signOut}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"

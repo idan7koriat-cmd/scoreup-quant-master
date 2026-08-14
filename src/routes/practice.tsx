@@ -3,6 +3,7 @@ import { Sigma, Loader2 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { PracticeSession } from "@/components/scoreup/PracticeSession";
 import type { PracticeConfig, PracticeMode, LauncherMode } from "@/data/questions";
+import { SUPPORT_EMAIL } from "@/lib/support";
 
 type PracticeSearch = {
   mode: LauncherMode;
@@ -127,12 +128,20 @@ function PracticePage() {
               </span>
             </span>
           </Link>
-          <Link
-            to="/dashboard"
-            className="rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            חזרה לדשבורד
-          </Link>
+          <div className="flex items-center gap-2">
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              צור קשר
+            </a>
+            <Link
+              to="/dashboard"
+              className="rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              חזרה לדשבורד
+            </Link>
+          </div>
         </div>
       </header>
 

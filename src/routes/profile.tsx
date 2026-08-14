@@ -15,6 +15,7 @@ import {
 import { useSession } from "@/hooks/useSession";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { getProfilePage, resetMyStats, updateMyProfile } from "@/lib/profile.functions";
+import { SUPPORT_EMAIL } from "@/lib/support";
 
 export const Route = createFileRoute("/profile")({
   ssr: false,
@@ -206,6 +207,12 @@ function ProfilePage() {
               <ArrowRight className="h-4 w-4" />
               חזרה לדשבורד
             </Link>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              צור קשר
+            </a>
             <button
               onClick={signOut}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
