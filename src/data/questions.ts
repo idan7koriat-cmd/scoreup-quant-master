@@ -10,6 +10,16 @@ export type Question = {
   svgCode: string | null;
 };
 
+/** מה ש-getQuestions מחזיר לפני שנבדקה תשובה — בלי correctIndex/explanation, שנשארים בשרת. */
+export type QuestionPreview = Omit<Question, "correctIndex" | "explanation">;
+
+/** תוצאה שמתקבלת מ-checkAnswers עבור שאלה בודדת, אחרי שהשרת בדק את התשובה. */
+export type AnswerReveal = {
+  isCorrect: boolean;
+  correctIndex: number;
+  explanation: string;
+};
+
 export type PracticeMode = "study" | "exam";
 
 export type LauncherMode = "warmup" | "custom" | "simulation";

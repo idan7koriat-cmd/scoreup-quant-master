@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   Check,
   X,
@@ -11,11 +12,12 @@ import {
   RotateCcw,
   Flag,
   Megaphone,
+  Lock,
 } from "lucide-react";
-import { getQuestions } from "@/lib/questions.functions";
+import { getQuestions, checkAnswers } from "@/lib/questions.functions";
 import { recordSolvedQuestion, reportQuestion } from "@/lib/profile.functions";
 import { toast } from "sonner";
-import type { PracticeConfig } from "@/data/questions";
+import type { AnswerReveal, PracticeConfig } from "@/data/questions";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
 import { Textarea } from "@/components/ui/textarea";
@@ -143,9 +145,12 @@ export function PracticeSession({
   const total = questions?.length ?? 0;
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [reveals, setReveals] = useState<Record<number, AnswerReveal>>({});
+  const [revealing, setRevealing] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [summaryReady, setSummaryReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState(config.totalSeconds ?? 0);
   const [elapsed, setElapsed] = useState(0);
   const [sent] = useState<Set<string>>(() => new Set());
@@ -160,11 +165,55 @@ export function PracticeSession({
     });
   };
 
-  /** Save the current answer before leaving the question. */
+  /**
+   * הדרך היחידה לגלות אם תשובה נכונה: קריאה לשרת (checkAnswers), שגם אוכפת את המכסה היומית
+   * למשתמש חינמי. מדלגת על שאלות שכבר נחשפו, כדי לא לבזבז מכסה פעמיים על אותה שאלה.
+   */
+  const reveal = async (indices: number[]) => {
+    if (!questions) return;
+    const need = indices.filter((i) => !reveals[i] && questions[i]);
+    if (need.length === 0) return;
+
+    setRevealing(true);
+    try {
+      const res = await checkAnswers({
+        data: {
+          items: need.map((i) => ({
+            questionId: questions[i]!.id,
+            selectedIndex: answers[i] ?? -1,
+          })),
+        },
+      });
+
+      if (!res.ok) {
+        setLimitReached(true);
+        toast.error("הגעת למכסת השאלות החינמית להיום — שדרג למסלול 700+ לגישה ללא הגבלה");
+        return;
+      }
+
+      setReveals((prev) => {
+        const next = { ...prev };
+        need.forEach((i, k) => {
+          const r = res.results[k]!;
+          next[i] = { isCorrect: r.isCorrect, correctIndex: r.correctIndex, explanation: r.explanation };
+        });
+        return next;
+      });
+
+      need.forEach((i, k) => {
+        const a = answers[i];
+        if (a != null) record(questions[i]!.id, res.results[k]!.isCorrect);
+      });
+    } catch {
+      toast.error("לא הצלחנו לבדוק את התשובה כרגע, נסה שוב");
+    } finally {
+      setRevealing(false);
+    }
+  };
+
+  /** Reveal the current answer (if any) before leaving the question. */
   const goTo = (i: number) => {
-    const cur = questions?.[index];
-    const a = answers[index];
-    if (cur && a != null) record(cur.id, a === cur.correctIndex);
+    if (answers[index] != null) void reveal([index]);
     setIndex(i);
   };
 
@@ -174,20 +223,15 @@ export function PracticeSession({
     return () => clearTimeout(t);
   }, [elapsed, finished, config.totalSeconds]);
 
-
-  const [recorded, setRecorded] = useState(false);
   useEffect(() => {
-    if (!finished || recorded || !questions) return;
-    setRecorded(true);
-    questions.forEach((qq, i) => {
-      const a = answers[i];
-      if (a != null) record(qq.id, a === qq.correctIndex);
-    });
-  }, [finished, recorded, questions, answers]);
+    if (!finished || summaryReady || !questions) return;
+    void reveal(questions.map((_, i) => i)).finally(() => setSummaryReady(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished, questions]);
 
   const q = questions?.[index];
   const selected = answers[index] ?? null;
-  const submitted = config.mode === "study" ? !!checked[index] : false;
+  const submitted = config.mode === "study" ? reveals[index] != null : false;
 
   useEffect(() => {
     if (config.totalSeconds == null || finished) return;
@@ -203,11 +247,8 @@ export function PracticeSession({
 
   const score = useMemo(() => {
     if (!questions) return 0;
-    return questions.reduce(
-      (acc, item, i) => acc + (answers[i] === item.correctIndex ? 1 : 0),
-      0
-    );
-  }, [questions, answers]);
+    return questions.reduce((acc, _item, i) => acc + (reveals[i]?.isCorrect ? 1 : 0), 0);
+  }, [questions, reveals]);
 
   if (isPending) {
     return (
@@ -241,6 +282,18 @@ export function PracticeSession({
 
   // ---- Summary ----
   if (finished) {
+    if (!summaryReady) {
+      return (
+        <div
+          className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card px-6 py-20"
+          style={{ boxShadow: "var(--shadow-elegant)" }}
+        >
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">מכינים את הסיכום…</p>
+        </div>
+      );
+    }
+
     return (
       <div
         className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card p-6 md:p-8"
@@ -253,16 +306,23 @@ export function PracticeSession({
 
         <div className="mt-6 space-y-4">
           {questions.map((item, i) => {
-            const ok = answers[i] === item.correctIndex;
+            const itemReveal = reveals[i];
+            const ok = !!itemReveal?.isCorrect;
             return (
               <div
                 key={item.id}
                 className={`rounded-2xl border-2 p-5 ${
-                  ok ? "border-success bg-success/5" : "border-destructive bg-destructive/5"
+                  !itemReveal
+                    ? "border-border bg-secondary/30"
+                    : ok
+                      ? "border-success bg-success/5"
+                      : "border-destructive bg-destructive/5"
                 }`}
               >
                 <div className="flex items-center gap-2 text-sm font-bold">
-                  {ok ? (
+                  {!itemReveal ? (
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                  ) : ok ? (
                     <Check className="h-4 w-4 text-success" />
                   ) : (
                     <X className="h-4 w-4 text-destructive" />
@@ -276,21 +336,32 @@ export function PracticeSession({
                 <p className="mt-3 text-foreground">
                   <MathText>{item.question}</MathText>
                 </p>
-                <p className="mt-2 text-sm font-semibold text-success">
-                  התשובה הנכונה:{" "}
-                  <MathText>{item.answers[item.correctIndex] ?? ""}</MathText>
-                </p>
-                <div className="mt-3 space-y-3 border-t border-border pt-3">
-                  {item.explanation
-                    .split(/\n{2,}/)
-                    .map((p) => p.trim())
-                    .filter(Boolean)
-                    .map((p, k) => (
-                      <p key={k} className="leading-relaxed text-foreground">
-                        <MathText>{p}</MathText>
-                      </p>
-                    ))}
-                </div>
+                {!itemReveal ? (
+                  <p className="mt-2 text-sm font-semibold text-muted-foreground">
+                    הגעת למכסת השאלות החינמית להיום —{" "}
+                    <Link to="/pricing" className="underline">
+                      שדרג למסלול 700+
+                    </Link>{" "}
+                    כדי לראות את הפתרון לשאלה הזו.
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-2 text-sm font-semibold text-success">
+                      התשובה הנכונה: <MathText>{item.answers[itemReveal.correctIndex] ?? ""}</MathText>
+                    </p>
+                    <div className="mt-3 space-y-3 border-t border-border pt-3">
+                      {itemReveal.explanation
+                        .split(/\n{2,}/)
+                        .map((p) => p.trim())
+                        .filter(Boolean)
+                        .map((p, k) => (
+                          <p key={k} className="leading-relaxed text-foreground">
+                            <MathText>{p}</MathText>
+                          </p>
+                        ))}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
@@ -308,22 +379,24 @@ export function PracticeSession({
     );
   }
 
+  const currentReveal = reveals[index];
+
   const optionClass = (i: number) => {
     const base =
       "w-full text-start rounded-2xl border-2 px-5 py-4 font-medium transition-all";
-    if (!submitted) {
+    if (!submitted || !currentReveal) {
       return `${base} ${
         selected === i
           ? "border-primary bg-accent text-foreground shadow-md"
           : "border-border bg-card hover:border-primary/50 hover:bg-accent/40"
       }`;
     }
-    if (i === q.correctIndex) return `${base} border-success bg-success/10 text-foreground`;
+    if (i === currentReveal.correctIndex) return `${base} border-success bg-success/10 text-foreground`;
     if (i === selected) return `${base} border-destructive bg-destructive/10 text-foreground`;
     return `${base} border-border bg-card opacity-60`;
   };
 
-  const isCorrect = submitted && selected === q.correctIndex;
+  const isCorrect = submitted && !!currentReveal?.isCorrect;
 
   return (
     <div
@@ -363,11 +436,7 @@ export function PracticeSession({
               דיווח
             </button>
             <button
-              onClick={() => {
-                const a = answers[index];
-                if (a != null) record(q.id, a === q.correctIndex);
-                setFinished(true);
-              }}
+              onClick={() => setFinished(true)}
               className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-secondary"
             >
               <Flag className="h-3.5 w-3.5" />
@@ -431,18 +500,18 @@ export function PracticeSession({
               <div className="flex items-center gap-3">
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                    submitted && i === q.correctIndex
+                    submitted && currentReveal && i === currentReveal.correctIndex
                       ? "border-success bg-success text-success-foreground"
-                      : submitted && i === selected
+                      : submitted && currentReveal && i === selected
                       ? "border-destructive bg-destructive text-destructive-foreground"
                       : selected === i
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background text-muted-foreground"
                   }`}
                 >
-                  {submitted && i === q.correctIndex ? (
+                  {submitted && currentReveal && i === currentReveal.correctIndex ? (
                     <Check className="h-4 w-4" />
-                  ) : submitted && i === selected ? (
+                  ) : submitted && currentReveal && i === selected ? (
                     <X className="h-4 w-4" />
                   ) : (
                     String.fromCharCode(0x05d0 + i)
@@ -459,17 +528,25 @@ export function PracticeSession({
         {/* Study-mode feedback */}
         {config.mode === "study" && (
           <div className="mt-6">
-            {!submitted ? (
+            {limitReached && !currentReveal ? (
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-dashed border-amber-500/50 bg-amber-500/5 px-5 py-4">
+                <Lock className="h-5 w-5 text-amber-600" />
+                <span className="font-bold text-amber-700">
+                  הגעת למכסת השאלות החינמית להיום —{" "}
+                  <Link to="/pricing" className="underline">
+                    שדרג למסלול 700+
+                  </Link>{" "}
+                  לגישה ללא הגבלה.
+                </span>
+              </div>
+            ) : !submitted ? (
               <button
-                onClick={() =>
-                  selected !== null &&
-                  (setChecked((prev) => ({ ...prev, [index]: true })),
-                  q && record(q.id, selected === q.correctIndex))
-                }
-                disabled={selected === null}
-                className="w-full rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40"
+                onClick={() => selected !== null && void reveal([index])}
+                disabled={selected === null || revealing}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40"
                 style={{ background: "var(--gradient-primary)" }}
               >
+                {revealing && <Loader2 className="h-4 w-4 animate-spin" />}
                 בדוק תשובה
               </button>
             ) : (
@@ -498,9 +575,9 @@ export function PracticeSession({
                     }`}
                   />
                 </button>
-                {showSolution && (
+                {showSolution && currentReveal && (
                   <div className="space-y-4 rounded-2xl border border-border bg-background p-5">
-                    {q.explanation
+                    {currentReveal.explanation
                       .split(/\n{2,}/)
                       .map((p) => p.trim())
                       .filter(Boolean)

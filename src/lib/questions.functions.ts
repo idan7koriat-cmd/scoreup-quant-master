@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { requireExtAuth } from "@/lib/extAuth.middleware";
-import type { Question } from "@/data/questions";
+import type { QuestionPreview } from "@/data/questions";
 
 type Filters = {
   topics?: string[];
@@ -36,7 +36,11 @@ const DIFFICULTY_LABELS: Record<number, string> = {
 
 const EXAM_TOPICS = ["אלגברה", "בעיות", "גיאומטריה"];
 
-function toQuestion(row: any): Question {
+// לעולם לא לכלול כאן correct_index/explanation — הן חסומות ברמת העמודה ל-anon/authenticated
+// (ראו המיגרציה שמגבילה את הגרנטים על questions), ונחשפות רק דרך checkAnswers/check_answers.
+const SAFE_COLUMNS = "id, topic, difficulty, question, answers, svg_code, group_id, group_order, created_at";
+
+function toQuestionPreview(row: any): QuestionPreview {
   const raw = row.difficulty;
   const level = typeof raw === "number" ? raw : Number(raw);
   const diff = Number.isFinite(level) ? level : 2;
@@ -47,8 +51,6 @@ function toQuestion(row: any): Question {
     difficultyLevel: diff,
     question: row.question ?? "",
     answers: (row.answers as string[]) ?? [],
-    correctIndex: row.correct_index ?? row.correctIndex ?? 0,
-    explanation: row.explanation ?? "",
     svgCode: row.svg_code ?? row.svgCode ?? null,
   };
 }
@@ -97,7 +99,7 @@ export const getTopics = createServerFn({ method: "GET" }).handler(async (): Pro
 export const getQuestions = createServerFn({ method: "GET" })
   .middleware([requireExtAuth])
   .inputValidator((input: any) => input)
-  .handler(async ({ data, context }): Promise<Question[]> => {
+  .handler(async ({ data, context }): Promise<QuestionPreview[]> => {
     const rawData = (data as any)?.data ? (data as any).data : data;
     const filters: Filters = rawData ?? {};
 
@@ -110,7 +112,7 @@ export const getQuestions = createServerFn({ method: "GET" })
     if (solvedError) console.error("[getQuestions] solved_questions fetch failed:", solvedError.message);
     const solved = new Set((solvedRows ?? []).map((r: any) => String(r.question_id)));
 
-    let query = client().from("questions").select("*");
+    let query = client().from("questions").select(SAFE_COLUMNS);
     if (!filters.examMode) {
       if (filters.topics && filters.topics.length > 0) {
         query = query.in("topic", filters.topics);
@@ -130,7 +132,7 @@ export const getQuestions = createServerFn({ method: "GET" })
     const ordered = shuffle(groupRows(rows));
 
     if (filters.examMode) {
-      return buildExam(ordered).map(toQuestion);
+      return buildExam(ordered).map(toQuestionPreview);
     }
 
     let selected: any[] = [];
@@ -147,7 +149,46 @@ export const getQuestions = createServerFn({ method: "GET" })
       selected = ordered.flat();
     }
 
-    return selected.map(toQuestion);
+    return selected.map(toQuestionPreview);
+  });
+
+export type CheckAnswersResult =
+  | { ok: true; results: { questionId: string; isCorrect: boolean; correctIndex: number; explanation: string }[] }
+  | { ok: false; reason: "daily_limit_reached" };
+
+/**
+ * הדרך היחידה לקבל correct_index/explanation: בודקת בשרת (auth.uid() אמיתי מה-JWT, לא ניתן
+ * לזיוף) האם המשתמש פרימיום, ולמשתמש חינמי אוכפת מכסה של 3 חשיפות תשובה ביום — בלי קשר לאיזה
+ * מסך שלח את הבקשה, כך שגם custom/simulation מוגנים בפועל ולא רק ב-UI.
+ */
+export const checkAnswers = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .inputValidator((input: { items: { questionId: string; selectedIndex: number }[] }) => input)
+  .handler(async ({ data, context }): Promise<CheckAnswersResult> => {
+    const payload = (data as any)?.data ?? data;
+    const items: { questionId: string; selectedIndex: number }[] = payload.items ?? [];
+    if (items.length === 0) return { ok: true, results: [] };
+
+    const { data: rows, error } = await context.supabase.rpc("check_answers", {
+      payload: items.map((it) => ({ question_id: it.questionId, selected_index: it.selectedIndex })),
+    });
+
+    if (error) {
+      if (error.message?.includes("DAILY_LIMIT_REACHED")) {
+        return { ok: false, reason: "daily_limit_reached" };
+      }
+      throw new Error(error.message);
+    }
+
+    return {
+      ok: true,
+      results: ((rows ?? []) as any[]).map((r) => ({
+        questionId: r.question_id,
+        isCorrect: r.is_correct,
+        correctIndex: r.correct_index,
+        explanation: r.explanation,
+      })),
+    };
   });
 
 /** סימולציית פרק מלאה: מקבץ תרשים אחד (4-5 שאלות) + שאר השאלות מחולקות בין הנושאים */
