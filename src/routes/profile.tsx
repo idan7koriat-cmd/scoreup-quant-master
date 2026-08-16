@@ -207,6 +207,12 @@ function ProfilePage() {
               <ArrowRight className="h-4 w-4" />
               חזרה לדשבורד
             </Link>
+            <Link
+              to="/pricing"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              תכניות ומנויים
+            </Link>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
               className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"

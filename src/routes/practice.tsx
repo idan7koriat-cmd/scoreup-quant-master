@@ -129,6 +129,12 @@ function PracticePage() {
             </span>
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              to="/pricing"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+            >
+              תכניות ומנויים
+            </Link>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
               className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"

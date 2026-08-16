@@ -127,7 +127,13 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
-        <div className="container mx-auto flex h-16 items-center justify-end px-4">
+        <div className="container mx-auto flex h-16 items-center justify-end gap-2 px-4">
+          <Link
+            to="/pricing"
+            className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            תכניות ומנויים
+          </Link>
           <a
             href={`mailto:${SUPPORT_EMAIL}`}
             className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
