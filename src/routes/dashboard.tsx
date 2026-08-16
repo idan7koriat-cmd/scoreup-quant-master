@@ -43,14 +43,14 @@ function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: profile } = useQuery({
+  const { data: profile, isPending: profileLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: () => getMyProfile(),
     enabled: !!session,
     staleTime: 60 * 1000,
   });
 
-  if (loading) {
+  if (loading || (session && profileLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -108,7 +108,6 @@ function Dashboard() {
         level: config.difficultyLevel ?? 0,
         seconds: config.totalSeconds ?? 0,
         style: config.mode,
-        questionId: config.questionId ?? "",
       },
     });
   };
