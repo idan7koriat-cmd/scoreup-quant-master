@@ -82,8 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "ScoreUp — שפר את הציון בחלק הכמותי בפסיכומטרי" },
       {
         name: "description",
-        content:
-          "ScoreUp — למידה חכמה ותרגול ממוקד עם AI לחלק הכמותי בפסיכומטרי.",
+        content: "ScoreUp — למידה חכמה ותרגול ממוקד עם AI לחלק הכמותי בפסיכומטרי.",
       },
     ],
     links: [
@@ -97,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700&display=swap",
       },
     ],
   }),

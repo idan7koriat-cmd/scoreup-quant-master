@@ -7,6 +7,8 @@
 
 @theme inline {
   --font-sans: "Heebo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Frank Ruhl Libre", Georgia, serif;
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,19 +45,19 @@
   --radius: 0.875rem;
 
   /* Dark & Neon Tech */
-  --background: oklch(0.17 0.032 260);   /* #0b0f19 */
+  --background: oklch(0.17 0.032 260); /* #0b0f19 */
   --foreground: oklch(0.97 0.01 240);
 
-  --card: oklch(0.22 0.035 258 / 0.72);  /* glass panel */
+  --card: oklch(0.22 0.035 258 / 0.72); /* glass panel */
   --card-foreground: oklch(0.97 0.01 240);
 
   --popover: oklch(0.2 0.035 258);
   --popover-foreground: oklch(0.97 0.01 240);
 
   /* Neon cyan primary */
-  --primary: oklch(0.79 0.14 213);       /* #00d2ff */
+  --primary: oklch(0.79 0.14 213); /* #00d2ff */
   --primary-foreground: oklch(0.16 0.03 260);
-  --primary-glow: oklch(0.62 0.2 253);   /* #0072ff */
+  --primary-glow: oklch(0.62 0.2 253); /* #0072ff */
 
   /* Brand accents */
   --cyan: oklch(0.79 0.14 213);
@@ -82,9 +84,10 @@
   --input: oklch(0.79 0.14 213 / 0.22);
   --ring: oklch(0.79 0.14 213);
 
-  --gradient-hero: radial-gradient(1200px 600px at 15% 10%, oklch(0.62 0.2 253 / 0.45), transparent 60%),
-                   radial-gradient(900px 500px at 90% 90%, oklch(0.79 0.14 213 / 0.28), transparent 60%),
-                   linear-gradient(180deg, #070b14 0%, #0b0f19 100%);
+  --gradient-hero:
+    radial-gradient(1200px 600px at 15% 10%, oklch(0.62 0.2 253 / 0.45), transparent 60%),
+    radial-gradient(900px 500px at 90% 90%, oklch(0.79 0.14 213 / 0.28), transparent 60%),
+    linear-gradient(180deg, #070b14 0%, #0b0f19 100%);
   --gradient-primary: linear-gradient(135deg, #00d2ff, #0072ff);
   --gradient-cta: linear-gradient(135deg, #00d2ff, #0072ff);
   --gradient-text: linear-gradient(90deg, #00d2ff, #4facfe);
@@ -106,6 +109,93 @@
   box-shadow: 0 18px 50px -24px color-mix(in oklab, #0072ff 70%, transparent);
 }
 
+/*
+ * "ריכוז בטוח" (Confident Focus) — the new visual direction from DESIGN.md,
+ * scoped rather than promoted to :root so it ships one surface at a time.
+ * First (and so far only) surface: the practice screen. Promote these values
+ * into :root and delete this block once the whole app has been carried over.
+ */
+.su-theme-v2 {
+  --background: #f5f2ed;
+  --foreground: #1d2624;
+
+  --card: #ffffff;
+  --card-foreground: #1d2624;
+
+  --popover: #ffffff;
+  --popover-foreground: #1d2624;
+
+  --primary: #1f4c4e;
+  --primary-foreground: #ffffff;
+
+  --secondary: #fbf8f3;
+  --secondary-foreground: #1d2624;
+
+  --muted: #fbf8f3;
+  --muted-foreground: #6b6459;
+
+  --accent: #e4edec;
+  --accent-foreground: #1f4c4e;
+
+  --success: #2f7a5c;
+  --success-foreground: #ffffff;
+
+  --destructive: #be4a39;
+  --destructive-foreground: #ffffff;
+
+  --border: #e4ded2;
+  --input: #e4ded2;
+  --ring: #1f4c4e;
+
+  --radius: 0.625rem;
+
+  --coral: #dd6b42;
+  --coral-deep: #a64e2e;
+  --emerald: #2f7a5c;
+
+  /* Flat by design (The No-Glow Rule) — these variables stay because several
+     components apply them as inline `background`/`background-image`, not
+     because this system uses gradients. */
+  --gradient-primary: var(--primary);
+  --gradient-cta: var(--coral);
+  --gradient-text: linear-gradient(90deg, var(--primary), var(--primary));
+  --gradient-subtle: var(--background);
+
+  --shadow-elegant: 0 1px 2px rgba(29, 38, 36, 0.04), 0 8px 24px -12px rgba(29, 38, 36, 0.12);
+  --shadow-glow: none;
+  --shadow-card: 0 1px 2px rgba(29, 38, 36, 0.04), 0 8px 24px -12px rgba(29, 38, 36, 0.12);
+
+  color-scheme: light;
+}
+
+.su-theme-v2 .glass-panel {
+  background: color-mix(in oklab, var(--card) 96%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-elegant);
+}
+
+@keyframes su-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes su-feedback-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
 
 @layer base {
   * {

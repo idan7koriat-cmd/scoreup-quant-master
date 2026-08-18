@@ -17,10 +17,7 @@ type PracticeSearch = {
 export const Route = createFileRoute("/practice")({
   ssr: false,
   validateSearch: (search: Record<string, unknown>): PracticeSearch => ({
-    mode:
-      search.mode === "warmup" || search.mode === "simulation"
-        ? search.mode
-        : "custom",
+    mode: search.mode === "warmup" || search.mode === "simulation" ? search.mode : "custom",
     topics: Array.isArray(search.topics) ? (search.topics as string[]) : [],
     count: Number(search.count) > 0 ? Number(search.count) : 10,
     level: Number(search.level) > 0 ? Number(search.level) : 0,
@@ -66,7 +63,8 @@ function PracticePage() {
     return null;
   }
 
-  const config: PracticeConfig = search.mode === "warmup"
+  const config: PracticeConfig =
+    search.mode === "warmup"
       ? {
           launch: "warmup",
           topics: [],
@@ -96,7 +94,7 @@ function PracticePage() {
           };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="su-theme-v2 min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link to="/dashboard" className="flex items-center gap-2.5">
@@ -106,7 +104,7 @@ function PracticePage() {
             >
               <Sigma className="h-5 w-5" strokeWidth={2.5} />
             </span>
-            <span className="text-xl font-black tracking-tight text-foreground">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
               Score
               <span
                 className="bg-clip-text text-transparent"
@@ -137,10 +135,7 @@ function PracticePage() {
       </header>
 
       <main className="container mx-auto px-4 pb-16">
-        <PracticeSession
-          config={config}
-          onExit={() => navigate({ to: "/dashboard" })}
-        />
+        <PracticeSession config={config} onExit={() => navigate({ to: "/dashboard" })} />
       </main>
     </div>
   );

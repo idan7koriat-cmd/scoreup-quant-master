@@ -55,10 +55,10 @@ function ReportModal({ questionId, onClose }: { questionId: string; onClose: () 
   return (
     <DialogPrimitive.Root open onOpenChange={(next) => !next && onClose()}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-background/85 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Overlay className="su-theme-v2 fixed inset-0 z-50 bg-background/85 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
           onOpenAutoFocus={(e) => e.preventDefault()}
-          className="glass-panel fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl p-7"
+          className="su-theme-v2 glass-panel fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-[20px] p-7"
         >
           <DialogPrimitive.Title asChild>
             <h3 className="text-xl font-extrabold text-foreground">השאלה בעייתית כי:</h3>
@@ -67,7 +67,7 @@ function ReportModal({ questionId, onClose }: { questionId: string; onClose: () 
             {REPORT_REASONS.map((r) => (
               <label
                 key={r}
-                className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 text-sm font-semibold transition-colors ${
+                className={`flex cursor-pointer items-start gap-3 rounded-[10px] border-2 p-4 text-sm font-semibold transition-colors duration-150 ${
                   reason === r
                     ? "border-primary bg-accent text-foreground"
                     : "border-border text-muted-foreground hover:border-primary/50"
@@ -102,15 +102,15 @@ function ReportModal({ questionId, onClose }: { questionId: string; onClose: () 
           <div className="mt-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
+              className="flex-1 rounded-[10px] border border-border px-4 py-3 text-sm font-bold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97]"
             >
               ביטול
             </button>
             <button
               onClick={submit}
               disabled={sending}
-              className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:opacity-60"
-              style={{ background: "var(--gradient-cta)" }}
+              className="flex-1 rounded-[10px] px-4 py-3 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:opacity-60"
+              style={{ background: "var(--gradient-primary)" }}
             >
               {sending ? "שולח…" : "שלח דיווח"}
             </button>
@@ -262,7 +262,7 @@ export function PracticeSession({
   if (isPending) {
     return (
       <div
-        className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card px-6 py-20"
+        className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-[20px] border border-border bg-card px-6 py-20"
         style={{ boxShadow: "var(--shadow-elegant)" }}
       >
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -273,13 +273,13 @@ export function PracticeSession({
 
   if (isError || total === 0 || !q) {
     return (
-      <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-border bg-card px-6 py-16 text-center">
+      <div className="mx-auto mt-12 max-w-3xl rounded-[20px] border border-border bg-card px-6 py-16 text-center">
         <p className="font-semibold text-foreground">
           {isError ? "לא הצלחנו לטעון את השאלות כרגע." : "לא נמצאו שאלות שתואמות את הבחירה שלך."}
         </p>
         <button
           onClick={onExit}
-          className="mt-4 rounded-xl border border-border bg-card px-5 py-2.5 font-semibold text-foreground hover:bg-secondary"
+          className="mt-4 rounded-[10px] border border-border bg-card px-5 py-2.5 font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97]"
         >
           חזרה להגדרות
         </button>
@@ -292,7 +292,7 @@ export function PracticeSession({
     if (!summaryReady) {
       return (
         <div
-          className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card px-6 py-20"
+          className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-center gap-4 rounded-[20px] border border-border bg-card px-6 py-20"
           style={{ boxShadow: "var(--shadow-elegant)" }}
         >
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -303,10 +303,10 @@ export function PracticeSession({
 
     return (
       <div
-        className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card p-6 md:p-8"
+        className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card p-6 md:p-8"
         style={{ boxShadow: "var(--shadow-elegant)" }}
       >
-        <h3 className="text-2xl font-extrabold text-foreground">סיכום התרגול</h3>
+        <h3 className="font-display text-2xl font-medium text-foreground">סיכום התרגול</h3>
         <p className="mt-2 text-lg text-muted-foreground">
           ענית נכון על {score} מתוך {total} שאלות
         </p>
@@ -318,7 +318,7 @@ export function PracticeSession({
             return (
               <div
                 key={item.id}
-                className={`rounded-2xl border-2 p-5 ${
+                className={`rounded-[16px] border-2 p-5 ${
                   !itemReveal
                     ? "border-border bg-secondary/30"
                     : ok
@@ -377,7 +377,7 @@ export function PracticeSession({
 
         <button
           onClick={onExit}
-          className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
+          className="mt-8 flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
           style={{ background: "var(--gradient-primary)" }}
         >
           <RotateCcw className="h-4 w-4" />
@@ -390,7 +390,8 @@ export function PracticeSession({
   const currentReveal = reveals[index];
 
   const optionClass = (i: number) => {
-    const base = "w-full text-start rounded-2xl border-2 px-5 py-4 font-medium transition-all";
+    const base =
+      "w-full text-start rounded-[10px] border-2 px-5 py-4 font-medium transition-[border-color,background-color,box-shadow] duration-150 ease-out";
     if (!submitted || !currentReveal) {
       return `${base} ${
         selected === i
@@ -401,14 +402,14 @@ export function PracticeSession({
     if (i === currentReveal.correctIndex)
       return `${base} border-success bg-success/10 text-foreground`;
     if (i === selected) return `${base} border-destructive bg-destructive/10 text-foreground`;
-    return `${base} border-border bg-card opacity-60`;
+    return `${base} border-border bg-card opacity-55`;
   };
 
   const isCorrect = submitted && !!currentReveal?.isCorrect;
 
   return (
     <div
-      className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card"
+      className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card"
       style={{ boxShadow: "var(--shadow-elegant)" }}
     >
       {reportOpen && <ReportModal questionId={q.id} onClose={() => setReportOpen(false)} />}
@@ -436,14 +437,14 @@ export function PracticeSession({
             </span>
             <button
               onClick={() => setReportOpen(true)}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground"
             >
               <Megaphone className="h-3.5 w-3.5" />
               דיווח
             </button>
             <button
               onClick={() => setFinished(true)}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-secondary"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground transition-colors duration-150 hover:bg-secondary"
             >
               <Flag className="h-3.5 w-3.5" />
               סיום תרגול
@@ -454,7 +455,7 @@ export function PracticeSession({
         {/* Progress bar */}
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-border">
           <div
-            className="h-full rounded-full transition-all duration-300"
+            className="h-full rounded-full transition-[width] duration-300 ease-out"
             style={{
               width: `${((index + 1) / total) * 100}%`,
               background: "var(--gradient-primary)",
@@ -471,7 +472,7 @@ export function PracticeSession({
             <button
               key={i}
               onClick={() => goTo(i)}
-              className={`h-9 w-9 rounded-lg border-2 text-sm font-bold transition-all ${
+              className={`h-10 w-10 rounded-[8px] border-2 text-sm font-bold transition-[border-color,background-color,color] duration-150 ${
                 i === index
                   ? "border-primary bg-primary text-primary-foreground"
                   : answered
@@ -503,7 +504,7 @@ export function PracticeSession({
             >
               <div className="flex items-center gap-3">
                 <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition-[border-color,background-color,color] duration-150 ${
                     submitted && currentReveal && i === currentReveal.correctIndex
                       ? "border-success bg-success text-success-foreground"
                       : submitted && currentReveal && i === selected
@@ -533,9 +534,15 @@ export function PracticeSession({
         {config.mode === "study" && (
           <div className="mt-6">
             {limitReached && !currentReveal ? (
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-dashed border-amber-500/50 bg-amber-500/5 px-5 py-4">
-                <Lock className="h-5 w-5 text-amber-600" />
-                <span className="font-bold text-amber-700">
+              <div
+                className="flex items-center gap-3 rounded-[10px] border-2 border-dashed px-5 py-4"
+                style={{
+                  borderColor: "color-mix(in oklab, var(--coral) 50%, transparent)",
+                  background: "color-mix(in oklab, var(--coral) 8%, transparent)",
+                }}
+              >
+                <Lock className="h-5 w-5" style={{ color: "var(--coral-deep)" }} />
+                <span className="font-bold" style={{ color: "var(--coral-deep)" }}>
                   הגעת למכסת השאלות החינמית להיום —{" "}
                   <Link to="/pricing" className="underline">
                     שדרג למסלול 700+
@@ -547,7 +554,7 @@ export function PracticeSession({
               <button
                 onClick={() => selected !== null && void reveal([index])}
                 disabled={selected === null || revealing}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
                 style={{ background: "var(--gradient-primary)" }}
               >
                 {revealing && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -556,7 +563,8 @@ export function PracticeSession({
             ) : (
               <div className="space-y-4">
                 <div
-                  className={`flex items-center gap-3 rounded-2xl border-2 px-5 py-4 ${
+                  key={isCorrect ? "correct" : "wrong"}
+                  className={`flex items-center gap-3 rounded-[10px] border-2 px-5 py-4 opacity-0 transition-[opacity,transform] duration-200 ease-out [animation:su-feedback-in_200ms_ease-out_forwards] ${
                     isCorrect
                       ? "border-success bg-success/10 text-success"
                       : "border-destructive bg-destructive/10 text-destructive"
@@ -570,15 +578,15 @@ export function PracticeSession({
 
                 <button
                   onClick={() => setShowSolution((s) => !s)}
-                  className="flex w-full items-center justify-between rounded-2xl border border-border bg-secondary/50 px-5 py-4 text-start font-semibold text-foreground transition-colors hover:bg-secondary"
+                  className="flex w-full items-center justify-between rounded-[10px] border border-border bg-secondary/50 px-5 py-4 text-start font-semibold text-foreground transition-colors duration-150 hover:bg-secondary"
                 >
                   <span>פתרון מפורט</span>
                   <ChevronDown
-                    className={`h-5 w-5 transition-transform ${showSolution ? "rotate-180" : ""}`}
+                    className={`h-5 w-5 transition-transform duration-200 ease-out ${showSolution ? "rotate-180" : ""}`}
                   />
                 </button>
                 {showSolution && currentReveal && (
-                  <div className="space-y-4 rounded-2xl border border-border bg-background p-5">
+                  <div className="space-y-4 rounded-[10px] border border-border bg-background p-5 opacity-0 [animation:su-feedback-in_200ms_ease-out_forwards]">
                     {currentReveal.explanation
                       .split(/\n{2,}/)
                       .map((p) => p.trim())
@@ -600,7 +608,7 @@ export function PracticeSession({
           <button
             onClick={() => goTo(Math.max(0, index - 1))}
             disabled={index === 0}
-            className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-5 py-4 text-base font-semibold text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
+            className="flex items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-5 py-4 text-base font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100"
           >
             <ChevronRight className="h-5 w-5" />
             הקודם
@@ -608,7 +616,7 @@ export function PracticeSession({
           {index < total - 1 ? (
             <button
               onClick={() => goTo(Math.min(total - 1, index + 1))}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
               style={{ background: "var(--gradient-primary)" }}
             >
               לשאלה הבאה
@@ -617,7 +625,7 @@ export function PracticeSession({
           ) : (
             <button
               onClick={() => setFinished(true)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
               style={{ background: "var(--gradient-primary)" }}
             >
               סיום וצפייה בסיכום
