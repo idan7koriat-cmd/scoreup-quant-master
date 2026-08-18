@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-19T00:00:00Z",
+  "title": "Design System: ScoreUp",
+  "extensions": {
+    "colorMeta": {
+      "petrol": { "role": "primary", "displayName": "Confident Petrol", "canonical": "#1F4C4E", "tonalRamp": ["#163537", "#296466", "#3a8e92", "#50b5b9", "#7cc7cb", "#a7dadc", "#d3ecee", "#edf7f8"] },
+      "coral": { "role": "secondary", "displayName": "Rationed Coral", "canonical": "#DD6B42", "tonalRamp": ["#411a0c", "#793016", "#ad451f", "#da5d30", "#e38563", "#ecae97", "#f6d6cb", "#fbeee9"] },
+      "success": { "role": "semantic-success", "displayName": "Quiet Success Green", "canonical": "#2F7A5C", "tonalRamp": ["#15372a", "#28674e", "#39936f", "#4ebb8f", "#7accab", "#a7ddc7", "#d3eee3", "#edf8f3"] },
+      "danger": { "role": "semantic-danger", "displayName": "Brick Red", "canonical": "#BE4A39", "tonalRamp": ["#3b1712", "#6e2b21", "#9d3d2f", "#c75443", "#d57e72", "#e3a9a1", "#f1d4d0", "#f9edeb"] },
+      "ink": { "role": "neutral", "displayName": "Warm Charcoal", "canonical": "#1D2624", "tonalRamp": ["#212b29", "#3e514d", "#58746e", "#74958e", "#97b0aa", "#bacac6", "#dce5e3", "#f1f4f3"] },
+      "bg": { "role": "neutral", "displayName": "Warm Paper Gray", "canonical": "#F5F2ED", "tonalRamp": ["#31291b", "#5c4c33", "#836d49", "#a88d62", "#bdaa89", "#d3c6b0", "#e9e3d8", "#f6f3ef"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headlines and page-level titles only. Never body/reading text." },
+      "title": { "displayName": "Title", "purpose": "Section headings, card titles, summary headline." },
+      "body": { "displayName": "Body", "purpose": "All reading content: questions, answers, explanations, marketing copy." },
+      "label": { "displayName": "Label", "purpose": "Badges, buttons, form labels, metadata." },
+      "numeral": { "displayName": "Numeral", "purpose": "Timer and question counter — tabular figures so digits never shift width." }
+    },
+    "shadows": [
+      { "name": "card-ambient", "value": "0 1px 2px rgba(29,38,36,0.04), 0 8px 24px -12px rgba(29,38,36,0.12)", "purpose": "The only shadow in the system: outer card shells, neutral warm-black, low opacity. Never colored/glowing." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for hover/press/selection transitions, 150-200ms." },
+      { "name": "ease-reveal", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Answer-feedback and disclosure reveals (solution panel, correct/incorrect state), 250-350ms — precise and settled, never bouncy." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default forward action — next question, continue, submit.",
+      "html": "<button class=\"ds-btn-primary\">לשאלה הבאה</button>",
+      "css": ".ds-btn-primary { background: #1F4C4E; color: #fff; padding: 16px 24px; border-radius: 10px; border: none; font-weight: 500; font-family: Heebo, sans-serif; transition: background 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: #153536; } .ds-btn-primary:active { transform: scale(0.99); } .ds-btn-primary:focus-visible { outline: 2px solid #1F4C4E; outline-offset: 2px; }"
+    },
+    {
+      "name": "CTA Button",
+      "kind": "button",
+      "refersTo": "button-cta",
+      "description": "The single highest-intent action on a screen — start practicing, upgrade. Never paired with a competing Primary button on the same screen.",
+      "html": "<button class=\"ds-btn-cta\">התחל לתרגל</button>",
+      "css": ".ds-btn-cta { background: #DD6B42; color: #fff; padding: 16px 24px; border-radius: 10px; border: none; font-weight: 500; font-family: Heebo, sans-serif; transition: background 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-cta:hover { background: #A64E2E; } .ds-btn-cta:focus-visible { outline: 2px solid #DD6B42; outline-offset: 2px; }"
+    },
+    {
+      "name": "Answer Option — Correct",
+      "kind": "custom",
+      "refersTo": "option-correct",
+      "description": "Revealed-correct answer state in the practice screen.",
+      "html": "<div class=\"ds-option ds-option-correct\"><span class=\"ds-option-letter\">✓</span><span>45</span></div>",
+      "css": ".ds-option { display: flex; align-items: center; gap: 12px; border: 1.5px solid #E4DED2; background: #fff; border-radius: 8px; padding: 13px 16px; font-family: Heebo, sans-serif; font-size: 15px; color: #1D2624; } .ds-option-correct { border-color: #2F7A5C; background: #E4F0EA; } .ds-option-letter { width: 28px; height: 28px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; } .ds-option-correct .ds-option-letter { background: #2F7A5C; color: #fff; border: none; }"
+    },
+    {
+      "name": "Answer Option — Incorrect",
+      "kind": "custom",
+      "refersTo": "option-wrong",
+      "description": "Revealed-incorrect selected answer state in the practice screen.",
+      "html": "<div class=\"ds-option ds-option-wrong\"><span class=\"ds-option-letter\">✕</span><span>21</span></div>",
+      "css": ".ds-option { display: flex; align-items: center; gap: 12px; border: 1.5px solid #E4DED2; background: #fff; border-radius: 8px; padding: 13px 16px; font-family: Heebo, sans-serif; font-size: 15px; color: #1D2624; } .ds-option-wrong { border-color: #BE4A39; background: #FBEAE6; } .ds-option-letter { width: 28px; height: 28px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; } .ds-option-wrong .ds-option-letter { background: #BE4A39; color: #fff; border: none; }"
+    },
+    {
+      "name": "Topic Badge",
+      "kind": "chip",
+      "refersTo": "badge-topic",
+      "description": "Quiet informational tag — topic name on a practice question.",
+      "html": "<span class=\"ds-badge\">אלגברה</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; background: #E4EDEC; color: #1F4C4E; font-size: 12px; font-weight: 500; font-family: Heebo, sans-serif; padding: 5px 12px; border-radius: 999px; }"
+    },
+    {
+      "name": "Timer",
+      "kind": "custom",
+      "refersTo": "timer-badge",
+      "description": "Countdown / elapsed-time display. Tabular numerals are mandatory — digits must not shift width as the value changes.",
+      "html": "<span class=\"ds-timer\">12:47</span>",
+      "css": ".ds-timer { display: inline-flex; align-items: center; gap: 6px; background: #E4EDEC; color: #1F4C4E; font-family: Heebo, sans-serif; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; padding: 6px 12px; border-radius: 999px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Primary content shell (practice card, summary card, pricing card).",
+      "html": "<div class=\"ds-card\">תוכן</div>",
+      "css": ".ds-card { background: #fff; border: 1px solid #E4DED2; border-radius: 20px; box-shadow: 0 1px 2px rgba(29,38,36,0.04), 0 8px 24px -12px rgba(29,38,36,0.12); padding: 24px; font-family: Heebo, sans-serif; color: #1D2624; }"
+    },
+    {
+      "name": "Question Chip — states",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Question-palette navigation chip: default, answered, current.",
+      "html": "<div style=\"display:flex;gap:6px;\"><div class=\"ds-chip\">1</div><div class=\"ds-chip ds-chip-done\">2</div><div class=\"ds-chip ds-chip-current\">3</div></div>",
+      "css": ".ds-chip { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid #E4DED2; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #6B6459; background: #fff; font-family: Heebo, sans-serif; } .ds-chip-done { border-color: #2F7A5C; background: #E4F0EA; color: #2F7A5C; } .ds-chip-current { border-color: #1F4C4E; background: #1F4C4E; color: #fff; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "ריכוז בטוח — Confident Focus",
+    "overview": "ScoreUp helps a stressed, time-pressured test-taker feel like they have command of the material in front of them. The system sits deliberately between two failure modes: it must never read as a dry, cold textbook (adds to exam anxiety) and never as a playful, gamified consumer app (undermines the seriousness of a real admissions exam). The rendition is a warm-neutral, structured, quietly confident interface — closer to a well-run instrument panel than to either a study manual or a language-learning app. This replaces an incumbent \"Dark & Neon Tech\" identity (near-black background, neon-cyan primary, glowing gradient blobs) that read as generic AI-startup chrome disconnected from the subject. The new system is light-first, warm-neutral, and reserves color for moments that matter — a functional discipline, not a decorative one: color marks the interactive edge (a button, a correct answer, a streak), never the ambient surface.",
+    "keyCharacteristics": [
+      "Warm, light-first ground (never the near-black + neon accent AI-startup default)",
+      "One deep, desaturated primary (petrol) carries structure; a warm coral accent is rationed to CTA and success moments only",
+      "A serif display face (Frank Ruhl Libre) gives headlines real character; the body stays on Heebo",
+      "Tabular numerals for the timer and question counter — exact, instrument-grade",
+      "Calmer corner radius than the incumbent system — structured and serious, not bubbly"
+    ],
+    "rules": [
+      { "name": "The Rationed Accent Rule", "body": "Coral appears only on a primary call-to-action or a success/achievement moment — never as a structural or decorative color. If more than one element on a screen is coral, one of them is wrong.", "section": "colors" },
+      { "name": "The Warm Neutral Rule", "body": "Every gray in this system (background, borders, muted text) carries a warm/beige bias. A cool or blue-gray value anywhere in the UI is a regression to the old identity, not a stylistic variant.", "section": "colors" },
+      { "name": "The Reading Content Rule", "body": "Frank Ruhl Libre is a headline face, never a body face. Question text, answer options, and explanations are always Heebo.", "section": "typography" },
+      { "name": "The Tabular Numeral Rule", "body": "Any digit sequence the user tracks in real time (countdown timer, question X of Y) uses font-variant-numeric: tabular-nums.", "section": "typography" },
+      { "name": "The No-Glow Rule", "body": "Shadows are neutral warm-black at low opacity. A colored/saturated shadow (the incumbent cyan/blue glow) is a regression to the old identity, not a legitimate elevation variant.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Heebo as the body/reading face everywhere text is meant to be read at length",
+      "Do use tabular numerals for the timer and question counter",
+      "Do treat RTL as a hard functional constraint: logical properties, mirrored directional icons, no hardcoded left/right",
+      "Do keep Coral to a single use per screen"
+    ],
+    "donts": [
+      "Don't reintroduce a saturated glow shadow, gradient blob, or neon-cyan accent anywhere",
+      "Don't set Frank Ruhl Libre (or any serif) as a body/reading face",
+      "Don't use a cool/blue-gray for any neutral",
+      "Don't invent a second accent color"
+    ]
+  }
+}
