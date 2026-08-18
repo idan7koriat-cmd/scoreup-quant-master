@@ -1,12 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import {
-  Sigma,
-  Flame,
-  LogOut,
-  Zap,
-
-  Loader2,
-} from "lucide-react";
+import { Sigma, Flame, LogOut, Zap, Loader2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { getMyProfile, markQuickPractice } from "@/lib/profile.functions";
@@ -23,8 +16,7 @@ export const Route = createFileRoute("/dashboard")({
       { title: "הדשבורד שלי — ScoreUp" },
       {
         name: "description",
-        content:
-          "בנה תרגול מותאם אישית, עקוב אחרי רצף הימים והתקדם בחשיבה כמותית עם ScoreUp.",
+        content: "בנה תרגול מותאם אישית, עקוב אחרי רצף הימים והתקדם בחשיבה כמותית עם ScoreUp.",
       },
       { property: "og:title", content: "הדשבורד שלי — ScoreUp" },
       {
@@ -112,11 +104,8 @@ function Dashboard() {
     });
   };
 
-
-
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="su-theme-v2 min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-between gap-3 px-4">
           <Link to="/" className="flex items-center gap-2.5">
@@ -126,7 +115,7 @@ function Dashboard() {
             >
               <Sigma className="h-5 w-5" strokeWidth={2.5} />
             </span>
-            <span className="text-xl font-black tracking-tight text-foreground">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
               Score
               <span
                 className="bg-clip-text text-transparent"
@@ -139,29 +128,35 @@ function Dashboard() {
 
           <div className="flex items-center gap-2 md:gap-3">
             {streak > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-sm font-bold text-accent-foreground">
-                <Flame className="h-4 w-4 text-orange-500" />
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold"
+                style={{
+                  background: "color-mix(in oklab, var(--coral) 14%, transparent)",
+                  color: "var(--coral-deep)",
+                }}
+              >
+                <Flame className="h-4 w-4" style={{ color: "var(--coral)" }} />
                 {streak} ימי רצף
               </span>
             )}
             <Link
               to="/profile"
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary sm:inline"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-foreground transition-colors duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline"
             >
               פרופיל
             </Link>
             <Link
               to="/pricing"
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline"
             >
               תכניות ומנויים
             </Link>
-            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline">
               צור קשר
             </ContactButton>
             <button
               onClick={signOut}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <LogOut className="h-4 w-4" />
               התנתק
@@ -171,7 +166,7 @@ function Dashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
           היי {name} 👋
         </h1>
         <p className="mt-2 text-muted-foreground">
@@ -189,12 +184,13 @@ function Dashboard() {
 
         {/* Account status */}
         <div className="mt-8">
-          <div className="rounded-3xl border border-border bg-card p-6">
+          <div
+            className="rounded-[20px] border border-border bg-card p-6"
+            style={{ boxShadow: "var(--shadow-elegant)" }}
+          >
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-muted-foreground">
-                  סטטוס חשבון
-                </p>
+                <p className="text-sm font-semibold text-muted-foreground">סטטוס חשבון</p>
                 <p className="mt-1 text-xl font-extrabold text-foreground">
                   {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
                 </p>
@@ -207,7 +203,7 @@ function Dashboard() {
               {!isPremium && (
                 <Link
                   to="/pricing"
-                  className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
+                  className="flex items-center gap-2 rounded-[10px] px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   <Zap className="h-4 w-4" />
@@ -220,7 +216,7 @@ function Dashboard() {
 
         {/* Practice engine */}
         <div className="mt-10">
-          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
+          <h2 className="font-display text-2xl font-medium tracking-tight text-foreground">
             בניה עצמית — תרגול מותאם אישית
           </h2>
           <p className="mt-2 text-muted-foreground">
@@ -233,7 +229,6 @@ function Dashboard() {
             onUpgrade={() => navigate({ to: "/pricing" })}
           />
         </div>
-
       </main>
     </div>
   );

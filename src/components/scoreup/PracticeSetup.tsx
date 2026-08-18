@@ -7,12 +7,20 @@ import type { PracticeConfig, PracticeMode } from "@/data/questions";
 const COUNTS = [5, 10, 15, 20];
 const LEVELS: (number | null)[] = [1, 2, 3, 4, null];
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl border-2 px-4 py-2.5 text-sm font-bold transition-all ${
+      className={`rounded-[10px] border-2 px-4 py-2.5 text-sm font-bold transition-[border-color,background-color,box-shadow] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
         active
           ? "border-primary bg-accent text-foreground shadow-md"
           : "border-border bg-card text-muted-foreground hover:border-primary/50"
@@ -72,7 +80,7 @@ export function PracticeSetup({
 
   return (
     <div
-      className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card p-6 md:p-8"
+      className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card p-6 md:p-8"
       style={{ boxShadow: "var(--shadow-elegant)" }}
     >
       {/* Presets */}
@@ -92,7 +100,7 @@ export function PracticeSetup({
             });
           }}
           disabled={!isPremium && quickLocked}
-          className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-[16px] border-2 border-border bg-secondary/50 p-5 text-start transition-[border-color,box-shadow] duration-150 ease-out hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span className="flex items-center gap-2 text-lg font-extrabold text-foreground">
             <Zap className="h-5 w-5 text-primary" />
@@ -122,19 +130,25 @@ export function PracticeSetup({
               launch: "simulation",
             });
           }}
-          className="rounded-2xl border-2 border-border bg-secondary/50 p-5 text-start transition-all hover:border-primary hover:shadow-md"
+          className="rounded-[16px] border-2 border-border bg-secondary/50 p-5 text-start transition-[border-color,box-shadow] duration-150 ease-out hover:border-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span className="flex items-center gap-2 text-lg font-extrabold text-foreground">
-            {isPremium ? <Timer className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
+            {isPremium ? (
+              <Timer className="h-5 w-5 text-primary" />
+            ) : (
+              <Lock className="h-5 w-5 text-muted-foreground" />
+            )}
             סימולציית פרק מלאה
           </span>
-          <p className="mt-2 text-sm text-muted-foreground">20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            20 שאלות · טיימר פרק כולל 20:00 · פתרונות רק בסיכום
+          </p>
         </button>
       </div>
 
       <div className="my-8 h-px w-full bg-border" />
 
-      <h3 className="mb-6 flex items-center gap-2 text-lg font-extrabold text-foreground">
+      <h3 className="font-display mb-6 flex items-center gap-2 text-lg font-medium text-foreground">
         <Sparkles className="h-5 w-5 text-primary" />
         בניית תרגול מותאם אישית
       </h3>
@@ -142,7 +156,7 @@ export function PracticeSetup({
       <div className="relative">
         {!isPremium && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center p-4">
-            <span className="pointer-events-auto sticky top-24 flex flex-col items-center gap-3 rounded-2xl border border-border bg-card/85 px-6 py-5 text-center shadow-lg">
+            <span className="pointer-events-auto sticky top-24 flex flex-col items-center gap-3 rounded-[16px] border border-border bg-card/85 px-6 py-5 text-center shadow-lg">
               <Lock className="h-8 w-8 text-primary" />
               <p className="max-w-xs text-base font-extrabold text-foreground">
                 תרגול מותאם אישית פתוח למנויי מסלול 700+ בלבד 🔒
@@ -150,7 +164,7 @@ export function PracticeSetup({
               <button
                 type="button"
                 onClick={onUpgrade}
-                className="rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
+                className="rounded-[10px] px-5 py-3 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 שדרג למסלול 700+ ⚡
@@ -163,59 +177,59 @@ export function PracticeSetup({
           {...(!isPremium ? { inert: "" as unknown as boolean } : {})}
           className={!isPremium ? "pointer-events-none select-none" : undefined}
         >
+          <div className="space-y-6">
+            <Field label="נושאים">
+              {allTopics.map((t) => (
+                <Chip key={t} active={selectedTopics.includes(t)} onClick={() => toggleTopic(t)}>
+                  {t}
+                </Chip>
+              ))}
+              {selectedTopics.length === 0 && (
+                <span className="self-center text-xs text-muted-foreground">
+                  (לא נבחר — כל הנושאים)
+                </span>
+              )}
+            </Field>
 
+            <Field label="מספר שאלות">
+              {COUNTS.map((c) => (
+                <Chip key={c} active={count === c} onClick={() => setCount(c)}>
+                  {c}
+                </Chip>
+              ))}
+            </Field>
 
-      <div className="space-y-6">
-        <Field label="נושאים">
-          {allTopics.map((t) => (
-            <Chip key={t} active={selectedTopics.includes(t)} onClick={() => toggleTopic(t)}>
-              {t}
-            </Chip>
-          ))}
-          {selectedTopics.length === 0 && (
-            <span className="self-center text-xs text-muted-foreground">(לא נבחר — כל הנושאים)</span>
-          )}
-        </Field>
+            <Field label="רמת קושי">
+              {LEVELS.map((l) => (
+                <Chip key={String(l)} active={level === l} onClick={() => setLevel(l)}>
+                  {l === null ? "משולב" : `רמה ${l}`}
+                </Chip>
+              ))}
+            </Field>
 
-        <Field label="מספר שאלות">
-          {COUNTS.map((c) => (
-            <Chip key={c} active={count === c} onClick={() => setCount(c)}>
-              {c}
-            </Chip>
-          ))}
-        </Field>
+            <Field label="טיימר">
+              <Chip active={!timed} onClick={() => setTimed(false)}>
+                ללא הגבלת זמן
+              </Chip>
+              <Chip active={timed} onClick={() => setTimed(true)}>
+                זמן פרק כולל ({count}:00 דקות)
+              </Chip>
+            </Field>
 
-        <Field label="רמת קושי">
-          {LEVELS.map((l) => (
-            <Chip key={String(l)} active={level === l} onClick={() => setLevel(l)}>
-              {l === null ? "משולב" : `רמה ${l}`}
-            </Chip>
-          ))}
-        </Field>
-
-        <Field label="טיימר">
-          <Chip active={!timed} onClick={() => setTimed(false)}>
-            ללא הגבלת זמן
-          </Chip>
-          <Chip active={timed} onClick={() => setTimed(true)}>
-            זמן פרק כולל ({count}:00 דקות)
-          </Chip>
-        </Field>
-
-        <Field label="מצב תרגול">
-          <Chip active={mode === "study"} onClick={() => setMode("study")}>
-            מצב לימודי
-          </Chip>
-          <Chip active={mode === "exam"} onClick={() => setMode("exam")}>
-            מצב מבחן
-          </Chip>
-        </Field>
-      </div>
+            <Field label="מצב תרגול">
+              <Chip active={mode === "study"} onClick={() => setMode("study")}>
+                מצב לימודי
+              </Chip>
+              <Chip active={mode === "exam"} onClick={() => setMode("exam")}>
+                מצב מבחן
+              </Chip>
+            </Field>
+          </div>
 
           <button
             type="button"
             onClick={startCustom}
-            className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-primary-foreground shadow-md transition-all hover:scale-[1.01]"
+            className="mt-8 w-full rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             style={{ background: "var(--gradient-primary)" }}
           >
             התחל תרגול
@@ -225,4 +239,3 @@ export function PracticeSetup({
     </div>
   );
 }
-
