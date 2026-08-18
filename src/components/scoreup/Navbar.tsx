@@ -1,7 +1,7 @@
 import { Sigma } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { SUPPORT_EMAIL } from "@/lib/support";
+import { ContactButton } from "./ContactButton";
 
 export function Navbar() {
   return (
@@ -40,12 +40,9 @@ export function Navbar() {
           >
             תכניות ומנויים
           </Link>
-          <a
-            href={`mailto:${SUPPORT_EMAIL}`}
-            className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-          >
+          <ContactButton className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
             צור קשר
-          </a>
+          </ContactButton>
         </nav>
 
         <div className="flex items-center gap-2">

@@ -3,7 +3,7 @@ import { Sigma, Loader2 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { PracticeSession } from "@/components/scoreup/PracticeSession";
 import type { PracticeConfig, PracticeMode, LauncherMode } from "@/data/questions";
-import { SUPPORT_EMAIL } from "@/lib/support";
+import { ContactButton } from "@/components/scoreup/ContactButton";
 
 type PracticeSearch = {
   mode: LauncherMode;
@@ -123,12 +123,9 @@ function PracticePage() {
             >
               תכניות ומנויים
             </Link>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
-            >
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
               צור קשר
-            </a>
+            </ContactButton>
             <Link
               to="/dashboard"
               className="rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"

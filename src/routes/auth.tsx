@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sigma, Loader2 } from "lucide-react";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { useSession } from "@/hooks/useSession";
-import { SUPPORT_EMAIL } from "@/lib/support";
+import { ContactButton } from "@/components/scoreup/ContactButton";
 
 type AuthMode = "signin" | "signup";
 
@@ -134,12 +134,9 @@ function AuthPage() {
           >
             תכניות ומנויים
           </Link>
-          <a
-            href={`mailto:${SUPPORT_EMAIL}`}
-            className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
+          <ContactButton className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
             צור קשר
-          </a>
+          </ContactButton>
         </div>
       </header>
       <div className="flex flex-1 items-center justify-center px-4 py-16">

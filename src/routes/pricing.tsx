@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getMyProfile } from "@/lib/profile.functions";
-import { SUPPORT_EMAIL } from "@/lib/support";
+import { ContactButton } from "@/components/scoreup/ContactButton";
 
 const valueCards = [
   {
@@ -206,12 +206,9 @@ function PricingPage() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
-            >
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
               צור קשר
-            </a>
+            </ContactButton>
             <Link
               to="/dashboard"
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"

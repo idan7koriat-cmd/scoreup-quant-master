@@ -15,7 +15,7 @@ import {
 import { useSession } from "@/hooks/useSession";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { getProfilePage, resetMyStats, updateMyProfile } from "@/lib/profile.functions";
-import { SUPPORT_EMAIL } from "@/lib/support";
+import { ContactButton } from "@/components/scoreup/ContactButton";
 
 export const Route = createFileRoute("/profile")({
   ssr: false,
@@ -213,12 +213,9 @@ function ProfilePage() {
             >
               תכניות ומנויים
             </Link>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
-            >
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
               צור קשר
-            </a>
+            </ContactButton>
             <button
               onClick={signOut}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
