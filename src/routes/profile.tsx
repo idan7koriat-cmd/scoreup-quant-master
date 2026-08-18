@@ -24,8 +24,7 @@ export const Route = createFileRoute("/profile")({
       { title: "הפרופיל שלי — ScoreUp" },
       {
         name: "description",
-        content:
-          "עדכן את פרטי החשבון, תאריך הבחינה וצפה בסיכום התרגול והדיוק שלך לפי נושאים.",
+        content: "עדכן את פרטי החשבון, תאריך הבחינה וצפה בסיכום התרגול והדיוק שלך לפי נושאים.",
       },
       { property: "og:title", content: "הפרופיל שלי — ScoreUp" },
       {
@@ -75,17 +74,9 @@ function rangeToDates(range: StatsRange): { from: string | null; to: string | nu
   return { from: null, to: null };
 }
 
-function StatCard({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
+function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-3xl border border-border bg-card p-6">
+    <div className="rounded-[16px] border border-border bg-card p-6">
       <p className="text-sm font-semibold text-muted-foreground">{label}</p>
       <p className="mt-1 text-3xl font-black text-foreground">{value}</p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
@@ -178,7 +169,7 @@ function ProfilePage() {
   const statsError = data?.statsError ?? null;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background">
+    <div dir="rtl" className="su-theme-v2 min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-between gap-3 px-4">
           <Link to="/" className="flex items-center gap-2.5">
@@ -188,7 +179,7 @@ function ProfilePage() {
             >
               <Sigma className="h-5 w-5" strokeWidth={2.5} />
             </span>
-            <span className="text-xl font-black tracking-tight text-foreground">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
               Score
               <span
                 className="bg-clip-text text-transparent"
@@ -202,23 +193,23 @@ function ProfilePage() {
           <div className="flex items-center gap-2">
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <ArrowRight className="h-4 w-4" />
               חזרה לדשבורד
             </Link>
             <Link
               to="/pricing"
-              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline"
             >
               תכניות ומנויים
             </Link>
-            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline">
               צור קשר
             </ContactButton>
             <button
               onClick={signOut}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <LogOut className="h-4 w-4" />
               התנתק
@@ -228,34 +219,33 @@ function ProfilePage() {
       </header>
 
       <main className="container mx-auto max-w-4xl px-4 py-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-          הפרופיל שלי
-        </h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">הפרופיל שלי</h1>
         <p className="mt-2 text-muted-foreground">
           נהל את פרטי החשבון שלך ועקוב אחרי ההתקדמות בתרגול.
         </p>
 
         {/* פרטי חשבון */}
-        <section className="mt-8 rounded-3xl border border-border bg-card p-6">
+        <section className="mt-8 rounded-[20px] border border-border bg-card p-6">
           <h2 className="text-xl font-extrabold text-foreground">פרטי חשבון</h2>
 
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label
+                htmlFor="profile-email"
+                className="text-sm font-semibold text-muted-foreground"
+              >
                 כתובת אימייל
               </label>
               <input
+                id="profile-email"
                 value={data?.email ?? ""}
                 disabled
-                className="mt-1.5 w-full rounded-2xl border border-border bg-secondary/50 px-4 py-3 text-sm font-semibold text-muted-foreground"
+                className="mt-1.5 w-full rounded-[10px] border border-border bg-secondary/50 px-4 py-3 text-sm font-semibold text-muted-foreground"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="fullName"
-                className="text-sm font-semibold text-muted-foreground"
-              >
+              <label htmlFor="fullName" className="text-sm font-semibold text-muted-foreground">
                 שם מלא
               </label>
               <input
@@ -263,15 +253,12 @@ function ProfilePage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="השם המלא שלך"
-                className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                className="mt-1.5 w-full rounded-[10px] border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none transition-colors duration-150 focus:border-primary"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="examDate"
-                className="text-sm font-semibold text-muted-foreground"
-              >
+              <label htmlFor="examDate" className="text-sm font-semibold text-muted-foreground">
                 תאריך הבחינה הקרוב
               </label>
               <input
@@ -279,15 +266,12 @@ function ProfilePage() {
                 type="date"
                 value={examDate}
                 onChange={(e) => setExamDate(e.target.value)}
-                className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                className="mt-1.5 w-full rounded-[10px] border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none transition-colors duration-150 focus:border-primary"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="targetDegree"
-                className="text-sm font-semibold text-muted-foreground"
-              >
+              <label htmlFor="targetDegree" className="text-sm font-semibold text-muted-foreground">
                 תחום לימודים מבוקש
               </label>
               <input
@@ -295,7 +279,7 @@ function ProfilePage() {
                 value={targetDegree}
                 onChange={(e) => setTargetDegree(e.target.value)}
                 placeholder="הנדסה, רפואה, מדעי המחשב…"
-                className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                className="mt-1.5 w-full rounded-[10px] border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none transition-colors duration-150 focus:border-primary"
               />
             </div>
           </div>
@@ -304,7 +288,7 @@ function ProfilePage() {
             <button
               onClick={() => save.mutate()}
               disabled={save.isPending}
-              className="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-[10px] px-5 py-3 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:opacity-60 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ background: "var(--gradient-primary)" }}
             >
               {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -312,29 +296,21 @@ function ProfilePage() {
             </button>
             <button
               onClick={changePassword}
-              className="inline-flex items-center gap-2 rounded-2xl border border-border px-5 py-3 text-sm font-bold text-foreground transition-colors hover:bg-secondary"
+              className="inline-flex items-center gap-2 rounded-[10px] border border-border px-5 py-3 text-sm font-bold text-foreground transition-colors duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <KeyRound className="h-4 w-4" />
               שינוי סיסמה
             </button>
-            {saved && (
-              <span className="text-sm font-semibold text-emerald-600">
-                השינויים נשמרו ✓
-              </span>
-            )}
-            {notice && (
-              <span className="text-sm font-semibold text-primary">{notice}</span>
-            )}
+            {saved && <span className="text-sm font-semibold text-success">השינויים נשמרו ✓</span>}
+            {notice && <span className="text-sm font-semibold text-primary">{notice}</span>}
           </div>
         </section>
 
         {/* סטטוס מנוי */}
-        <section className="mt-8 rounded-3xl border border-border bg-card p-6">
+        <section className="mt-8 rounded-[20px] border border-border bg-card p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-muted-foreground">
-                סוג החשבון
-              </p>
+              <p className="text-sm font-semibold text-muted-foreground">סוג החשבון</p>
               <p className="mt-1 flex items-center gap-2 text-xl font-extrabold text-foreground">
                 {isPremium ? (
                   <>
@@ -357,7 +333,7 @@ function ProfilePage() {
             {!isPremium && (
               <Link
                 to="/pricing"
-                className="flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
+                className="flex items-center gap-2 rounded-[10px] px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 <Zap className="h-4 w-4" />
@@ -370,13 +346,11 @@ function ProfilePage() {
         {/* סיכום תרגול */}
         <section className="mt-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-xl font-extrabold text-foreground">
-              סיכום התרגול שלי
-            </h2>
+            <h2 className="text-xl font-extrabold text-foreground">סיכום התרגול שלי</h2>
             <button
               onClick={() => reset.mutate()}
               disabled={reset.isPending}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 rounded-[10px] border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition-colors duration-150 hover:bg-destructive/10 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <RotateCcw className="h-4 w-4" />
               איפוס סטטיסטיקה
@@ -388,7 +362,7 @@ function ProfilePage() {
               <button
                 key={opt.value}
                 onClick={() => setRange(opt.value)}
-                className={`rounded-xl border-2 px-3.5 py-2 text-sm font-bold transition-colors ${
+                className={`rounded-[10px] border-2 px-3.5 py-2 text-sm font-bold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   range === opt.value
                     ? "border-primary bg-accent text-foreground"
                     : "border-border bg-card text-muted-foreground hover:border-primary/50"
@@ -400,7 +374,7 @@ function ProfilePage() {
           </div>
 
           {statsError ? (
-            <p className="mt-4 rounded-2xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
+            <p className="mt-4 rounded-[10px] border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
               לא הצלחנו לטעון את הסטטיסטיקה כרגע.
               <span dir="ltr" className="mt-1 block font-mono text-xs font-normal opacity-80">
                 {statsError}
@@ -418,9 +392,7 @@ function ProfilePage() {
                 />
               </div>
 
-              <h3 className="mt-8 text-lg font-extrabold text-foreground">
-                פילוח לפי נושאים
-              </h3>
+              <h3 className="mt-8 text-lg font-extrabold text-foreground">פילוח לפי נושאים</h3>
             </>
           )}
           {!statsError && data && data.byTopic.length > 0 ? (
@@ -428,10 +400,7 @@ function ProfilePage() {
               {data.byTopic.map((t) => {
                 const pct = t.total ? Math.round((t.correct / t.total) * 100) : 0;
                 return (
-                  <div
-                    key={t.topic}
-                    className="rounded-2xl border border-border bg-card p-4"
-                  >
+                  <div key={t.topic} className="rounded-[16px] border border-border bg-card p-4">
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-bold text-foreground">{t.topic}</span>
                       <span className="text-sm font-semibold text-muted-foreground">
@@ -440,7 +409,7 @@ function ProfilePage() {
                     </div>
                     <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
                       <div
-                        className="h-full rounded-full"
+                        className="h-full rounded-full transition-[width] duration-300 ease-out"
                         style={{
                           width: `${pct}%`,
                           background: "var(--gradient-primary)",

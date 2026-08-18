@@ -120,33 +120,36 @@ function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="su-theme-v2 flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-end gap-2 px-4">
           <Link
             to="/pricing"
-            className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             תכניות ומנויים
           </Link>
-          <ContactButton className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
+          <ContactButton className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
             צור קשר
           </ContactButton>
         </div>
       </header>
       <div className="flex flex-1 items-center justify-center px-4 py-16">
         <div
-          className="w-full max-w-md rounded-3xl border border-border bg-card p-8"
+          className="w-full max-w-md rounded-[20px] border border-border bg-card p-8"
           style={{ boxShadow: "var(--shadow-elegant)" }}
         >
-          <Link to="/" className="flex items-center justify-center gap-2.5">
+          <Link
+            to="/"
+            className="flex items-center justify-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
             <span
               className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
               style={{ background: "var(--gradient-primary)" }}
             >
               <Sigma className="h-5 w-5" strokeWidth={2.5} />
             </span>
-            <span className="text-xl font-black tracking-tight text-foreground">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
               Score
               <span
                 className="bg-clip-text text-transparent"
@@ -164,7 +167,7 @@ function AuthPage() {
             גישה למאגר השאלות המלא, פתרונות מפורטים וניתוח ביצועים ב-AI.
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-1 rounded-2xl bg-secondary p-1">
+          <div className="mt-6 grid grid-cols-2 gap-1 rounded-[10px] bg-secondary p-1">
             {(["signup", "signin"] as AuthMode[]).map((m) => (
               <button
                 key={m}
@@ -174,7 +177,7 @@ function AuthPage() {
                   setErr(null);
                   setMsg(null);
                 }}
-                className={`rounded-xl py-2.5 text-sm font-bold transition-colors ${
+                className={`rounded-[8px] py-2.5 text-sm font-bold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   mode === m
                     ? "bg-card text-foreground shadow"
                     : "text-muted-foreground hover:text-foreground"
@@ -189,7 +192,7 @@ function AuthPage() {
             type="button"
             onClick={googleSignIn}
             disabled={googleLoading}
-            className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-border bg-background py-3.5 text-sm font-bold text-foreground transition-colors hover:bg-secondary disabled:opacity-50"
+            className="mt-4 flex w-full items-center justify-center gap-3 rounded-[10px] border-2 border-border bg-background py-3.5 text-sm font-bold text-foreground transition-colors duration-150 hover:bg-secondary disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {googleLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -237,7 +240,7 @@ function AuthPage() {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                className="w-full rounded-[10px] border-2 border-border bg-background px-4 py-3 text-foreground outline-none transition-colors duration-150 focus:border-primary"
                 placeholder="you@example.com"
               />
             </div>
@@ -256,7 +259,7 @@ function AuthPage() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                className="w-full rounded-[10px] border-2 border-border bg-background px-4 py-3 text-foreground outline-none transition-colors duration-150 focus:border-primary"
                 placeholder="••••••••"
               />
             </div>
@@ -276,7 +279,7 @@ function AuthPage() {
                     required
                     value={examDate}
                     onChange={(e) => setExamDate(e.target.value)}
-                    className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                    className="w-full rounded-[10px] border-2 border-border bg-background px-4 py-3 text-foreground outline-none transition-colors duration-150 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -292,7 +295,7 @@ function AuthPage() {
                     required
                     value={targetDegree}
                     onChange={(e) => setTargetDegree(e.target.value)}
-                    className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
+                    className="w-full rounded-[10px] border-2 border-border bg-background px-4 py-3 text-foreground outline-none transition-colors duration-150 focus:border-primary"
                     placeholder="הנדסה, רפואה, מדעי המחשב…"
                   />
                 </div>
@@ -300,12 +303,12 @@ function AuthPage() {
             )}
 
             {err && (
-              <p className="rounded-xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
+              <p className="rounded-[10px] border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
                 {err}
               </p>
             )}
             {msg && (
-              <p className="rounded-xl border border-success bg-success/10 px-4 py-3 text-sm font-semibold text-success">
+              <p className="rounded-[10px] border border-success bg-success/10 px-4 py-3 text-sm font-semibold text-success">
                 {msg}
               </p>
             )}
@@ -313,7 +316,7 @@ function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ background: "var(--gradient-cta)" }}
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -327,7 +330,7 @@ function AuthPage() {
               setErr(null);
               setMsg(null);
             }}
-            className="mt-5 w-full text-center text-sm font-semibold text-muted-foreground hover:text-foreground"
+            className="mt-5 w-full rounded-md text-center text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {mode === "signup" ? "כבר יש לך חשבון? התחברות" : "אין לך חשבון? הרשמה"}
           </button>

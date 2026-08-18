@@ -194,7 +194,7 @@ function PricingPage() {
   const isPremium = profile?.isPremium ?? false;
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="su-theme-v2 min-h-screen bg-background text-foreground" dir="rtl">
       {modal && <LeadModal plan={plan} onClose={() => setModal(false)} />}
 
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
@@ -206,7 +206,7 @@ function PricingPage() {
             >
               <Sigma className="h-5 w-5" strokeWidth={2.5} />
             </span>
-            <span className="text-xl font-black tracking-tight text-foreground">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
               Score
               <span
                 className="bg-clip-text text-transparent"
@@ -218,12 +218,12 @@ function PricingPage() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline">
+            <ContactButton className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline">
               צור קשר
             </ContactButton>
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <ArrowRight className="h-4 w-4" />
               חזרה לדשבורד
@@ -250,7 +250,7 @@ function PricingPage() {
 
         <div className="mx-auto mt-12 grid max-w-4xl gap-6 lg:grid-cols-[1fr_1.25fr]">
           {/* Free */}
-          <div className="rounded-3xl border border-border bg-card p-8">
+          <div className="rounded-[20px] border border-border bg-card p-8">
             <p className="text-sm font-bold text-muted-foreground">מסלול חינמי</p>
             <p className="mt-3 text-4xl font-extrabold text-foreground">₪0</p>
             <p className="mt-1 text-sm text-muted-foreground">להתחלה ולהיכרות עם המערכת</p>
@@ -264,7 +264,7 @@ function PricingPage() {
             </ul>
             <button
               disabled={!isPremium}
-              className="mt-8 w-full cursor-default rounded-2xl border border-border bg-secondary py-3.5 text-sm font-bold text-muted-foreground disabled:opacity-70"
+              className="mt-8 w-full cursor-default rounded-[10px] border border-border bg-secondary py-3.5 text-sm font-bold text-muted-foreground disabled:opacity-70"
             >
               {loading ? (
                 <Loader2 className="mx-auto h-4 w-4 animate-spin" />
@@ -278,7 +278,7 @@ function PricingPage() {
 
           {/* Premium */}
           <div
-            className="relative overflow-hidden rounded-3xl border-2 border-primary/30 bg-card p-8"
+            className="relative overflow-hidden rounded-[20px] border-2 border-primary/30 bg-card p-8"
             style={{ boxShadow: "var(--shadow-elegant)" }}
           >
             <span
@@ -294,7 +294,7 @@ function PricingPage() {
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <button
                 onClick={() => setPlan("monthly")}
-                className={`rounded-2xl border p-4 text-start transition-colors ${
+                className={`rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   plan === "monthly"
                     ? "border-primary bg-accent"
                     : "border-border hover:bg-secondary"
@@ -310,7 +310,7 @@ function PricingPage() {
 
               <button
                 onClick={() => setPlan("marathon")}
-                className={`relative rounded-2xl border p-4 text-start transition-colors ${
+                className={`relative rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   plan === "marathon"
                     ? "border-primary bg-accent"
                     : "border-border hover:bg-secondary"
@@ -338,13 +338,13 @@ function PricingPage() {
             </ul>
 
             {isPremium ? (
-              <div className="mt-8 w-full rounded-2xl bg-accent py-4 text-center text-sm font-bold text-accent-foreground">
+              <div className="mt-8 w-full rounded-[10px] bg-accent py-4 text-center text-sm font-bold text-accent-foreground">
                 המנוי שלך פעיל — גישה מלאה פתוחה 🎉
               </div>
             ) : (
               <button
                 onClick={() => setModal(true)}
-                className="mt-8 w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
+                className="mt-8 w-full rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
                 שדרג עכשיו ל-700+
@@ -372,10 +372,10 @@ function PricingPage() {
             {valueCards.map((c) => (
               <div
                 key={c.title}
-                className="glass-panel rounded-3xl p-7 transition-transform hover:-translate-y-1"
+                className="glass-panel rounded-[20px] p-7 transition-transform duration-200 ease-out hover:-translate-y-1"
               >
                 <span
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
+                  className="flex h-12 w-12 items-center justify-center rounded-[16px] text-white"
                   style={{ background: "var(--gradient-primary)" }}
                 >
                   <c.icon className="h-6 w-6" />
