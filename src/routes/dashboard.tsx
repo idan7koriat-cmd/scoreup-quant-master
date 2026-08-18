@@ -166,9 +166,7 @@ function Dashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-10">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-          היי {name} 👋
-        </h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">היי {name} 👋</h1>
         <p className="mt-2 text-muted-foreground">
           בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.
         </p>
@@ -216,7 +214,7 @@ function Dashboard() {
 
         {/* Practice engine */}
         <div className="mt-10">
-          <h2 className="font-display text-2xl font-medium tracking-tight text-foreground">
+          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
             בניה עצמית — תרגול מותאם אישית
           </h2>
           <p className="mt-2 text-muted-foreground">

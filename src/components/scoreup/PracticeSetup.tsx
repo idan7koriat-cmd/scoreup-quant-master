@@ -148,7 +148,7 @@ export function PracticeSetup({
 
       <div className="my-8 h-px w-full bg-border" />
 
-      <h3 className="font-display mb-6 flex items-center gap-2 text-lg font-medium text-foreground">
+      <h3 className="mb-6 flex items-center gap-2 text-lg font-extrabold text-foreground">
         <Sparkles className="h-5 w-5 text-primary" />
         בניית תרגול מותאם אישית
       </h3>

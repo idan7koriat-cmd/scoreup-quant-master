@@ -4,26 +4,138 @@
   "title": "Design System: ScoreUp",
   "extensions": {
     "colorMeta": {
-      "petrol": { "role": "primary", "displayName": "Confident Petrol", "canonical": "#1F4C4E", "tonalRamp": ["#163537", "#296466", "#3a8e92", "#50b5b9", "#7cc7cb", "#a7dadc", "#d3ecee", "#edf7f8"] },
-      "coral": { "role": "secondary", "displayName": "Rationed Coral", "canonical": "#DD6B42", "tonalRamp": ["#411a0c", "#793016", "#ad451f", "#da5d30", "#e38563", "#ecae97", "#f6d6cb", "#fbeee9"] },
-      "success": { "role": "semantic-success", "displayName": "Quiet Success Green", "canonical": "#2F7A5C", "tonalRamp": ["#15372a", "#28674e", "#39936f", "#4ebb8f", "#7accab", "#a7ddc7", "#d3eee3", "#edf8f3"] },
-      "danger": { "role": "semantic-danger", "displayName": "Brick Red", "canonical": "#BE4A39", "tonalRamp": ["#3b1712", "#6e2b21", "#9d3d2f", "#c75443", "#d57e72", "#e3a9a1", "#f1d4d0", "#f9edeb"] },
-      "ink": { "role": "neutral", "displayName": "Warm Charcoal", "canonical": "#1D2624", "tonalRamp": ["#212b29", "#3e514d", "#58746e", "#74958e", "#97b0aa", "#bacac6", "#dce5e3", "#f1f4f3"] },
-      "bg": { "role": "neutral", "displayName": "Warm Paper Gray", "canonical": "#F5F2ED", "tonalRamp": ["#31291b", "#5c4c33", "#836d49", "#a88d62", "#bdaa89", "#d3c6b0", "#e9e3d8", "#f6f3ef"] }
+      "petrol": {
+        "role": "primary",
+        "displayName": "Confident Petrol",
+        "canonical": "#1F4C4E",
+        "tonalRamp": [
+          "#163537",
+          "#296466",
+          "#3a8e92",
+          "#50b5b9",
+          "#7cc7cb",
+          "#a7dadc",
+          "#d3ecee",
+          "#edf7f8"
+        ]
+      },
+      "coral": {
+        "role": "secondary",
+        "displayName": "Rationed Coral",
+        "canonical": "#DD6B42",
+        "tonalRamp": [
+          "#411a0c",
+          "#793016",
+          "#ad451f",
+          "#da5d30",
+          "#e38563",
+          "#ecae97",
+          "#f6d6cb",
+          "#fbeee9"
+        ]
+      },
+      "success": {
+        "role": "semantic-success",
+        "displayName": "Quiet Success Green",
+        "canonical": "#2F7A5C",
+        "tonalRamp": [
+          "#15372a",
+          "#28674e",
+          "#39936f",
+          "#4ebb8f",
+          "#7accab",
+          "#a7ddc7",
+          "#d3eee3",
+          "#edf8f3"
+        ]
+      },
+      "danger": {
+        "role": "semantic-danger",
+        "displayName": "Brick Red",
+        "canonical": "#BE4A39",
+        "tonalRamp": [
+          "#3b1712",
+          "#6e2b21",
+          "#9d3d2f",
+          "#c75443",
+          "#d57e72",
+          "#e3a9a1",
+          "#f1d4d0",
+          "#f9edeb"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Warm Charcoal",
+        "canonical": "#1D2624",
+        "tonalRamp": [
+          "#212b29",
+          "#3e514d",
+          "#58746e",
+          "#74958e",
+          "#97b0aa",
+          "#bacac6",
+          "#dce5e3",
+          "#f1f4f3"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Warm Paper Gray",
+        "canonical": "#F5F2ED",
+        "tonalRamp": [
+          "#31291b",
+          "#5c4c33",
+          "#836d49",
+          "#a88d62",
+          "#bdaa89",
+          "#d3c6b0",
+          "#e9e3d8",
+          "#f6f3ef"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Hero headlines and page-level titles only. Never body/reading text." },
-      "title": { "displayName": "Title", "purpose": "Section headings, card titles, summary headline." },
-      "body": { "displayName": "Body", "purpose": "All reading content: questions, answers, explanations, marketing copy." },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The 'ScoreUp' logotype only. Frank Ruhl Libre's only surviving use after it read heavy/blocky at Hebrew heading sizes on the shipped practice and dashboard screens."
+      },
+      "heading-page": {
+        "displayName": "Heading — page",
+        "purpose": "Page-level headings ('היי {name}', 'סיכום התרגול'). Heebo, extrabold."
+      },
+      "heading-section": {
+        "displayName": "Heading — section",
+        "purpose": "Section headings and card titles ('בניה עצמית', 'בניית תרגול מותאם אישית'). Heebo, extrabold."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All reading content: questions, answers, explanations, marketing copy."
+      },
       "label": { "displayName": "Label", "purpose": "Badges, buttons, form labels, metadata." },
-      "numeral": { "displayName": "Numeral", "purpose": "Timer and question counter — tabular figures so digits never shift width." }
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Timer and question counter — tabular figures so digits never shift width."
+      }
     },
     "shadows": [
-      { "name": "card-ambient", "value": "0 1px 2px rgba(29,38,36,0.04), 0 8px 24px -12px rgba(29,38,36,0.12)", "purpose": "The only shadow in the system: outer card shells, neutral warm-black, low opacity. Never colored/glowing." }
+      {
+        "name": "card-ambient",
+        "value": "0 1px 2px rgba(29,38,36,0.04), 0 8px 24px -12px rgba(29,38,36,0.12)",
+        "purpose": "The only shadow in the system: outer card shells, neutral warm-black, low opacity. Never colored/glowing."
+      }
     ],
     "motion": [
-      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for hover/press/selection transitions, 150-200ms." },
-      { "name": "ease-reveal", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Answer-feedback and disclosure reveals (solution panel, correct/incorrect state), 250-350ms — precise and settled, never bouncy." }
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for hover/press/selection transitions, 150-200ms."
+      },
+      {
+        "name": "ease-reveal",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Answer-feedback and disclosure reveals (solution panel, correct/incorrect state), 250-350ms — precise and settled, never bouncy."
+      }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
@@ -102,16 +214,41 @@
     "keyCharacteristics": [
       "Warm, light-first ground (never the near-black + neon accent AI-startup default)",
       "One deep, desaturated primary (petrol) carries structure; a warm coral accent is rationed to CTA and success moments only",
-      "A serif display face (Frank Ruhl Libre) gives headlines real character; the body stays on Heebo",
+      "Frank Ruhl Libre marks the wordmark only; every heading is Heebo, differentiated by weight and size",
       "Tabular numerals for the timer and question counter — exact, instrument-grade",
       "Calmer corner radius than the incumbent system — structured and serious, not bubbly"
     ],
     "rules": [
-      { "name": "The Rationed Accent Rule", "body": "Coral appears only on a primary call-to-action or a success/achievement moment — never as a structural or decorative color. If more than one element on a screen is coral, one of them is wrong.", "section": "colors" },
-      { "name": "The Warm Neutral Rule", "body": "Every gray in this system (background, borders, muted text) carries a warm/beige bias. A cool or blue-gray value anywhere in the UI is a regression to the old identity, not a stylistic variant.", "section": "colors" },
-      { "name": "The Reading Content Rule", "body": "Frank Ruhl Libre is a headline face, never a body face. Question text, answer options, and explanations are always Heebo.", "section": "typography" },
-      { "name": "The Tabular Numeral Rule", "body": "Any digit sequence the user tracks in real time (countdown timer, question X of Y) uses font-variant-numeric: tabular-nums.", "section": "typography" },
-      { "name": "The No-Glow Rule", "body": "Shadows are neutral warm-black at low opacity. A colored/saturated shadow (the incumbent cyan/blue glow) is a regression to the old identity, not a legitimate elevation variant.", "section": "elevation" }
+      {
+        "name": "The Rationed Accent Rule",
+        "body": "Coral appears only on a primary call-to-action or a success/achievement moment — never as a structural or decorative color. If more than one element on a screen is coral, one of them is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Neutral Rule",
+        "body": "Every gray in this system (background, borders, muted text) carries a warm/beige bias. A cool or blue-gray value anywhere in the UI is a regression to the old identity, not a stylistic variant.",
+        "section": "colors"
+      },
+      {
+        "name": "The Wordmark-Only Rule",
+        "body": "Frank Ruhl Libre renders the ScoreUp logotype and nothing else. Every heading at every level is Heebo — hierarchy comes from weight and size, never a typeface switch. Shipped as headline face across the practice/dashboard screens first, then pulled back to wordmark-only once it read heavy and blocky against Heebo body text at Hebrew heading sizes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Reading Content Rule",
+        "body": "Question text, answer options, and explanations are always Heebo at body weight.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Numeral Rule",
+        "body": "Any digit sequence the user tracks in real time (countdown timer, question X of Y) uses font-variant-numeric: tabular-nums.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Glow Rule",
+        "body": "Shadows are neutral warm-black at low opacity. A colored/saturated shadow (the incumbent cyan/blue glow) is a regression to the old identity, not a legitimate elevation variant.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do keep Heebo as the body/reading face everywhere text is meant to be read at length",
@@ -121,7 +258,7 @@
     ],
     "donts": [
       "Don't reintroduce a saturated glow shadow, gradient blob, or neon-cyan accent anywhere",
-      "Don't set Frank Ruhl Libre (or any serif) as a body/reading face",
+      "Don't use Frank Ruhl Libre (or any serif) anywhere but the wordmark — not headings, not body text",
       "Don't use a cool/blue-gray for any neutral",
       "Don't invent a second accent color"
     ]

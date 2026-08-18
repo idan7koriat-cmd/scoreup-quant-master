@@ -306,7 +306,7 @@ export function PracticeSession({
         className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card p-6 md:p-8"
         style={{ boxShadow: "var(--shadow-elegant)" }}
       >
-        <h3 className="font-display text-2xl font-medium text-foreground">סיכום התרגול</h3>
+        <h3 className="text-2xl font-extrabold text-foreground">סיכום התרגול</h3>
         <p className="mt-2 text-lg text-muted-foreground">
           ענית נכון על {score} מתוך {total} שאלות
         </p>
