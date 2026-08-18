@@ -8,7 +8,6 @@ import { FinalCTA } from "@/components/scoreup/FinalCTA";
 import { Footer } from "@/components/scoreup/Footer";
 import { useSession } from "@/hooks/useSession";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -21,8 +20,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "ScoreUp — שפר את הציון בפסיכומטרי כמותי" },
       {
         property: "og:description",
-        content:
-          "תרגול חכם עם AI, פתרונות מפורטים וניתוח ביצועים לחלק הכמותי בפסיכומטרי.",
+        content: "תרגול חכם עם AI, פתרונות מפורטים וניתוח ביצועים לחלק הכמותי בפסיכומטרי.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -40,14 +38,13 @@ function Index() {
   }, [session, navigate]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="su-theme-v2 min-h-screen bg-background text-foreground">
       <Navbar />
       <main>
         <Hero />
         <WhyScoreUp />
         <DemoPractice />
         <FinalCTA />
-
       </main>
       <Footer />
     </div>

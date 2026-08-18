@@ -3,8 +3,8 @@ import { Sigma } from "lucide-react";
 export function Footer() {
   return (
     <footer
-      className="border-t py-10 text-slate-300"
-      style={{ background: "#0B1120", borderColor: "rgba(255,255,255,0.08)" }}
+      className="border-t py-10 text-white/75"
+      style={{ background: "var(--petrol-deep)", borderColor: "rgba(255,255,255,0.08)" }}
     >
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row">
         <div className="flex items-center gap-2.5">
@@ -14,17 +14,12 @@ export function Footer() {
           >
             <Sigma className="h-4 w-4" strokeWidth={2.5} />
           </span>
-          <span className="font-black tracking-tight text-white">
+          <span className="font-display font-bold tracking-tight text-white">
             Score
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "var(--gradient-text)" }}
-            >
-              Up
-            </span>
+            <span style={{ color: "var(--petrol-tint)" }}>Up</span>
           </span>
         </div>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-white/60">
           © {new Date().getFullYear()} ScoreUp — כל הזכויות שמורות.
         </p>
       </div>

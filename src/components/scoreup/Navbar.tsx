@@ -14,7 +14,7 @@ export function Navbar() {
           >
             <Sigma className="h-5 w-5" strokeWidth={2.5} />
           </span>
-          <span className="text-xl font-black tracking-tight text-foreground">
+          <span className="font-display text-xl font-bold tracking-tight text-foreground">
             Score
             <span
               className="bg-clip-text text-transparent"
@@ -27,20 +27,18 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-7 md:flex">
           <button
-            onClick={() =>
-              toast("המדריך המלא יעלה בקרוב — נעדכן אותך במייל 📘")
-            }
-            className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            onClick={() => toast("המדריך המלא יעלה בקרוב — נעדכן אותך במייל 📘")}
+            className="rounded-md text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             איך ללמוד
           </button>
           <Link
             to="/pricing"
-            className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+            className="rounded-md text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             תכניות ומנויים
           </Link>
-          <ContactButton className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
+          <ContactButton className="rounded-md text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
             צור קשר
           </ContactButton>
         </nav>
@@ -49,14 +47,14 @@ export function Navbar() {
           <Link
             to="/auth"
             search={{ mode: "signin" as const }}
-            className="rounded-full px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+            className="rounded-full px-4 py-2 text-sm font-semibold text-foreground transition-colors duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             התחברות
           </Link>
           <Link
             to="/auth"
             search={{ mode: "signup" as const }}
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.03]"
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             style={{ background: "var(--gradient-cta)" }}
           >
             התחל לתרגל

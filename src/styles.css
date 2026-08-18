@@ -127,6 +127,7 @@
 
   --primary: #1f4c4e;
   --primary-foreground: #ffffff;
+  --petrol-deep: #153536;
 
   --secondary: #fbf8f3;
   --secondary-foreground: #1d2624;
@@ -151,7 +152,7 @@
 
   --coral: #dd6b42;
   --coral-deep: #a64e2e;
-  --emerald: #2f7a5c;
+  --petrol-tint: #e4edec;
 
   /* Flat by design (The No-Glow Rule) — these variables stay because several
      components apply them as inline `background`/`background-image`, not
@@ -160,6 +161,11 @@
   --gradient-cta: var(--coral);
   --gradient-text: linear-gradient(90deg, var(--primary), var(--primary));
   --gradient-subtle: var(--background);
+
+  /* The petrol "bookend": Hero and Footer are the only two dark sections on
+     an otherwise light-first system — a deliberate Committed-strategy color
+     statement (see DESIGN.md Colors), not a leftover from the old dark theme. */
+  --gradient-hero: linear-gradient(165deg, var(--petrol-deep) 0%, var(--primary) 100%);
 
   --shadow-elegant: 0 1px 2px rgba(29, 38, 36, 0.04), 0 8px 24px -12px rgba(29, 38, 36, 0.12);
   --shadow-glow: none;

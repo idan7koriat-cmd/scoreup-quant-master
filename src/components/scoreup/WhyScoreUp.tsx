@@ -35,7 +35,8 @@ export function WhyScoreUp() {
             כל מה שצריך כדי להעלות ציון — במקום אחד
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            שילוב של טכנולוגיה חכמה, פדגוגיה מדויקת ותרגול ממוקד — כדי לתת לך יתרון אמיתי ביום המבחן.
+            שילוב של טכנולוגיה חכמה, פדגוגיה מדויקת ותרגול ממוקד — כדי לתת לך יתרון אמיתי ביום
+            המבחן.
           </p>
         </div>
 
@@ -43,19 +44,17 @@ export function WhyScoreUp() {
           {features.map((f) => (
             <div
               key={f.title}
-              className="group rounded-3xl border border-border bg-card p-6 transition-all hover:-translate-y-1"
+              className="group rounded-[20px] border border-border bg-card p-6 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-2xl text-primary-foreground transition-transform group-hover:scale-110"
+                className="flex h-12 w-12 items-center justify-center rounded-[16px] text-primary-foreground transition-transform duration-200 ease-out group-hover:scale-110"
                 style={{ background: "var(--gradient-primary)" }}
               >
                 <f.icon className="h-6 w-6" />
               </div>
               <h3 className="mt-5 text-lg font-bold text-foreground">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {f.desc}
-              </p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
             </div>
           ))}
         </div>
