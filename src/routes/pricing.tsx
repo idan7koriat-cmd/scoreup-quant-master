@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Sigma,
   ArrowRight,
@@ -78,92 +79,103 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
   const [phone, setPhone] = useState("");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
-      <div
-        className="relative w-full max-w-md rounded-3xl border border-border bg-card p-8"
-        style={{ boxShadow: "var(--shadow-elegant)" }}
-      >
-        <button
-          onClick={onClose}
-          aria-label="סגור"
-          className="absolute end-4 top-4 text-muted-foreground hover:text-foreground"
+    <DialogPrimitive.Root open onOpenChange={(next) => !next && onClose()}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-slate-950/70 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-border bg-card p-8"
+          style={{ boxShadow: "var(--shadow-elegant)" }}
         >
-          <X className="h-5 w-5" />
-        </button>
+          <DialogPrimitive.Close
+            aria-label="סגור"
+            className="absolute end-4 top-4 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-5 w-5" />
+          </DialogPrimitive.Close>
 
-        {sent ? (
-          <div className="text-center">
-            <span
-              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-white"
-              style={{ background: "var(--gradient-primary)" }}
-            >
-              <Check className="h-7 w-7" />
-            </span>
-            <h3 className="mt-5 text-2xl font-extrabold text-foreground">
-              הפרטים נשמרו
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              ניצור איתך קשר תוך 24 שעות עם קישור לתשלום ופתיחת הגישה המלאה.
-            </p>
-            <button
-              onClick={onClose}
-              className="mt-6 w-full rounded-2xl bg-secondary py-3.5 text-sm font-bold text-secondary-foreground"
-            >
-              סגור
-            </button>
-          </div>
-        ) : (
-          <>
-            <span
-              className="flex h-14 w-14 items-center justify-center rounded-2xl text-white"
-              style={{ background: "var(--gradient-primary)" }}
-            >
-              <Sparkles className="h-7 w-7" />
-            </span>
-            <h3 className="mt-5 text-2xl font-extrabold text-foreground">
-              שדרוג למסלול 700+
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {plan === "monthly"
-                ? "מנוי חודשי גמיש — ₪99 לחודש, ביטול בכל עת."
-                : "חבילת מרתון 60 יום — ₪149 בתשלום חד-פעמי."}{" "}
-              השאר פרטים והסליקה תישלח אליך.
-            </p>
-            <form
-              className="mt-5 space-y-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSent(true);
-              }}
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="אימייל"
-                className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="טלפון"
-                className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-              />
-              <button
-                type="submit"
-                className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
-                style={{ background: "var(--gradient-cta)" }}
+          {sent ? (
+            <div className="text-center">
+              <span
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-white"
+                style={{ background: "var(--gradient-primary)" }}
               >
-                שלח ופתח גישה
+                <Check className="h-7 w-7" />
+              </span>
+              <DialogPrimitive.Title asChild>
+                <h3 className="mt-5 text-2xl font-extrabold text-foreground">הפרטים נשמרו</h3>
+              </DialogPrimitive.Title>
+              <p className="mt-2 text-sm text-muted-foreground">
+                ניצור איתך קשר תוך 24 שעות עם קישור לתשלום ופתיחת הגישה המלאה.
+              </p>
+              <button
+                onClick={onClose}
+                className="mt-6 w-full rounded-2xl bg-secondary py-3.5 text-sm font-bold text-secondary-foreground"
+              >
+                סגור
               </button>
-            </form>
-          </>
-        )}
-      </div>
-    </div>
+            </div>
+          ) : (
+            <>
+              <span
+                className="flex h-14 w-14 items-center justify-center rounded-2xl text-white"
+                style={{ background: "var(--gradient-primary)" }}
+              >
+                <Sparkles className="h-7 w-7" />
+              </span>
+              <DialogPrimitive.Title asChild>
+                <h3 className="mt-5 text-2xl font-extrabold text-foreground">שדרוג למסלול 700+</h3>
+              </DialogPrimitive.Title>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {plan === "monthly"
+                  ? "מנוי חודשי גמיש — ₪99 לחודש, ביטול בכל עת."
+                  : "חבילת מרתון 60 יום — ₪149 בתשלום חד-פעמי."}{" "}
+                השאר פרטים והסליקה תישלח אליך.
+              </p>
+              <form
+                className="mt-5 space-y-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setSent(true);
+                }}
+              >
+                <label htmlFor="lead-email" className="sr-only">
+                  אימייל
+                </label>
+                <input
+                  id="lead-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="אימייל"
+                  className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                />
+                <label htmlFor="lead-phone" className="sr-only">
+                  טלפון
+                </label>
+                <input
+                  id="lead-phone"
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="טלפון"
+                  className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                />
+                <button
+                  type="submit"
+                  className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
+                  style={{ background: "var(--gradient-cta)" }}
+                >
+                  שלח ופתח גישה
+                </button>
+              </form>
+            </>
+          )}
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
 
@@ -241,9 +253,7 @@ function PricingPage() {
           <div className="rounded-3xl border border-border bg-card p-8">
             <p className="text-sm font-bold text-muted-foreground">מסלול חינמי</p>
             <p className="mt-3 text-4xl font-extrabold text-foreground">₪0</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              להתחלה ולהיכרות עם המערכת
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">להתחלה ולהיכרות עם המערכת</p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
               {["חימום מהיר — 3 שאלות ביום", "ניתוח ביצועים בסיסי"].map((t) => (
                 <li key={t} className="flex items-start gap-2">
@@ -293,14 +303,9 @@ function PricingPage() {
                 <p className="text-sm font-bold text-foreground">מנוי חודשי גמיש</p>
                 <p className="mt-1 text-2xl font-extrabold text-foreground">
                   ₪99
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {" "}
-                    / חודש
-                  </span>
+                  <span className="text-sm font-semibold text-muted-foreground"> / חודש</span>
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  ללא התחייבות, ביטול בכל עת
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">ללא התחייבות, ביטול בכל עת</p>
               </button>
 
               <button
@@ -317,14 +322,9 @@ function PricingPage() {
                 <p className="text-sm font-bold text-foreground">מרתון 60 יום</p>
                 <p className="mt-1 text-2xl font-extrabold text-foreground">
                   ₪149
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {" "}
-                    חד-פעמי
-                  </span>
+                  <span className="text-sm font-semibold text-muted-foreground"> חד-פעמי</span>
                 </p>
-                <p className="mt-1 text-xs font-semibold text-primary">
-                  המסלול הכי פופולרי
-                </p>
+                <p className="mt-1 text-xs font-semibold text-primary">המסלול הכי פופולרי</p>
               </button>
             </div>
 
@@ -380,12 +380,8 @@ function PricingPage() {
                 >
                   <c.icon className="h-6 w-6" />
                 </span>
-                <h3 className="mt-5 text-xl font-extrabold text-foreground">
-                  {c.title}
-                </h3>
-                <p className="mt-2 leading-relaxed text-muted-foreground">
-                  {c.text}
-                </p>
+                <h3 className="mt-5 text-xl font-extrabold text-foreground">{c.title}</h3>
+                <p className="mt-2 leading-relaxed text-muted-foreground">{c.text}</p>
               </div>
             ))}
           </div>

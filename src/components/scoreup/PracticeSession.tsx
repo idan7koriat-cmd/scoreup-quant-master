@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Check,
   X,
@@ -28,20 +29,13 @@ function fmt(sec: number) {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-
 const REPORT_REASONS = [
   "יש טעות תחבירית / טעות במבנה השאלה",
   "אין תשובה נכונה / התשובה המוצגת אינה נכונה",
   "דירוג הקושי לא מתאים",
 ];
 
-function ReportModal({
-  questionId,
-  onClose,
-}: {
-  questionId: string;
-  onClose: () => void;
-}) {
+function ReportModal({ questionId, onClose }: { questionId: string; onClose: () => void }) {
   const [reason, setReason] = useState(REPORT_REASONS[0]!);
   const [details, setDetails] = useState("");
   const [sending, setSending] = useState(false);
@@ -59,60 +53,71 @@ function ReportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 p-4 backdrop-blur-sm">
-      <div className="glass-panel w-full max-w-md rounded-3xl p-7">
-        <h3 className="text-xl font-extrabold text-foreground">השאלה בעייתית כי:</h3>
-        <div className="mt-5 space-y-3">
-          {REPORT_REASONS.map((r) => (
+    <DialogPrimitive.Root open onOpenChange={(next) => !next && onClose()}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-background/85 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="glass-panel fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl p-7"
+        >
+          <DialogPrimitive.Title asChild>
+            <h3 className="text-xl font-extrabold text-foreground">השאלה בעייתית כי:</h3>
+          </DialogPrimitive.Title>
+          <div className="mt-5 space-y-3">
+            {REPORT_REASONS.map((r) => (
+              <label
+                key={r}
+                className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 text-sm font-semibold transition-colors ${
+                  reason === r
+                    ? "border-primary bg-accent text-foreground"
+                    : "border-border text-muted-foreground hover:border-primary/50"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="report-reason"
+                  className="mt-1 accent-[var(--primary)]"
+                  checked={reason === r}
+                  onChange={() => setReason(r)}
+                />
+                {r}
+              </label>
+            ))}
+          </div>
+          <div className="mt-5">
             <label
-              key={r}
-              className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 text-sm font-semibold transition-colors ${
-                reason === r
-                  ? "border-primary bg-accent text-foreground"
-                  : "border-border text-muted-foreground hover:border-primary/50"
-              }`}
+              htmlFor="report-details"
+              className="mb-2 block text-sm font-semibold text-foreground"
             >
-              <input
-                type="radio"
-                name="report-reason"
-                className="mt-1 accent-[var(--primary)]"
-                checked={reason === r}
-                onChange={() => setReason(r)}
-              />
-              {r}
+              פרטים נוספים (לא חובה)
             </label>
-          ))}
-        </div>
-        <div className="mt-5">
-          <label htmlFor="report-details" className="mb-2 block text-sm font-semibold text-foreground">
-            פרטים נוספים (לא חובה)
-          </label>
-          <Textarea
-            id="report-details"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            placeholder="ספר לנו עוד על הבעיה..."
-            className="min-h-[90px] resize-none"
-          />
-        </div>
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
-          >
-            ביטול
-          </button>
-          <button
-            onClick={submit}
-            disabled={sending}
-            className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:opacity-60"
-            style={{ background: "var(--gradient-cta)" }}
-          >
-            {sending ? "שולח…" : "שלח דיווח"}
-          </button>
-        </div>
-      </div>
-    </div>
+            <Textarea
+              id="report-details"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="ספר לנו עוד על הבעיה..."
+              className="min-h-[90px] resize-none"
+            />
+          </div>
+          <div className="mt-6 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
+            >
+              ביטול
+            </button>
+            <button
+              onClick={submit}
+              disabled={sending}
+              className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:opacity-60"
+              style={{ background: "var(--gradient-cta)" }}
+            >
+              {sending ? "שולח…" : "שלח דיווח"}
+            </button>
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
 
@@ -195,7 +200,11 @@ export function PracticeSession({
         const next = { ...prev };
         need.forEach((i, k) => {
           const r = res.results[k]!;
-          next[i] = { isCorrect: r.isCorrect, correctIndex: r.correctIndex, explanation: r.explanation };
+          next[i] = {
+            isCorrect: r.isCorrect,
+            correctIndex: r.correctIndex,
+            explanation: r.explanation,
+          };
         });
         return next;
       });
@@ -266,9 +275,7 @@ export function PracticeSession({
     return (
       <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-border bg-card px-6 py-16 text-center">
         <p className="font-semibold text-foreground">
-          {isError
-            ? "לא הצלחנו לטעון את השאלות כרגע."
-            : "לא נמצאו שאלות שתואמות את הבחירה שלך."}
+          {isError ? "לא הצלחנו לטעון את השאלות כרגע." : "לא נמצאו שאלות שתואמות את הבחירה שלך."}
         </p>
         <button
           onClick={onExit}
@@ -347,7 +354,8 @@ export function PracticeSession({
                 ) : (
                   <>
                     <p className="mt-2 text-sm font-semibold text-success">
-                      התשובה הנכונה: <MathText>{item.answers[itemReveal.correctIndex] ?? ""}</MathText>
+                      התשובה הנכונה:{" "}
+                      <MathText>{item.answers[itemReveal.correctIndex] ?? ""}</MathText>
                     </p>
                     <div className="mt-3 space-y-3 border-t border-border pt-3">
                       {itemReveal.explanation
@@ -382,8 +390,7 @@ export function PracticeSession({
   const currentReveal = reveals[index];
 
   const optionClass = (i: number) => {
-    const base =
-      "w-full text-start rounded-2xl border-2 px-5 py-4 font-medium transition-all";
+    const base = "w-full text-start rounded-2xl border-2 px-5 py-4 font-medium transition-all";
     if (!submitted || !currentReveal) {
       return `${base} ${
         selected === i
@@ -391,7 +398,8 @@ export function PracticeSession({
           : "border-border bg-card hover:border-primary/50 hover:bg-accent/40"
       }`;
     }
-    if (i === currentReveal.correctIndex) return `${base} border-success bg-success/10 text-foreground`;
+    if (i === currentReveal.correctIndex)
+      return `${base} border-success bg-success/10 text-foreground`;
     if (i === selected) return `${base} border-destructive bg-destructive/10 text-foreground`;
     return `${base} border-border bg-card opacity-60`;
   };
@@ -403,9 +411,7 @@ export function PracticeSession({
       className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-3xl border border-border bg-card"
       style={{ boxShadow: "var(--shadow-elegant)" }}
     >
-      {reportOpen && (
-        <ReportModal questionId={q.id} onClose={() => setReportOpen(false)} />
-      )}
+      {reportOpen && <ReportModal questionId={q.id} onClose={() => setReportOpen(false)} />}
       {/* Header */}
       <div className="border-b border-border bg-secondary/60 px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -469,8 +475,8 @@ export function PracticeSession({
                 i === index
                   ? "border-primary bg-primary text-primary-foreground"
                   : answered
-                  ? "border-success bg-success/15 text-foreground"
-                  : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                    ? "border-success bg-success/15 text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/50"
               }`}
             >
               {i + 1}
@@ -491,9 +497,7 @@ export function PracticeSession({
           {q.answers.map((opt, i) => (
             <button
               key={i}
-              onClick={() =>
-                !submitted && setAnswers((prev) => ({ ...prev, [index]: i }))
-              }
+              onClick={() => !submitted && setAnswers((prev) => ({ ...prev, [index]: i }))}
               disabled={submitted}
               className={optionClass(i)}
             >
@@ -503,10 +507,10 @@ export function PracticeSession({
                     submitted && currentReveal && i === currentReveal.correctIndex
                       ? "border-success bg-success text-success-foreground"
                       : submitted && currentReveal && i === selected
-                      ? "border-destructive bg-destructive text-destructive-foreground"
-                      : selected === i
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background text-muted-foreground"
+                        ? "border-destructive bg-destructive text-destructive-foreground"
+                        : selected === i
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-muted-foreground"
                   }`}
                 >
                   {submitted && currentReveal && i === currentReveal.correctIndex ? (
@@ -570,9 +574,7 @@ export function PracticeSession({
                 >
                   <span>פתרון מפורט</span>
                   <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      showSolution ? "rotate-180" : ""
-                    }`}
+                    className={`h-5 w-5 transition-transform ${showSolution ? "rotate-180" : ""}`}
                   />
                 </button>
                 {showSolution && currentReveal && (

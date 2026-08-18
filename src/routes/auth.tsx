@@ -48,8 +48,7 @@ function AuthPage() {
     }
     navigate({ to: dest, replace: true });
   }, [session, navigate]);
-  const setMode = (m: AuthMode) =>
-    navigate({ to: "/auth", search: { mode: m } });
+  const setMode = (m: AuthMode) => navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [examDate, setExamDate] = useState("");
@@ -58,7 +57,6 @@ function AuthPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
-
 
   const googleSignIn = async () => {
     setErr(null);
@@ -85,8 +83,6 @@ function AuthPage() {
       setGoogleLoading(false);
     }
   };
-
-
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +112,6 @@ function AuthPage() {
         setMsg("התחברת בהצלחה!");
         navigate({ to: "/dashboard" });
       }
-
     } catch (e) {
       setErr(e instanceof Error ? e.message : "אירעה שגיאה, נסה שוב.");
     } finally {
@@ -228,12 +223,15 @@ function AuthPage() {
           </div>
 
           <form onSubmit={submit} className="space-y-4">
-
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-foreground">
+              <label
+                htmlFor="auth-email"
+                className="mb-1.5 block text-sm font-semibold text-foreground"
+              >
                 אימייל
               </label>
               <input
+                id="auth-email"
                 type="email"
                 required
                 dir="ltr"
@@ -244,10 +242,14 @@ function AuthPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-foreground">
+              <label
+                htmlFor="auth-password"
+                className="mb-1.5 block text-sm font-semibold text-foreground"
+              >
                 סיסמה
               </label>
               <input
+                id="auth-password"
                 type="password"
                 required
                 minLength={6}
@@ -262,10 +264,14 @@ function AuthPage() {
             {mode === "signup" && (
               <>
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  <label
+                    htmlFor="auth-exam-date"
+                    className="mb-1.5 block text-sm font-semibold text-foreground"
+                  >
                     תאריך בחינה מתוכנן
                   </label>
                   <input
+                    id="auth-exam-date"
                     type="date"
                     required
                     value={examDate}
@@ -274,10 +280,14 @@ function AuthPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                  <label
+                    htmlFor="auth-target-degree"
+                    className="mb-1.5 block text-sm font-semibold text-foreground"
+                  >
                     תחום לימודים מבוקש
                   </label>
                   <input
+                    id="auth-target-degree"
                     type="text"
                     required
                     value={targetDegree}
@@ -288,7 +298,6 @@ function AuthPage() {
                 </div>
               </>
             )}
-
 
             {err && (
               <p className="rounded-xl border border-destructive bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
@@ -310,7 +319,6 @@ function AuthPage() {
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {mode === "signup" ? "ההרשמה עכשיו" : "התחבר"}
             </button>
-
           </form>
 
           <button
@@ -321,9 +329,7 @@ function AuthPage() {
             }}
             className="mt-5 w-full text-center text-sm font-semibold text-muted-foreground hover:text-foreground"
           >
-            {mode === "signup"
-              ? "כבר יש לך חשבון? התחברות"
-              : "אין לך חשבון? הרשמה"}
+            {mode === "signup" ? "כבר יש לך חשבון? התחברות" : "אין לך חשבון? הרשמה"}
           </button>
         </div>
       </div>

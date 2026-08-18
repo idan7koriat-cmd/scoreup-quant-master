@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { toast } from "sonner";
 import { sendContactMessage } from "@/lib/contact.functions";
 import { SUPPORT_EMAIL } from "@/lib/support";
@@ -6,7 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 /** מחליף את קישורי ה-mailto: פותח מודאל ששולח הודעה בפועל למייל התמיכה דרך השרת. */
-export function ContactButton({ className, children }: { className?: string; children: ReactNode }) {
+export function ContactButton({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -47,69 +54,91 @@ function ContactModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 p-4 backdrop-blur-sm">
-      <div className="glass-panel w-full max-w-md rounded-3xl p-7">
-        <h3 className="text-xl font-extrabold text-foreground">צור קשר</h3>
-        <p className="mt-1 text-sm text-muted-foreground">נשמח לעזור — נחזור אליך במייל בהקדם.</p>
+    <DialogPrimitive.Root open onOpenChange={(next) => !next && onClose()}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-background/85 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="glass-panel fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl p-7"
+        >
+          <DialogPrimitive.Title asChild>
+            <h3 className="text-xl font-extrabold text-foreground">צור קשר</h3>
+          </DialogPrimitive.Title>
+          <p className="mt-1 text-sm text-muted-foreground">נשמח לעזור — נחזור אליך במייל בהקדם.</p>
 
-        <div className="mt-5 space-y-4">
-          <div>
-            <label htmlFor="contact-name" className="mb-2 block text-sm font-semibold text-foreground">
-              שם (לא חובה)
-            </label>
-            <Input id="contact-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="השם שלך" />
+          <div className="mt-5 space-y-4">
+            <div>
+              <label
+                htmlFor="contact-name"
+                className="mb-2 block text-sm font-semibold text-foreground"
+              >
+                שם (לא חובה)
+              </label>
+              <Input
+                id="contact-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="השם שלך"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="contact-email"
+                className="mb-2 block text-sm font-semibold text-foreground"
+              >
+                אימייל
+              </label>
+              <Input
+                id="contact-email"
+                type="email"
+                dir="ltr"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="contact-message"
+                className="mb-2 block text-sm font-semibold text-foreground"
+              >
+                הודעה
+              </label>
+              <Textarea
+                id="contact-message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="איך נוכל לעזור?"
+                className="min-h-[120px] resize-none"
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="contact-email" className="mb-2 block text-sm font-semibold text-foreground">
-              אימייל
-            </label>
-            <Input
-              id="contact-email"
-              type="email"
-              dir="ltr"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <label htmlFor="contact-message" className="mb-2 block text-sm font-semibold text-foreground">
-              הודעה
-            </label>
-            <Textarea
-              id="contact-message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="איך נוכל לעזור?"
-              className="min-h-[120px] resize-none"
-            />
-          </div>
-        </div>
 
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
-          >
-            ביטול
-          </button>
-          <button
-            onClick={submit}
-            disabled={sending || !email.trim() || !message.trim()}
-            className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
-            style={{ background: "var(--gradient-cta)" }}
-          >
-            {sending ? "שולח…" : "שלח הודעה"}
-          </button>
-        </div>
+          <div className="mt-6 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-2xl border border-border px-4 py-3 text-sm font-bold text-foreground hover:bg-secondary"
+            >
+              ביטול
+            </button>
+            <button
+              onClick={submit}
+              disabled={sending || !email.trim() || !message.trim()}
+              className="flex-1 rounded-2xl px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ background: "var(--gradient-cta)" }}
+            >
+              {sending ? "שולח…" : "שלח הודעה"}
+            </button>
+          </div>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          אפשר גם ישירות ל-
-          <a href={`mailto:${SUPPORT_EMAIL}`} className="underline" dir="ltr">
-            {SUPPORT_EMAIL}
-          </a>
-        </p>
-      </div>
-    </div>
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            אפשר גם ישירות ל-
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="underline" dir="ltr">
+              {SUPPORT_EMAIL}
+            </a>
+          </p>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
