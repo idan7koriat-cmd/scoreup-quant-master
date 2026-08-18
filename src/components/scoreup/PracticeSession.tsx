@@ -102,14 +102,14 @@ function ReportModal({ questionId, onClose }: { questionId: string; onClose: () 
           <div className="mt-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 rounded-[10px] border border-border px-4 py-3 text-sm font-bold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97]"
+              className="flex-1 rounded-[10px] border border-border px-4 py-3 text-sm font-bold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               ביטול
             </button>
             <button
               onClick={submit}
               disabled={sending}
-              className="flex-1 rounded-[10px] px-4 py-3 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:opacity-60"
+              className="flex-1 rounded-[10px] px-4 py-3 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ background: "var(--gradient-primary)" }}
             >
               {sending ? "שולח…" : "שלח דיווח"}
@@ -279,7 +279,7 @@ export function PracticeSession({
         </p>
         <button
           onClick={onExit}
-          className="mt-4 rounded-[10px] border border-border bg-card px-5 py-2.5 font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97]"
+          className="mt-4 rounded-[10px] border border-border bg-card px-5 py-2.5 font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           חזרה להגדרות
         </button>
@@ -377,7 +377,7 @@ export function PracticeSession({
 
         <button
           onClick={onExit}
-          className="mt-8 flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
+          className="mt-8 flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           style={{ background: "var(--gradient-primary)" }}
         >
           <RotateCcw className="h-4 w-4" />
@@ -391,7 +391,7 @@ export function PracticeSession({
 
   const optionClass = (i: number) => {
     const base =
-      "w-full text-start rounded-[10px] border-2 px-5 py-4 font-medium transition-[border-color,background-color,box-shadow] duration-150 ease-out";
+      "w-full text-start rounded-[10px] border-2 px-5 py-4 font-medium transition-[border-color,background-color,box-shadow] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
     if (!submitted || !currentReveal) {
       return `${base} ${
         selected === i
@@ -437,14 +437,14 @@ export function PracticeSession({
             </span>
             <button
               onClick={() => setReportOpen(true)}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Megaphone className="h-3.5 w-3.5" />
               דיווח
             </button>
             <button
               onClick={() => setFinished(true)}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground transition-colors duration-150 hover:bg-secondary"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground transition-colors duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Flag className="h-3.5 w-3.5" />
               סיום תרגול
@@ -472,7 +472,7 @@ export function PracticeSession({
             <button
               key={i}
               onClick={() => goTo(i)}
-              className={`h-10 w-10 rounded-[8px] border-2 text-sm font-bold transition-[border-color,background-color,color] duration-150 ${
+              className={`h-10 w-10 rounded-[8px] border-2 text-sm font-bold transition-[border-color,background-color,color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                 i === index
                   ? "border-primary bg-primary text-primary-foreground"
                   : answered
@@ -554,7 +554,7 @@ export function PracticeSession({
               <button
                 onClick={() => selected !== null && void reveal([index])}
                 disabled={selected === null || revealing}
-                className="flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
+                className="flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-primary)" }}
               >
                 {revealing && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -578,7 +578,7 @@ export function PracticeSession({
 
                 <button
                   onClick={() => setShowSolution((s) => !s)}
-                  className="flex w-full items-center justify-between rounded-[10px] border border-border bg-secondary/50 px-5 py-4 text-start font-semibold text-foreground transition-colors duration-150 hover:bg-secondary"
+                  className="flex w-full items-center justify-between rounded-[10px] border border-border bg-secondary/50 px-5 py-4 text-start font-semibold text-foreground transition-colors duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   <span>פתרון מפורט</span>
                   <ChevronDown
@@ -608,7 +608,7 @@ export function PracticeSession({
           <button
             onClick={() => goTo(Math.max(0, index - 1))}
             disabled={index === 0}
-            className="flex items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-5 py-4 text-base font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100"
+            className="flex items-center justify-center gap-2 rounded-[10px] border border-border bg-card px-5 py-4 text-base font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <ChevronRight className="h-5 w-5" />
             הקודם
@@ -616,7 +616,7 @@ export function PracticeSession({
           {index < total - 1 ? (
             <button
               onClick={() => goTo(Math.min(total - 1, index + 1))}
-              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ background: "var(--gradient-primary)" }}
             >
               לשאלה הבאה
@@ -625,7 +625,7 @@ export function PracticeSession({
           ) : (
             <button
               onClick={() => setFinished(true)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ background: "var(--gradient-primary)" }}
             >
               סיום וצפייה בסיכום
