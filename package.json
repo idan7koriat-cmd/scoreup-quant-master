@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "generate-questions": "bun scripts/generate-questions.ts"
+    "generate-questions": "bun scripts/generate-questions.ts",
+    "upload-questions": "bun scripts/upload-questions.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
@@ -56,6 +57,7 @@
     "input-otp": "^1.4.2",
     "katex": "0.16.22",
     "lucide-react": "^0.575.0",
+    "posthog-js": "^1.418.10",
     "react": "^19.2.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.0",

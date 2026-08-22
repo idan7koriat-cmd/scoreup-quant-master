@@ -25,7 +25,6 @@ import { AGENT_1_SYSTEM_PROMPT, AGENT_2_SYSTEM_PROMPT } from "./prompts";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MODEL = "claude-opus-5";
 const TOPICS = ["אלגברה", "בעיות", "גיאומטריה", "הסקה מתרשים"] as const;
-const EXPECTED_SOURCE_COUNT = 5;
 const APPROVED_MARKER = "הכל תקין";
 
 const QuestionSchema = z
@@ -57,7 +56,7 @@ function readSourceFile(): string {
   if (!existsSync(sourcePath)) {
     throw new Error(
       `לא נמצא קובץ שאלות מקור ב-${sourcePath}.\n` +
-        `העתק את scripts/input/source-questions.example.txt לשם, מלא ${EXPECTED_SOURCE_COUNT} שאלות מקור, ונסה שוב.`,
+        `העתק את scripts/input/source-questions.example.txt לשם, מלא שאלות מקור (הכמות גמישה — תלוי במורכבות: פחות אם יש הרבה איורים, יותר אם זה טקסט פשוט), ונסה שוב.`,
     );
   }
 
