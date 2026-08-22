@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,8 +12,24 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initPostHog, isPostHogReady, posthog } from "../lib/posthog";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { Toaster } from "../components/ui/sonner";
+
+/** מאתחל את PostHog פעם אחת בצד הלקוח, ושולח $pageview בכל ניווט בין מסכים. */
+function PostHogTracker() {
+  const href = useRouterState({ select: (s) => s.location.href });
+
+  useEffect(() => {
+    initPostHog();
+  }, []);
+
+  useEffect(() => {
+    if (isPostHogReady()) posthog.capture("$pageview");
+  }, [href]);
+
+  return null;
+}
 
 function NotFoundComponent() {
   return (
@@ -125,6 +142,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PostHogTracker />
       <ScrollToTop />
       <Toaster position="top-center" richColors />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
