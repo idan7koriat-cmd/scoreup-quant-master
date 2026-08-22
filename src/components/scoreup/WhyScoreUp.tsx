@@ -1,4 +1,5 @@
 import { Brain, ListChecks, LineChart, Library } from "lucide-react";
+import { useInView } from "@/hooks/useInView";
 
 const features = [
   {
@@ -24,10 +25,16 @@ const features = [
 ];
 
 export function WhyScoreUp() {
+  const { ref: headerRef, inView: headerInView } = useInView<HTMLDivElement>();
+  const { ref: gridRef, inView: gridInView } = useInView<HTMLDivElement>();
+
   return (
     <section id="why" className="py-24" style={{ background: "var(--gradient-subtle)" }}>
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-2xl text-center">
+        <div
+          ref={headerRef}
+          className={`mx-auto max-w-2xl text-center ${headerInView ? "su-rise-in" : "opacity-0"}`}
+        >
           <span className="inline-block rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
             למה ScoreUp?
           </span>
@@ -40,12 +47,14 @@ export function WhyScoreUp() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {features.map((f) => (
+        <div ref={gridRef} className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {features.map((f, i) => (
             <div
               key={f.title}
-              className="group rounded-[20px] border border-border bg-card p-6 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              className={`group rounded-[20px] border border-border bg-card p-6 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 ${
+                gridInView ? "su-rise-in" : "opacity-0"
+              }`}
+              style={{ boxShadow: "var(--shadow-card)", animationDelay: `${i * 80}ms` }}
             >
               <div
                 className="flex h-12 w-12 items-center justify-center rounded-[16px] text-primary-foreground transition-transform duration-200 ease-out group-hover:scale-110"

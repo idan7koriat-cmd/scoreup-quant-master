@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Check, X, ChevronDown, ChevronLeft, Sparkles, Lock, RotateCcw } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { demoQuestions } from "@/data/demoQuestions";
+import { useInView } from "@/hooks/useInView";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
 
@@ -12,6 +13,7 @@ export function DemoPractice() {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [showSolution, setShowSolution] = useState(false);
   const [paywall, setPaywall] = useState(false);
+  const { ref: revealRef, inView: revealInView } = useInView<HTMLDivElement>();
 
   const total = demoQuestions.length;
   const q = demoQuestions[index]!;
@@ -48,7 +50,10 @@ export function DemoPractice() {
 
   return (
     <section id="practice" className="bg-background py-24">
-      <div className="container mx-auto px-4">
+      <div
+        ref={revealRef}
+        className={`container mx-auto px-4 ${revealInView ? "su-rise-in" : "opacity-0"}`}
+      >
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
             <Sparkles className="h-4 w-4" />
