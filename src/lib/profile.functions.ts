@@ -74,7 +74,6 @@ export const getMyProfile = createServerFn({ method: "GET" })
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
       streak: computeStreak(practicedDates),
     };
-
   });
 
 export const markQuickPractice = createServerFn({ method: "POST" })
@@ -111,6 +110,8 @@ export type ProfilePage = {
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd: string | null;
   total: number;
   correct: number;
   byTopic: TopicStat[];
@@ -141,8 +142,7 @@ export const getProfilePage = createServerFn({ method: "POST" })
 
     const user = (context as any).user;
     const meta = user?.user_metadata ?? {};
-    const fullName =
-      (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
+    const fullName = (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
     // כשל כאן (כולל חריגה שאינה object של {error}, כמו כשל רשת) לא אמור להפיל
     // את שאר פרטי הפרופיל — נתפוס אותו כאן ונדווח עליו בנפרד דרך statsError.
@@ -191,6 +191,8 @@ export const getProfilePage = createServerFn({ method: "POST" })
       examDate: (row as any)?.exam_date ?? null,
       targetDegree: (row as any)?.target_degree ?? null,
       isPremium: Boolean((row as any)?.is_premium),
+      cancelAtPeriodEnd: Boolean((row as any)?.cancel_at_period_end),
+      currentPeriodEnd: (row as any)?.current_period_end ?? null,
       total: rows.length,
       correct,
       byTopic: [...map.values()].sort((a, b) => b.total - a.total),
@@ -234,6 +236,67 @@ export const resetMyStats = createServerFn({ method: "POST" })
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const recordPaymentConsent = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .handler(async ({ context }) => {
+    const { error } = await context.supabase
+      .from("profiles")
+      .upsert({ id: context.userId, payment_consent_at: new Date().toISOString() } as any, {
+        onConflict: "id",
+      });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export type CancelSubscriptionResult =
+  | { ok: true; periodEnd: string | null }
+  | { ok: false; reason: string };
+
+/** מבטל את חידוש המנוי (ללא חיבור לחברת סליקה בפועל עדיין) ושולח מייל אישור ביטול. */
+export const cancelSubscription = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .handler(async ({ context }): Promise<CancelSubscriptionResult> => {
+    const { data: row } = await context.supabase
+      .from("profiles")
+      .select("current_period_end")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({ cancel_at_period_end: true, cancelled_at: new Date().toISOString() })
+      .eq("id", context.userId);
+    if (error) return { ok: false, reason: error.message };
+
+    const periodEnd = (row as any)?.current_period_end ?? null;
+    const email = (context as any).user?.email as string | undefined;
+    const apiKey = process.env["RESEND_API_KEY"];
+
+    if (email && apiKey) {
+      const untilText = periodEnd ? `עד ${periodEnd}` : "עד תום מחזור החיוב הנוכחי ששולם";
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            from: "ScoreUp <onboarding@resend.dev>",
+            to: [email],
+            subject: "אישור ביטול מנוי — ScoreUp",
+            text: `היי,\n\nביטול המנוי שלך ל-ScoreUp נקלט בהצלחה. המנוי לא יחודש ולא תחויב/י שוב במחזור החיוב הבא.\nתמשיך/י ליהנות מהגישה המלאה ${untilText}.\n\nאם זו לא היית את/ה, אנא צור/י איתנו קשר בהקדם: ${process.env["VITE_SUPPORT_EMAIL"] ?? ""}\n\nצוות ScoreUp`,
+          }),
+        });
+        if (!res.ok) {
+          console.error("[cancelSubscription] Resend error:", res.status, await res.text());
+        }
+      } catch (e) {
+        // כשל בשליחת המייל לא אמור לחסום את הביטול עצמו.
+        console.error("[cancelSubscription] failed to send confirmation email", e);
+      }
+    }
+
+    return { ok: true, periodEnd };
   });
 
 export const reportQuestion = createServerFn({ method: "POST" })

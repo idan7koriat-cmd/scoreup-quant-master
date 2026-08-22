@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   ArrowRight,
   Loader2,
@@ -11,11 +12,29 @@ import {
   Zap,
   KeyRound,
   RotateCcw,
+  XCircle,
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getExtSupabase } from "@/lib/extAuthClient";
-import { getProfilePage, resetMyStats, updateMyProfile } from "@/lib/profile.functions";
+import {
+  cancelSubscription,
+  getProfilePage,
+  resetMyStats,
+  updateMyProfile,
+} from "@/lib/profile.functions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Footer } from "@/components/scoreup/Footer";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/profile")({
   ssr: false,
@@ -131,6 +150,22 @@ function ProfilePage() {
     },
   });
 
+  const cancel = useMutation({
+    mutationFn: () => cancelSubscription(),
+    onSuccess: (res) => {
+      if (!res.ok) {
+        toast.error("לא הצלחנו לבטל את המנוי כרגע — נסה שוב או פנה לתמיכה");
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ["profile-page"] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("הביטול נקלט — נשלח אליך מייל אישור");
+    },
+    onError: () => {
+      toast.error("לא הצלחנו לבטל את המנוי כרגע — נסה שוב או פנה לתמיכה");
+    },
+  });
+
   const changePassword = async () => {
     const email = data?.email ?? session?.user.email;
     if (!email) return;
@@ -166,6 +201,8 @@ function ProfilePage() {
   const correct = data?.correct ?? 0;
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
   const isPremium = data?.isPremium ?? false;
+  const cancelAtPeriodEnd = data?.cancelAtPeriodEnd ?? false;
+  const currentPeriodEnd = data?.currentPeriodEnd ?? null;
   const statsError = data?.statsError ?? null;
 
   return (
@@ -326,7 +363,13 @@ function ProfilePage() {
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {isPremium
-                  ? "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                  ? cancelAtPeriodEnd
+                    ? `המנוי בוטל ולא יחודש. תיהנה/י מהגישה המלאה ${
+                        currentPeriodEnd
+                          ? `עד ${new Date(currentPeriodEnd).toLocaleDateString("he-IL")}`
+                          : "עד תום מחזור החיוב הנוכחי ששולם"
+                      }.`
+                    : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
                   : "גישה חלקית למאגר. שדרג כדי לפתוח את הכל."}
               </p>
             </div>
@@ -339,6 +382,36 @@ function ProfilePage() {
                 <Zap className="h-4 w-4" />
                 שדרג למסלול 700+ ⚡
               </Link>
+            )}
+            {isPremium && !cancelAtPeriodEnd && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button className="inline-flex items-center gap-1.5 rounded-[10px] border border-destructive/40 px-4 py-2.5 text-sm font-semibold text-destructive transition-colors duration-150 hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+                    <XCircle className="h-4 w-4" />
+                    בטל מנוי
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="su-theme-v2" dir="rtl">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>לבטל את המנוי?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      המנוי לא יחודש ולא תחויב/י שוב במחזור החיוב הבא. תמשיך/י ליהנות מהגישה המלאה
+                      עד תום התקופה ששולמה.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>השאר/י פעיל</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => cancel.mutate()}
+                      disabled={cancel.isPending}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {cancel.isPending && <Loader2 className="me-1 h-4 w-4 animate-spin" />}
+                      כן, בטל את המנוי
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </section>
@@ -427,6 +500,7 @@ function ProfilePage() {
           ) : null}
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

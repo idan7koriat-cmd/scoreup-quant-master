@@ -8,6 +8,7 @@ import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
 import type { PracticeConfig } from "@/data/questions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Footer } from "@/components/scoreup/Footer";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -228,6 +229,7 @@ function Dashboard() {
           />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
@@ -16,8 +16,10 @@ import {
   LineChart,
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
-import { getMyProfile } from "@/lib/profile.functions";
+import { getMyProfile, recordPaymentConsent } from "@/lib/profile.functions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Footer } from "@/components/scoreup/Footer";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const valueCards = [
   {
@@ -77,6 +79,8 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [purchaseConsent, setPurchaseConsent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <DialogPrimitive.Root open onOpenChange={(next) => !next && onClose()}>
@@ -134,8 +138,16 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
               </p>
               <form
                 className="mt-5 space-y-3"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
+                  if (!purchaseConsent) return;
+                  setSubmitting(true);
+                  try {
+                    await recordPaymentConsent();
+                  } catch {
+                    // כשל בשמירת רישום ההסכמה לא אמור לחסום את המשך תהליך ה-lead.
+                  }
+                  setSubmitting(false);
                   setSent(true);
                 }}
               >
@@ -163,12 +175,28 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
                   placeholder="טלפון"
                   className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
                 />
+                <div className="flex items-start gap-2.5 pt-1">
+                  <Checkbox
+                    id="lead-purchase-consent"
+                    checked={purchaseConsent}
+                    onCheckedChange={(v) => setPurchaseConsent(v === true)}
+                    className="mt-0.5"
+                  />
+                  <label
+                    htmlFor="lead-purchase-consent"
+                    className="text-start text-xs leading-relaxed text-muted-foreground"
+                  >
+                    אני מבין/ה שמדובר ברכישת תוכן דיגיטלי הניתן לי באופן מיידי עם השלמת התשלום,
+                    ושהמנוי מתחדש אוטומטית עד לביטולו.
+                  </label>
+                </div>
                 <button
                   type="submit"
-                  className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01]"
+                  disabled={!purchaseConsent || submitting}
+                  className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{ background: "var(--gradient-cta)" }}
                 >
-                  שלח ופתח גישה
+                  {submitting ? "שולח…" : "שלח ופתח גישה"}
                 </button>
               </form>
             </>
@@ -181,8 +209,17 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
 
 function PricingPage() {
   const { session, loading } = useSession();
+  const navigate = useNavigate();
   const [plan, setPlan] = useState<Plan>("marathon");
   const [modal, setModal] = useState(false);
+
+  const openUpgrade = () => {
+    if (!session) {
+      navigate({ to: "/auth", search: { mode: "signup" as const } });
+      return;
+    }
+    setModal(true);
+  };
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -343,7 +380,7 @@ function PricingPage() {
               </div>
             ) : (
               <button
-                onClick={() => setModal(true)}
+                onClick={openUpgrade}
                 className="mt-8 w-full rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
@@ -387,6 +424,7 @@ function PricingPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 }
