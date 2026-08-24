@@ -174,12 +174,17 @@ function Dashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">היי {name} 👋</h1>
-        <p className="mt-2 text-muted-foreground">
-          בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.
-        </p>
+        <div className="su-rise-in" style={{ animationDelay: "0ms" }}>
+          <h1 className="text-4xl font-black tracking-tight text-foreground">היי {name} 👋</h1>
+          <p className="mt-2 text-muted-foreground">
+            בוא נתקדם היום — בנה תרגול מותאם אישית והתחל לפתור.
+          </p>
+        </div>
         {daysToExam !== null && (
-          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">
+          <p
+            className="su-rise-in mt-4 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-base font-extrabold text-accent-foreground"
+            style={{ animationDelay: "70ms" }}
+          >
             {daysToExam > 0
               ? `עוד ${daysToExam} ימים עד הבחינה הפסיכומטרית`
               : daysToExam === 0
@@ -189,22 +194,32 @@ function Dashboard() {
         )}
 
         {/* Account status */}
-        <div className="mt-8">
+        <div className="su-rise-in mt-8" style={{ animationDelay: "140ms" }}>
           <div
             className="rounded-[20px] border border-border bg-card p-6"
             style={{ boxShadow: "var(--shadow-elegant)" }}
           >
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold text-muted-foreground">סטטוס חשבון</p>
-                <p className="mt-1 text-xl font-extrabold text-foreground">
-                  {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {isPremium
-                    ? "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
-                    : "יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל."}
-                </p>
+              <div className="flex items-center gap-4">
+                <span
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] ${
+                    isPremium ? "text-primary-foreground" : "text-muted-foreground"
+                  }`}
+                  style={{ background: isPremium ? "var(--gradient-primary)" : "var(--secondary)" }}
+                >
+                  <Zap className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-muted-foreground">סטטוס חשבון</p>
+                  <p className="mt-1 text-xl font-extrabold text-foreground">
+                    {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isPremium
+                      ? "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                      : "יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל."}
+                  </p>
+                </div>
               </div>
               {!isPremium && (
                 <Link
@@ -220,10 +235,16 @@ function Dashboard() {
           </div>
         </div>
 
-        <LearningAdvisorCard isPremium={isPremium} onStart={start} onUpgrade={() => navigate({ to: "/pricing" })} />
+        <div className="su-rise-in" style={{ animationDelay: "210ms" }}>
+          <LearningAdvisorCard
+            isPremium={isPremium}
+            onStart={start}
+            onUpgrade={() => navigate({ to: "/pricing" })}
+          />
+        </div>
 
         {/* Practice engine */}
-        <div className="mt-10">
+        <div className="su-rise-in mt-10" style={{ animationDelay: "280ms" }}>
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
             בניה עצמית — תרגול מותאם אישית
           </h2>
