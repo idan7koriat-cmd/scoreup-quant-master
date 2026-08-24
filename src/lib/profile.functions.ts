@@ -104,6 +104,64 @@ export const recordSolvedQuestion = createServerFn({ method: "POST" })
   });
 
 export type TopicStat = { topic: string; total: number; correct: number };
+
+type StatsContext = { supabase: any; userId: string };
+
+/**
+ * שולף את פילוח הדיוק לפי נושא + הסכומים הכוללים, מתוך solved_questions.
+ * משותף בין getProfilePage (עם טווח תאריכים אופציונלי) לבין יועץ הלימודים (כל הזמנים).
+ */
+export async function getUserTopicStats(
+  context: StatsContext,
+  range?: { from?: string | null; to?: string | null },
+): Promise<{ total: number; correct: number; byTopic: TopicStat[]; statsError: string | null }> {
+  let rows: any[] = [];
+  let statsErrorMessage: string | null = null;
+  try {
+    let solvedQuery = context.supabase
+      .from("solved_questions")
+      .select("question_id, is_correct, solved_at")
+      .eq("user_id", context.userId);
+
+    if (range?.from) solvedQuery = solvedQuery.gte("solved_at", `${range.from}T00:00:00`);
+    if (range?.to) solvedQuery = solvedQuery.lte("solved_at", `${range.to}T23:59:59`);
+
+    const { data: solved, error: solvedError } = await solvedQuery;
+    if (solvedError) statsErrorMessage = solvedError.message;
+    else rows = (solved as any[]) ?? [];
+  } catch (e) {
+    statsErrorMessage = e instanceof Error ? e.message : String(e);
+  }
+
+  const ids = [...new Set(rows.map((r) => String(r.question_id)))];
+  let topics = new Map<string, string>();
+  if (ids.length) {
+    const { data: qs } = await context.supabase
+      .from("questions")
+      .select("id, topic")
+      .in("id", ids);
+    topics = new Map(((qs as any[]) ?? []).map((q) => [String(q.id), q.topic]));
+  }
+
+  const map = new Map<string, TopicStat>();
+  let correct = 0;
+  for (const r of rows) {
+    if (r.is_correct) correct++;
+    const topic = topics.get(String(r.question_id)) ?? "אחר";
+    const cur = map.get(topic) ?? { topic, total: 0, correct: 0 };
+    cur.total++;
+    if (r.is_correct) cur.correct++;
+    map.set(topic, cur);
+  }
+
+  return {
+    total: rows.length,
+    correct,
+    byTopic: [...map.values()].sort((a, b) => b.total - a.total),
+    statsError: statsErrorMessage,
+  };
+}
+
 export type ProfilePage = {
   email: string | null;
   fullName: string;
@@ -144,46 +202,7 @@ export const getProfilePage = createServerFn({ method: "POST" })
     const meta = user?.user_metadata ?? {};
     const fullName = (row as any)?.full_name ?? meta.full_name ?? meta.name ?? "";
 
-    // כשל כאן (כולל חריגה שאינה object של {error}, כמו כשל רשת) לא אמור להפיל
-    // את שאר פרטי הפרופיל — נתפוס אותו כאן ונדווח עליו בנפרד דרך statsError.
-    let rows: any[] = [];
-    let statsErrorMessage: string | null = null;
-    try {
-      let solvedQuery = context.supabase
-        .from("solved_questions")
-        .select("question_id, is_correct, solved_at")
-        .eq("user_id", context.userId);
-
-      if (payload.from) solvedQuery = solvedQuery.gte("solved_at", `${payload.from}T00:00:00`);
-      if (payload.to) solvedQuery = solvedQuery.lte("solved_at", `${payload.to}T23:59:59`);
-
-      const { data: solved, error: solvedError } = await solvedQuery;
-      if (solvedError) statsErrorMessage = solvedError.message;
-      else rows = (solved as any[]) ?? [];
-    } catch (e) {
-      statsErrorMessage = e instanceof Error ? e.message : String(e);
-    }
-
-    const ids = [...new Set(rows.map((r) => String(r.question_id)))];
-    let topics = new Map<string, string>();
-    if (ids.length) {
-      const { data: qs } = await context.supabase
-        .from("questions")
-        .select("id, topic")
-        .in("id", ids);
-      topics = new Map(((qs as any[]) ?? []).map((q) => [String(q.id), q.topic]));
-    }
-
-    const map = new Map<string, TopicStat>();
-    let correct = 0;
-    for (const r of rows) {
-      if (r.is_correct) correct++;
-      const topic = topics.get(String(r.question_id)) ?? "אחר";
-      const cur = map.get(topic) ?? { topic, total: 0, correct: 0 };
-      cur.total++;
-      if (r.is_correct) cur.correct++;
-      map.set(topic, cur);
-    }
+    const stats = await getUserTopicStats(context, { from: payload.from, to: payload.to });
 
     return {
       email: user?.email ?? null,
@@ -193,10 +212,10 @@ export const getProfilePage = createServerFn({ method: "POST" })
       isPremium: Boolean((row as any)?.is_premium),
       cancelAtPeriodEnd: Boolean((row as any)?.cancel_at_period_end),
       currentPeriodEnd: (row as any)?.current_period_end ?? null,
-      total: rows.length,
-      correct,
-      byTopic: [...map.values()].sort((a, b) => b.total - a.total),
-      statsError: statsErrorMessage,
+      total: stats.total,
+      correct: stats.correct,
+      byTopic: stats.byTopic,
+      statsError: stats.statsError,
     };
   });
 
