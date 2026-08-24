@@ -19,6 +19,7 @@ import { useSession } from "@/hooks/useSession";
 import { useInView } from "@/hooks/useInView";
 import { getMyProfile, recordPaymentConsent } from "@/lib/profile.functions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Faq } from "@/components/scoreup/Faq";
 import { Footer } from "@/components/scoreup/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -217,7 +218,8 @@ function PricingPage() {
   const { ref: cardsRef, inView: cardsInView } = useInView<HTMLDivElement>();
   const { ref: valueRef, inView: valueInView } = useInView<HTMLDivElement>();
 
-  const openUpgrade = () => {
+  const openUpgrade = (selectedPlan: Plan) => {
+    setPlan(selectedPlan);
     if (!session) {
       navigate({ to: "/auth", search: { mode: "signup" as const } });
       return;
@@ -294,18 +296,20 @@ function PricingPage() {
 
         <div
           ref={cardsRef}
-          className="mx-auto mt-12 grid max-w-4xl gap-6 lg:grid-cols-[1fr_1.25fr]"
+          className="mx-auto mt-12 grid max-w-5xl items-start gap-6 lg:grid-cols-3"
         >
           {/* Free */}
           <div
             className={`rounded-[20px] border border-border bg-card p-8 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
             style={{ animationDelay: "0ms" }}
           >
-            <p className="text-sm font-bold text-muted-foreground">מסלול חינמי</p>
+            <p className="text-sm font-bold text-muted-foreground">מנוי חינמי</p>
             <p className="mt-3 text-4xl font-extrabold text-foreground">₪0</p>
-            <p className="mt-1 text-sm text-muted-foreground">להתחלה ולהיכרות עם המערכת</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              להתחלה ולהיכרות עם המערכת — בלי כרטיס אשראי
+            </p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
-              {["חימום מהיר — 3 שאלות ביום", "ניתוח ביצועים בסיסי"].map((t) => (
+              {["3 שאלות תרגול ביום", "ניתוח ביצועים בסיסי"].map((t) => (
                 <li key={t} className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   {t}
@@ -319,17 +323,52 @@ function PricingPage() {
               {loading ? (
                 <Loader2 className="mx-auto h-4 w-4 animate-spin" />
               ) : isPremium ? (
-                "מסלול חינמי"
+                "מנוי חינמי"
               ) : (
                 "המסלול הנוכחי שלך"
               )}
             </button>
           </div>
 
-          {/* Premium */}
+          {/* Monthly (flexible) */}
           <div
-            className={`relative overflow-hidden rounded-[20px] border-2 border-primary/30 bg-card p-8 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
-            style={{ boxShadow: "var(--shadow-elegant)", animationDelay: "80ms" }}
+            className={`rounded-[20px] border border-border bg-card p-8 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
+            style={{ animationDelay: "80ms" }}
+          >
+            <p className="text-sm font-bold text-primary">מנוי גמיש</p>
+            <p className="mt-3 text-4xl font-extrabold text-foreground">
+              ₪99<span className="text-base font-semibold text-muted-foreground"> / חודש</span>
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              לתרגול שוטף בלי להתחייב קדימה — ללא התחייבות, ביטול בכל עת
+            </p>
+            <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
+              {premiumFeatures.map((t) => (
+                <li key={t} className="flex items-start gap-2">
+                  <Zap className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+
+            {isPremium ? (
+              <div className="mt-8 w-full rounded-[10px] bg-accent py-4 text-center text-sm font-bold text-accent-foreground">
+                המנוי שלך פעיל 🎉
+              </div>
+            ) : (
+              <button
+                onClick={() => openUpgrade("monthly")}
+                className="mt-8 w-full rounded-[10px] border border-primary bg-transparent py-4 text-base font-bold text-primary shadow-sm transition-transform duration-150 ease-snappy hover:scale-[1.01] hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                בחר במנוי הגמיש
+              </button>
+            )}
+          </div>
+
+          {/* Marathon — the emphasized plan */}
+          <div
+            className={`relative overflow-hidden rounded-[20px] border-2 border-primary/40 bg-card p-8 lg:-mt-3 lg:mb-3 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
+            style={{ boxShadow: "var(--shadow-elegant)", animationDelay: "160ms" }}
           >
             <span
               className="absolute start-8 top-0 rounded-b-xl px-3 py-1 text-xs font-bold text-white"
@@ -338,46 +377,19 @@ function PricingPage() {
               המסלול המומלץ
             </span>
 
-            <p className="mt-4 text-sm font-bold text-primary">מסלול 700+</p>
-
-            {/* Plan selector */}
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={() => setPlan("monthly")}
-                className={`rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                  plan === "monthly"
-                    ? "border-primary bg-accent"
-                    : "border-border hover:bg-secondary"
-                }`}
-              >
-                <p className="text-sm font-bold text-foreground">מנוי חודשי גמיש</p>
-                <p className="mt-1 text-2xl font-extrabold text-foreground">
-                  ₪99
-                  <span className="text-sm font-semibold text-muted-foreground"> / חודש</span>
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">ללא התחייבות, ביטול בכל עת</p>
-              </button>
-
-              <button
-                onClick={() => setPlan("marathon")}
-                className={`relative rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                  plan === "marathon"
-                    ? "border-primary bg-accent"
-                    : "border-border hover:bg-secondary"
-                }`}
-              >
-                <span className="absolute end-3 top-3 rounded-full bg-success px-2 py-0.5 text-[10px] font-bold text-success-foreground">
-                  חיסכון 25%
-                </span>
-                <p className="text-sm font-bold text-foreground">מרתון 60 יום</p>
-                <p className="mt-1 text-2xl font-extrabold text-foreground">
-                  ₪149
-                  <span className="text-sm font-semibold text-muted-foreground"> חד-פעמי</span>
-                </p>
-                <p className="mt-1 text-xs font-semibold text-primary">המסלול הכי פופולרי</p>
-              </button>
+            <p className="mt-4 text-sm font-bold text-primary">מנוי מרתון</p>
+            <p className="mt-3 text-4xl font-extrabold text-foreground">
+              ₪149<span className="text-base font-semibold text-muted-foreground"> חד-פעמי</span>
+            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-success px-2 py-0.5 text-[10px] font-bold text-success-foreground">
+                חיסכון 25%
+              </span>
+              <p className="text-sm text-muted-foreground">60 יום גישה מלאה</p>
             </div>
-
+            <p className="mt-2 text-sm text-muted-foreground">
+              המסלול הכי משתלם אם המבחן כבר מתקרב — משלמים פעם אחת, לא חושבים על זה שוב.
+            </p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
               {premiumFeatures.map((t) => (
                 <li key={t} className="flex items-start gap-2">
@@ -393,16 +405,14 @@ function PricingPage() {
               </div>
             ) : (
               <button
-                onClick={openUpgrade}
+                onClick={() => openUpgrade("marathon")}
                 className="mt-8 w-full rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
-                שדרג עכשיו ל-700+
+                בחר במסלול המרתון
               </button>
             )}
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              תשלום מאובטח • ביטול בכל עת • תמיכה אישית בוואטסאפ
-            </p>
+            <p className="mt-3 text-center text-xs text-muted-foreground">תשלום מאובטח</p>
           </div>
         </div>
 
@@ -440,6 +450,7 @@ function PricingPage() {
           </div>
         </section>
       </main>
+      <Faq />
       <Footer />
     </div>
   );
