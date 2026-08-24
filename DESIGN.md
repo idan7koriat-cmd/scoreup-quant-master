@@ -165,7 +165,7 @@ A restrained strategy: warm neutrals carry nearly the whole surface, one deep co
 
 ### Named Rules
 
-**The Rationed Accent Rule.** Coral appears only on a primary call-to-action or a success/achievement moment — never as a structural or decorative color. If more than one element on a screen is coral, one of them is wrong.
+**The Rationed Accent Rule.** Coral appears only on a primary call-to-action or a success/achievement moment — never as a structural or decorative color. If more than one element on a screen is coral, one of them is wrong. Two narrow, explicit exceptions on the marketing homepage: (1) the animated background layer in the two dark bookend sections (`.su-gradient-energy`) may carry a faint coral-tinted ambient blob alongside its dominant petrol tones — this is atmosphere, not a competing accent, and stays low-opacity; (2) exactly one flagship element per section may use a coral-tinted shadow **on hover only** (see the No-Glow Rule) as its single "bigger coral moment." Both exceptions are deliberately rare — the rule's spirit (one coral moment pulls the eye, not several) still governs everything else.
 
 **The Warm Neutral Rule.** Every gray in this system (background, borders, muted text) carries a warm/beige bias. A cool or blue-gray value anywhere in the UI is a regression to the old identity, not a stylistic variant.
 
@@ -179,6 +179,7 @@ A restrained strategy: warm neutrals carry nearly the whole surface, one deep co
 ### Hierarchy
 
 - **Display** (700, `clamp(2rem, 4.5vw, 3.2rem)`, 1.15 line-height): the "ScoreUp" wordmark only. Frank Ruhl Libre.
+- **Marketing Display** (900, `text-6xl`–`text-8xl` responsive, tight/negative tracking, ~1.02–1.1 line-height): the homepage Hero H1 only — not a general heading level, and never used inside the app itself (dashboard, practice, summary). Heebo, still — proof that boldness at this scale comes from weight and tracking discipline, not from reaching for the serif.
 - **Heading — page** (800, 1.875rem, 1.2 line-height): page-level headings ("היי {name}", "סיכום התרגול"). Heebo.
 - **Heading — section** (800, 1.5rem, 1.3 line-height): section headings and card titles ("בניה עצמית", "בניית תרגול מותאם אישית"). Heebo.
 - **Body** (400, 1rem, 1.75 line-height): every piece of reading content — question text, answer options, explanations, marketing copy. Heebo.
@@ -207,7 +208,7 @@ Mostly flat. Cards separate from the warm background primarily through the Surfa
 
 ### Named Rules
 
-**The No-Glow Rule.** Shadows are neutral warm-black at low opacity. A colored/saturated shadow (the incumbent cyan/blue glow) is a regression to the old identity, not a legitimate elevation variant.
+**The No-Glow Rule.** Shadows are neutral warm-black at low opacity at rest. A colored/saturated shadow as a *resting* state (the incumbent cyan/blue glow) is a regression to the old identity, not a legitimate elevation variant. One narrow exception: on the marketing homepage, exactly one flagship element per section may transition to a coral-tinted shadow **on hover/focus only** (resting state stays the same neutral shadow as every other card) — this is interaction feedback, not ambient glow, and it does not license a second one on the same screen.
 
 ## Shapes
 

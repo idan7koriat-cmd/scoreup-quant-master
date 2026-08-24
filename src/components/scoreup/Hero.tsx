@@ -1,5 +1,8 @@
-import { ArrowLeft, ChevronDown, TrendingUp, Database, Timer, Zap } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, TrendingUp, Database, Timer, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { demoQuestions } from "@/data/demoQuestions";
+import { DemoQuestionCard } from "./DemoQuestionCard";
 
 const stats = [
   { icon: TrendingUp, label: "+20-40 נקודות לשיפור" },
@@ -7,14 +10,62 @@ const stats = [
   { icon: Timer, label: "תרגול בזמן אמת" },
 ];
 
+function HeroPreviewCard() {
+  const q = demoQuestions[0]!;
+  const [selected, setSelected] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+
+  return (
+    <div className="su-rise-in" style={{ animationDelay: "260ms" }}>
+      <div
+        className="rounded-[20px] border border-border bg-card p-6 text-foreground md:p-7"
+        style={{ boxShadow: "var(--shadow-elegant)" }}
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+            {q.topic}
+          </span>
+          <span className="text-xs font-semibold text-muted-foreground">
+            שאלה לדוגמה — בלי הרשמה
+          </span>
+        </div>
+
+        <div className="pt-5">
+          <DemoQuestionCard
+            question={q}
+            selected={selected}
+            submitted={submitted}
+            showSolution={showSolution}
+            onSelect={setSelected}
+            onCheck={() => setSubmitted(true)}
+            onToggleSolution={() => setShowSolution((s) => !s)}
+          />
+        </div>
+
+        {submitted && (
+          <a
+            href="#practice"
+            className="group mt-5 flex items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{ background: "var(--gradient-cta)" }}
+          >
+            עוד 4 שאלות למטה — בלי הרשמה
+            <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden text-white">
-      <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
+      <div className="su-gradient-energy" aria-hidden="true" />
       <div className="su-instrument-texture" aria-hidden="true" />
 
-      <div className="container relative mx-auto px-4 py-24 md:py-32">
-        <div className="mx-auto max-w-4xl text-center">
+      <div className="container relative mx-auto grid gap-14 px-4 py-24 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-32">
+        <div>
           <span
             className="su-rise-in inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold backdrop-blur-xl"
             style={{
@@ -29,23 +80,23 @@ export function Hero() {
           </span>
 
           <h1
-            className="su-rise-in mt-6 text-5xl font-extrabold leading-[1.1] tracking-tight text-white md:text-7xl"
+            className="su-rise-in mt-6 text-6xl leading-[1.02] font-black tracking-tighter text-white sm:text-7xl lg:text-[5.5rem] xl:text-8xl"
             style={{ animationDelay: "70ms" }}
           >
-            ScoreUp — שפר את הציון בחלק
+            שפר את הציון
             <br />
-            <span style={{ color: "var(--petrol-tint)" }}>הכמותי בפסיכומטרי</span>
+            <span style={{ color: "var(--petrol-tint)" }}>בכמותי</span>
           </h1>
 
           <p
-            className="su-rise-in mx-auto mt-6 max-w-2xl text-lg text-white/75 md:text-xl"
+            className="su-rise-in mt-6 max-w-xl text-lg text-white/75 md:text-xl"
             style={{ animationDelay: "140ms" }}
           >
             למידה חכמה ותרגול ממוקד עם AI, פתרונות מפורטים שלב-אחר-שלב וניתוח ביצועים בזמן אמת.
           </p>
 
           <div
-            className="su-rise-in mt-10 flex flex-wrap items-center justify-center gap-4"
+            className="su-rise-in mt-10 flex flex-wrap items-center gap-4"
             style={{ animationDelay: "210ms" }}
           >
             <Link
@@ -90,16 +141,9 @@ export function Hero() {
               </div>
             ))}
           </div>
-
-          <a
-            href="#practice"
-            aria-label="גלול לתרגול לדוגמה למטה"
-            className="su-rise-in motion-safe:animate-bounce mt-16 inline-flex h-10 w-10 items-center justify-center rounded-full border text-white/70 transition-colors duration-150 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--petrol-deep)]"
-            style={{ borderColor: "rgba(255,255,255,0.14)", animationDelay: "350ms" }}
-          >
-            <ChevronDown className="h-5 w-5" />
-          </a>
         </div>
+
+        <HeroPreviewCard />
       </div>
     </section>
   );

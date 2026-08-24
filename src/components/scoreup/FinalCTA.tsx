@@ -7,13 +7,13 @@ export function FinalCTA() {
 
   return (
     <section className="relative overflow-hidden py-24 text-white">
-      <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
+      <div className="su-gradient-energy" aria-hidden="true" />
       <div className="su-instrument-texture" aria-hidden="true" />
       <div
         ref={ref}
         className={`container relative mx-auto px-4 text-center ${inView ? "su-rise-in" : "opacity-0"}`}
       >
-        <h2 className="mx-auto max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
+        <h2 className="mx-auto max-w-3xl text-4xl leading-tight font-black tracking-tight md:text-6xl">
           מוכן להעלות את הציון <span style={{ color: "var(--petrol-tint)" }}>בחלק הכמותי?</span>
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-white/75">

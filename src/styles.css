@@ -203,6 +203,24 @@
   }
 }
 
+@keyframes su-energy-drift {
+  0% {
+    background-position:
+      20% 12%,
+      85% 85%;
+  }
+  50% {
+    background-position:
+      35% 25%,
+      65% 70%;
+  }
+  100% {
+    background-position:
+      20% 12%,
+      85% 85%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   @keyframes su-feedback-in {
     from {
@@ -219,6 +237,19 @@
     }
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes su-energy-drift {
+    from {
+      background-position:
+        20% 12%,
+        85% 85%;
+    }
+    to {
+      background-position:
+        20% 12%,
+        85% 85%;
     }
   }
 }
@@ -243,6 +274,56 @@
     rgba(245, 242, 237, 0.05) 31px,
     rgba(245, 242, 237, 0.05) 32px
   );
+}
+
+/*
+ * Color-as-energy background for the two dark bookend sections (Hero,
+ * FinalCTA) — a slow-drifting ambient layer instead of a flat fill, built
+ * only from existing tokens via color-mix. This is the CSS-only stand-in
+ * for the "animated color energy" principle observed on Stripe.com's WebGL
+ * hero (see plan) — no canvas/WebGL, just background-position on layered
+ * gradients. The coral blob is deliberately faint: an ambient wash, not a
+ * second CTA-strength accent (see DESIGN.md's amended Rationed Accent Rule).
+ */
+.su-gradient-energy {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(
+      60% 60% at 50% 50%,
+      color-mix(in oklab, var(--coral) 22%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      70% 70% at 50% 50%,
+      color-mix(in oklab, var(--primary) 45%, transparent) 0%,
+      transparent 70%
+    ),
+    linear-gradient(165deg, var(--petrol-deep) 0%, var(--primary) 100%);
+  background-size:
+    180% 180%,
+    180% 180%,
+    100% 100%;
+  animation: su-energy-drift 18s ease-in-out infinite;
+}
+
+/*
+ * One deliberate "bigger coral moment" per DESIGN.md's amended Rationed
+ * Accent Rule: a coral-tinted shadow on hover only, on the single flagship
+ * card in WhyScoreUp. Resting state stays the same flat --shadow-card as
+ * every other card — the tint only appears on interaction, so it never
+ * violates the No-Glow Rule's ban on a *resting-state* glow.
+ */
+.su-flagship-card {
+  box-shadow: var(--shadow-card);
+  transition:
+    box-shadow 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.su-flagship-card:hover,
+.su-flagship-card:focus-within {
+  box-shadow: 0 24px 48px -20px color-mix(in oklab, var(--coral) 35%, transparent);
 }
 
 @layer base {
