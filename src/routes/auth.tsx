@@ -148,7 +148,7 @@ function AuthPage() {
       </header>
       <div className="flex flex-1 items-center justify-center px-4 py-16">
         <div
-          className="w-full max-w-md rounded-[20px] border border-border bg-card p-8"
+          className="su-rise-in w-full max-w-md rounded-[20px] border border-border bg-card p-8"
           style={{ boxShadow: "var(--shadow-elegant)" }}
         >
           <Link
