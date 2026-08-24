@@ -258,6 +258,36 @@
   animation: su-rise-in 0.7s var(--ease-snappy) both;
 }
 
+/* "היועץ מקליד…" — נקודות ההקלדה של כרטיס יועץ הלימודים, פלייבק חד-פעמי בלבד (ראו LearningAdvisorCard). */
+@keyframes su-typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes su-typing-dot {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+.su-typing-dot {
+  animation: su-typing-dot 1s ease-in-out infinite;
+}
+
 /*
  * Color-as-energy background for the two dark bookend sections (Hero,
  * FinalCTA) — a slow-drifting ambient layer instead of a flat fill, built
