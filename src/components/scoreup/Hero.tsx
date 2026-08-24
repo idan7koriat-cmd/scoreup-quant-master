@@ -68,7 +68,7 @@ export function Hero() {
                 borderColor: "rgba(255,255,255,0.14)",
               }}
             >
-              נסה 5 שאלות חינם
+              בחן את עצמך עכשיו
             </a>
           </div>
 

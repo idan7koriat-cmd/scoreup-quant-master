@@ -1,31 +1,41 @@
 import { useEffect, useState } from "react";
-import { SignalHigh, Wifi, BatteryFull } from "lucide-react";
+import { SignalHigh, Wifi, BatteryFull, ChevronLeft } from "lucide-react";
 import { demoQuestions } from "@/data/demoQuestions";
-import { MathText } from "./MathText";
+import { DemoQuestionCard } from "./DemoQuestionCard";
 
 /** תת-קבוצה של שאלות הדמו שמתאימות לתצוגה קטנה בתוך מסגרת טלפון — בלי דיאגרמת SVG ובלי שאלת מילים ארוכה מדי. */
 const previewQuestions = [demoQuestions[0]!, demoQuestions[1]!, demoQuestions[3]!];
 
-const CYCLE_MS = 4200;
+const CYCLE_MS = 6000;
 
-/** ויטרינה פסיבית ומונפשת — לא אינטראקטיבית בכוונה: הרכיב הזה "מציג", הרכיב האינטראקטיבי האמיתי נמצא ב-DemoPractice למטה. */
+/** ויטרינת "המוצר בפעולה" — טלפון עם שאלת תרגול אמיתית ואינטראקטיבית (אותם כפתורי "בדוק תשובה"/"השאלה הבאה" כמו בתרגול האמיתי), שמתקדמת לבד אם אף אחד לא נוגע בה. */
 export function PhoneMockup() {
   const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    setSelected(null);
+    setSubmitted(false);
+    setShowSolution(false);
+  }, [index]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => {
+    if (selected !== null) return; // המבקר בחר תשובה — הפסק להתקדם לבד, חכה לו
+    const id = setTimeout(() => {
       setIndex((i) => (i + 1) % previewQuestions.length);
     }, CYCLE_MS);
-    return () => clearInterval(id);
-  }, []);
+    return () => clearTimeout(id);
+  }, [index, selected]);
 
   const q = previewQuestions[index]!;
 
   return (
     <div className="su-rise-in mx-auto w-[260px] sm:w-[280px]" style={{ animationDelay: "260ms" }}>
       <div className="rounded-[46px] border-[10px] border-neutral-900 bg-neutral-900 shadow-2xl">
-        <div className="relative overflow-hidden rounded-[36px] bg-card" style={{ aspectRatio: "9 / 18.5" }}>
+        <div className="relative min-h-[420px] overflow-hidden rounded-[36px] bg-card">
           <div className="absolute inset-x-0 top-0 flex justify-center pt-2">
             <div className="h-6 w-28 rounded-full bg-neutral-900" />
           </div>
@@ -51,23 +61,28 @@ export function PhoneMockup() {
               )}
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-foreground">
-              <MathText>{q.question}</MathText>
-            </p>
-
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {q.answers.map((opt, i) => (
-                <div
-                  key={i}
-                  className="relative rounded-[10px] border border-border bg-background px-3 py-3 text-center text-sm font-semibold text-foreground"
-                >
-                  <span className="absolute top-1 end-1.5 text-[10px] font-bold text-muted-foreground">
-                    {String.fromCharCode(0x05d0 + i)}
-                  </span>
-                  <MathText>{opt}</MathText>
-                </div>
-              ))}
+            <div className="mt-4 text-sm [&_button]:text-sm [&_button]:py-3 [&_p]:text-sm">
+              <DemoQuestionCard
+                question={q}
+                selected={selected}
+                submitted={submitted}
+                showSolution={showSolution}
+                onSelect={setSelected}
+                onCheck={() => setSubmitted(true)}
+                onToggleSolution={() => setShowSolution((s) => !s)}
+              />
             </div>
+
+            {submitted && (
+              <button
+                onClick={() => setIndex((i) => (i + 1) % previewQuestions.length)}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] py-3 text-sm font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97]"
+                style={{ background: "var(--gradient-primary)" }}
+              >
+                השאלה הבאה
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>
