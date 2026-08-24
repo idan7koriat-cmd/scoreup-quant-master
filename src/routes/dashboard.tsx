@@ -8,6 +8,7 @@ import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
 import type { PracticeConfig } from "@/data/questions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Footer } from "@/components/scoreup/Footer";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -146,6 +147,12 @@ function Dashboard() {
               פרופיל
             </Link>
             <Link
+              to="/how-to-learn"
+              className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline"
+            >
+              איך ללמוד
+            </Link>
+            <Link
               to="/pricing"
               className="hidden rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline"
             >
@@ -228,6 +235,7 @@ function Dashboard() {
           />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
