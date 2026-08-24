@@ -2,12 +2,16 @@ export type TopicStat = { topic: string; total: number; correct: number };
 
 export type AdvisorTone = "no-data" | "partial-data" | "strong" | "mixed" | "weak";
 
+export type TopicSignal = { topic: string; accuracy: number };
+
 export type AdvisorResult = {
   headline: string;
   detail: string;
   recommendedTopic: string | null;
   recommendedDifficulty: number | null;
   tone: AdvisorTone;
+  /** נושאים שהאבחנה מתייחסת אליהם בפועל, עם הדיוק שלהם — לתצוגה ויזואלית שמגבה את המשפט. */
+  topicSignals: TopicSignal[];
 };
 
 const MIN_RELIABLE_SAMPLES = 5;
@@ -68,13 +72,19 @@ export function buildAdvice(
 
   if (totalSolved === 0) {
     const t = pick(NO_DATA_TEMPLATES, seed);
-    return { ...t, recommendedTopic: null, recommendedDifficulty: null, tone: "no-data" };
+    return { ...t, recommendedTopic: null, recommendedDifficulty: null, tone: "no-data", topicSignals: [] };
   }
 
   const reliable = byTopic.filter((t) => t.total >= MIN_RELIABLE_SAMPLES);
   if (reliable.length === 0) {
     const t = pick(PARTIAL_DATA_TEMPLATES, seed);
-    return { ...t, recommendedTopic: null, recommendedDifficulty: null, tone: "partial-data" };
+    return {
+      ...t,
+      recommendedTopic: null,
+      recommendedDifficulty: null,
+      tone: "partial-data",
+      topicSignals: [],
+    };
   }
 
   const withUrgency = (detail: string) => {
@@ -89,14 +99,15 @@ export function buildAdvice(
     reliable.reduce((s, t) => s + t.correct, 0) / reliable.reduce((s, t) => s + t.total, 0);
 
   if (overallAccuracy >= STRONG_OVERALL_THRESHOLD) {
-    const strongTopics = sorted.slice(0, Math.min(2, sorted.length)).map((t) => t.topic);
-    const headline = pick(STRONG_TEMPLATES, seed)(strongTopics);
+    const strongStats = sorted.slice(0, Math.min(2, sorted.length));
+    const headline = pick(STRONG_TEMPLATES, seed)(strongStats.map((t) => t.topic));
     return {
       headline,
       detail: withUrgency("אתה שולט בחומר ברמה גבוהה — הזמן לעלות רמת קושי או לנסות סימולציית פרק מלאה."),
       recommendedTopic: strongest.topic,
       recommendedDifficulty: null,
       tone: "strong",
+      topicSignals: strongStats.map((t) => ({ topic: t.topic, accuracy: pct(t) })),
     };
   }
 
@@ -106,12 +117,15 @@ export function buildAdvice(
     const detail = hasStrong
       ? `ב${strongest.topic} אתה כבר מוכיח שאתה מסוגל — בוא ניקח את אותה גישה ל${weakest.topic}.`
       : `נתמקד ב${weakest.topic} עם שאלות ברמה נוחה יותר, ונבנה משם ביטחון.`;
+    const topicSignals: TopicSignal[] = [{ topic: weakest.topic, accuracy: pct(weakest) }];
+    if (hasStrong) topicSignals.push({ topic: strongest.topic, accuracy: pct(strongest) });
     return {
       headline,
       detail: withUrgency(detail),
       recommendedTopic: weakest.topic,
       recommendedDifficulty: 1,
       tone: "weak",
+      topicSignals,
     };
   }
 
@@ -122,5 +136,9 @@ export function buildAdvice(
     recommendedTopic: weakest.topic,
     recommendedDifficulty: null,
     tone: "mixed",
+    topicSignals: [
+      { topic: strongest.topic, accuracy: pct(strongest) },
+      { topic: weakest.topic, accuracy: pct(weakest) },
+    ],
   };
 }

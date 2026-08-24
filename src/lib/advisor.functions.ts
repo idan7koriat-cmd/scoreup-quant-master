@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireExtAuth } from "@/lib/extAuth.middleware";
 import { getUserTopicStats } from "@/lib/profile.functions";
-import { buildAdvice, type AdvisorTone } from "@/lib/learningAdvisorRules";
+import { buildAdvice, type AdvisorTone, type TopicSignal } from "@/lib/learningAdvisorRules";
 
 export type LearningAdvice = {
   headline: string;
@@ -9,6 +9,7 @@ export type LearningAdvice = {
   recommendedTopic: string | null;
   recommendedDifficulty: number | null;
   tone: AdvisorTone;
+  topicSignals: TopicSignal[];
 };
 
 const REFRESH_AFTER_MS = 3 * 24 * 60 * 60 * 1000;
@@ -51,6 +52,7 @@ export const getLearningAdvice = createServerFn({ method: "GET" })
         recommendedTopic: cached.recommended_topic,
         recommendedDifficulty: cached.recommended_difficulty,
         tone: cached.tone,
+        topicSignals: (cached.topic_signals as TopicSignal[] | null) ?? [],
       };
     }
 
@@ -77,6 +79,7 @@ export const getLearningAdvice = createServerFn({ method: "GET" })
           recommended_topic: advice.recommendedTopic,
           recommended_difficulty: advice.recommendedDifficulty,
           tone: advice.tone,
+          topic_signals: advice.topicSignals,
           solved_count_at_calc: stats.total,
           calculated_at: new Date().toISOString(),
         } as any,
