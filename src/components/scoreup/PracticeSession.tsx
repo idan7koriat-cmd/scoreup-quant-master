@@ -22,6 +22,8 @@ import type { AnswerReveal, PracticeConfig } from "@/data/questions";
 import { MathText } from "./MathText";
 import { QuestionDiagram } from "./QuestionDiagram";
 import { Textarea } from "@/components/ui/textarea";
+import { AccuracyRing } from "./AccuracyRing";
+import { TopicBar } from "./TopicBar";
 
 function fmt(sec: number) {
   const m = Math.floor(sec / 60);
@@ -261,6 +263,19 @@ export function PracticeSession({
     return questions.reduce((acc, _item, i) => acc + (reveals[i]?.isCorrect ? 1 : 0), 0);
   }, [questions, reveals]);
 
+  /** פילוח לפי נושא של הסשן הנוכחי בלבד — לא סטטיסטיקה כוללת (זו נמצאת בפרופיל). */
+  const topicBreakdown = useMemo(() => {
+    if (!questions) return [];
+    const map = new Map<string, { correct: number; total: number }>();
+    questions.forEach((item, i) => {
+      const entry = map.get(item.topic) ?? { correct: 0, total: 0 };
+      entry.total += 1;
+      if (reveals[i]?.isCorrect) entry.correct += 1;
+      map.set(item.topic, entry);
+    });
+    return [...map.entries()].map(([topic, v]) => ({ topic, ...v }));
+  }, [questions, reveals]);
+
   if (isPending) {
     return (
       <div
@@ -305,13 +320,34 @@ export function PracticeSession({
 
     return (
       <div
-        className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card p-6 md:p-8"
+        className="su-rise-in mx-auto mt-12 max-w-3xl overflow-hidden rounded-[20px] border border-border bg-card p-6 md:p-8"
         style={{ boxShadow: "var(--shadow-elegant)" }}
       >
         <h3 className="text-2xl font-extrabold text-foreground">סיכום התרגול</h3>
-        <p className="mt-2 text-lg text-muted-foreground">
-          ענית נכון על {score} מתוך {total} שאלות
-        </p>
+
+        <div className="mt-5 flex items-center gap-5">
+          <AccuracyRing percent={total ? (score / total) * 100 : 0} />
+          <p className="text-lg text-muted-foreground">
+            ענית נכון על {score} מתוך {total} שאלות
+          </p>
+        </div>
+
+        {topicBreakdown.length > 1 && (
+          <div className="mt-6">
+            <h4 className="text-sm font-bold text-foreground">פילוח לפי נושאים</h4>
+            <div className="mt-3 space-y-3">
+              {topicBreakdown.map((t, i) => (
+                <TopicBar
+                  key={t.topic}
+                  topic={t.topic}
+                  correct={t.correct}
+                  total={t.total}
+                  delayMs={i * 60}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 space-y-4">
           {questions.map((item, i) => {
