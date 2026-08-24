@@ -1,6 +1,5 @@
 import { Sigma } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { toast } from "sonner";
 import { ContactButton } from "./ContactButton";
 
 export function Navbar() {
@@ -26,12 +25,12 @@ export function Navbar() {
         </a>
 
         <nav className="hidden items-center gap-7 md:flex">
-          <button
-            onClick={() => toast("המדריך המלא יעלה בקרוב — נעדכן אותך במייל 📘")}
+          <Link
+            to="/how-to-learn"
             className="rounded-md text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             איך ללמוד
-          </button>
+          </Link>
           <Link
             to="/pricing"
             className="rounded-md text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
