@@ -121,12 +121,14 @@ function ReportModal({ questionId, onClose }: { questionId: string; onClose: () 
   );
 }
 
+export type PracticeSessionResult = { score: number; total: number; topic: string | null };
+
 export function PracticeSession({
   config,
   onExit,
 }: {
   config: PracticeConfig;
-  onExit: () => void;
+  onExit: (result?: PracticeSessionResult) => void;
 }) {
   const {
     data: questions,
@@ -278,7 +280,7 @@ export function PracticeSession({
           {isError ? "לא הצלחנו לטעון את השאלות כרגע." : "לא נמצאו שאלות שתואמות את הבחירה שלך."}
         </p>
         <button
-          onClick={onExit}
+          onClick={() => onExit()}
           className="mt-4 rounded-[10px] border border-border bg-card px-5 py-2.5 font-semibold text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-secondary active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           חזרה להגדרות
@@ -376,7 +378,13 @@ export function PracticeSession({
         </div>
 
         <button
-          onClick={onExit}
+          onClick={() =>
+            onExit({
+              score,
+              total,
+              topic: config.topics.length === 1 ? config.topics[0]! : null,
+            })
+          }
           className="mt-8 flex w-full items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-primary-foreground shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           style={{ background: "var(--gradient-primary)" }}
         >

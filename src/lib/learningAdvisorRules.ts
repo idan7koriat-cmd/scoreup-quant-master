@@ -60,6 +60,68 @@ const WEAK_TEMPLATES = [
 ];
 
 /**
+ * בנק ניסוחים לתגובה המיידית "עכשיו הרגע" בסיום תרגול — הופעל הרבה יותר תדיר מהאבחנה
+ * המצטברת (כל תרגול, לא כל 3 ימים), אז נדרש מגוון רחב כדי שלא ירגיש כמו "כל הכבוד" קבוע.
+ * הניסוח נשען על עידוד ממוקד-מאמץ/התקדמות (ולא שבח גנרי) — בהשראת הממצא של Duolingo
+ * שניסוח "growth mindset" מנצח שבח גנרי בשימור משתמשים.
+ */
+type SessionTemplate = (score: number, total: number, topic: string) => string;
+
+const SESSION_PERFECT: SessionTemplate[] = [
+  (s, t, topic) => `${s}/${t} ב${topic} — נקי לגמרי, ממש מרשים 🎯`,
+  (s, t, topic) => `לא פספסת אף שאלה ב${topic} (${s}/${t}) — ברמה הזו`,
+  (s, t) => `${s} מתוך ${t} — סבב מושלם, ככה עושים את זה`,
+  (s, t, topic) => `${topic} בלי אף טעות (${s}/${t}) — תרגיש את זה`,
+];
+
+const SESSION_GREAT: SessionTemplate[] = [
+  (s, t, topic) => `${s}/${t} ב${topic} — קצב מצוין, ממשיכים ככה`,
+  (s, t) => `${s} מתוך ${t} — ניכר שהעבודה משתלמת`,
+  (s, t, topic) => `רוב התשובות ב${topic} נכונות (${s}/${t}) — יפה מאוד`,
+  (s, t) => `${s}/${t} — כיוון ממש טוב בתרגול הזה`,
+  (s, t, topic) => `${topic}: ${s} מתוך ${t} — הביטחון שלך בנושא הזה עולה`,
+];
+
+const SESSION_GOOD: SessionTemplate[] = [
+  (s, t, topic) => `${s}/${t} ב${topic} — התקדמות אמיתית, המשך לתרגל`,
+  (s, t) => `${s} מתוך ${t} — לא רע בכלל, ויש עוד לאן לגדול`,
+  (s, t, topic) => `חצי מהדרך ב${topic} כבר בכיס (${s}/${t})`,
+  (s, t) => `${s}/${t} — כל תרגול כזה מקרב אותך`,
+];
+
+const SESSION_ROUGH: SessionTemplate[] = [
+  (s, t, topic) => `${s}/${t} ב${topic} הפעם — בדיוק בשביל זה מתרגלים, נתמקד בזה`,
+  (s, t) => `${s} מתוך ${t} — סבב מאתגר, אבל ככה מזהים בדיוק מה לחזק`,
+  (s, t, topic) => `${topic} דרש מאמץ הפעם (${s}/${t}) — בוא נחזור עליו ברמה נוחה יותר`,
+  (s, t) => `${s}/${t} — לא הסבב הכי חלק, וזה בסדר גמור. ממשיכים`,
+];
+
+function pickSessionTemplate(bank: SessionTemplate[]): SessionTemplate {
+  return bank[Math.floor(Math.random() * bank.length)]!;
+}
+
+/**
+ * תגובה מיידית וממוקדת-הישג לתרגול שהרגע הסתיים — נפרדת מהאבחנה המצטברת (buildAdvice),
+ * מחושבת כולה בצד הלקוח (אין צורך בשרת: score/total כבר ידועים ברגע שהתרגול נגמר).
+ * topic: שם הנושא אם התרגול היה ממוקד נושא יחיד, אחרת "בתרגול האחרון".
+ */
+export function buildSessionReaction(score: number, total: number, topic: string | null): string {
+  if (total <= 0) return "";
+  const ratio = score / total;
+  // שם-עצם "גולמי" (בלי מילת יחס) — כל התבניות למעלה מוסיפות "ב" בעצמן, למשל ב${topicLabel}.
+  const topicLabel = topic ?? "תרגול האחרון";
+  const bank =
+    ratio === 1 && total >= 3
+      ? SESSION_PERFECT
+      : ratio >= 0.8
+        ? SESSION_GREAT
+        : ratio >= 0.5
+          ? SESSION_GOOD
+          : SESSION_ROUGH;
+  return pickSessionTemplate(bank)(score, total, topicLabel);
+}
+
+/**
  * מנוע חוקים טהור (ללא I/O) שהופך פילוח דיוק לפי נושא לתובנה אנושית + המלצת תרגול.
  * seed קובע איזו תבנית ניסוח נבחרת, כדי שהניסוח לא ישתנה בכל רינדור אך יתחלף בין חישובים.
  */
