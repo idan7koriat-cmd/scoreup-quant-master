@@ -8,6 +8,7 @@ import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
 import type { PracticeConfig } from "@/data/questions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { LearningAdvisorCard } from "@/components/scoreup/LearningAdvisorCard";
 import { Footer } from "@/components/scoreup/Footer";
 
 export const Route = createFileRoute("/dashboard")({
@@ -218,6 +219,8 @@ function Dashboard() {
             </div>
           </div>
         </div>
+
+        <LearningAdvisorCard isPremium={isPremium} onStart={start} onUpgrade={() => navigate({ to: "/pricing" })} />
 
         {/* Practice engine */}
         <div className="mt-10">
