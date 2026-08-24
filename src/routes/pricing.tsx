@@ -135,7 +135,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
               <p className="mt-2 text-sm text-muted-foreground">
                 {plan === "monthly"
                   ? "מנוי חודשי גמיש — ₪99 לחודש, ביטול בכל עת."
-                  : "חבילת מרתון 60 יום — ₪149 בתשלום חד-פעמי."}{" "}
+                  : "מנוי מרתון — ₪149 ל-60 יום גישה מלאה."}{" "}
                 השאר פרטים והסליקה תישלח אליך.
               </p>
               <form
@@ -378,9 +378,7 @@ function PricingPage() {
             </span>
 
             <p className="mt-4 text-sm font-bold text-primary">מנוי מרתון</p>
-            <p className="mt-3 text-4xl font-extrabold text-foreground">
-              ₪149<span className="text-base font-semibold text-muted-foreground"> חד-פעמי</span>
-            </p>
+            <p className="mt-3 text-4xl font-extrabold text-foreground">₪149</p>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-success px-2 py-0.5 text-[10px] font-bold text-success-foreground">
                 חיסכון 25%
@@ -388,7 +386,7 @@ function PricingPage() {
               <p className="text-sm text-muted-foreground">60 יום גישה מלאה</p>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              המסלול הכי משתלם אם המבחן כבר מתקרב — משלמים פעם אחת, לא חושבים על זה שוב.
+              המסלול הכי משתלם אם המבחן כבר מתקרב — גישה מלאה לאורך כל תקופת ההכנה.
             </p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
               {premiumFeatures.map((t) => (
