@@ -4,6 +4,7 @@ import { Navbar } from "@/components/scoreup/Navbar";
 import { Hero } from "@/components/scoreup/Hero";
 import { WhyScoreUp } from "@/components/scoreup/WhyScoreUp";
 import { DemoPractice } from "@/components/scoreup/DemoPractice";
+import { Faq } from "@/components/scoreup/Faq";
 import { FinalCTA } from "@/components/scoreup/FinalCTA";
 import { Footer } from "@/components/scoreup/Footer";
 import { useSession } from "@/hooks/useSession";
@@ -44,6 +45,7 @@ function Index() {
         <Hero />
         <WhyScoreUp />
         <DemoPractice />
+        <Faq />
         <FinalCTA />
       </main>
       <Footer />

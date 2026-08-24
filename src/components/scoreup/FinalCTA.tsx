@@ -8,7 +8,6 @@ export function FinalCTA() {
   return (
     <section className="relative overflow-hidden py-24 text-white">
       <div className="su-gradient-energy" aria-hidden="true" />
-      <div className="su-instrument-texture" aria-hidden="true" />
       <div
         ref={ref}
         className={`container relative mx-auto px-4 text-center ${inView ? "su-rise-in" : "opacity-0"}`}

@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { ArrowLeft, TrendingUp, Database, Timer, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { demoQuestions } from "@/data/demoQuestions";
-import { DemoQuestionCard } from "./DemoQuestionCard";
+import { PhoneMockup } from "./PhoneMockup";
 
 const stats = [
   { icon: TrendingUp, label: "+20-40 נקודות לשיפור" },
@@ -10,59 +8,10 @@ const stats = [
   { icon: Timer, label: "תרגול בזמן אמת" },
 ];
 
-function HeroPreviewCard() {
-  const q = demoQuestions[0]!;
-  const [selected, setSelected] = useState<number | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [showSolution, setShowSolution] = useState(false);
-
-  return (
-    <div className="su-rise-in" style={{ animationDelay: "260ms" }}>
-      <div
-        className="rounded-[20px] border border-border bg-card p-6 text-foreground md:p-7"
-        style={{ boxShadow: "var(--shadow-elegant)" }}
-      >
-        <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-            {q.topic}
-          </span>
-          <span className="text-xs font-semibold text-muted-foreground">
-            שאלה לדוגמה — בלי הרשמה
-          </span>
-        </div>
-
-        <div className="pt-5">
-          <DemoQuestionCard
-            question={q}
-            selected={selected}
-            submitted={submitted}
-            showSolution={showSolution}
-            onSelect={setSelected}
-            onCheck={() => setSubmitted(true)}
-            onToggleSolution={() => setShowSolution((s) => !s)}
-          />
-        </div>
-
-        {submitted && (
-          <a
-            href="#practice"
-            className="group mt-5 flex items-center justify-center gap-2 rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            style={{ background: "var(--gradient-cta)" }}
-          >
-            עוד 4 שאלות למטה — בלי הרשמה
-            <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-          </a>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function Hero() {
   return (
     <section className="relative overflow-hidden text-white">
       <div className="su-gradient-energy" aria-hidden="true" />
-      <div className="su-instrument-texture" aria-hidden="true" />
 
       <div className="container relative mx-auto grid gap-14 px-4 py-24 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-32">
         <div>
@@ -143,7 +92,7 @@ export function Hero() {
           </div>
         </div>
 
-        <HeroPreviewCard />
+        <PhoneMockup />
       </div>
     </section>
   );

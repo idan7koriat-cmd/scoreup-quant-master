@@ -259,24 +259,6 @@
 }
 
 /*
- * Faint "instrument panel" scanline texture for the two dark bookend
- * sections (Hero, FinalCTA) — texture, not glow: see DESIGN.md's No-Glow
- * Rule. Kept as an overlay div (not a background-image on the section
- * itself) so it composes cleanly with --gradient-hero underneath.
- */
-.su-instrument-texture {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    rgba(245, 242, 237, 0) 0px,
-    rgba(245, 242, 237, 0) 31px,
-    rgba(245, 242, 237, 0.05) 31px,
-    rgba(245, 242, 237, 0.05) 32px
-  );
-}
-
-/*
  * Color-as-energy background for the two dark bookend sections (Hero,
  * FinalCTA) — a slow-drifting ambient layer instead of a flat fill, built
  * only from existing tokens via color-mix. This is the CSS-only stand-in

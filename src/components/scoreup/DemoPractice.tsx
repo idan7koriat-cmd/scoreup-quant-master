@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ChevronLeft, Sparkles, Lock, RotateCcw, FileCheck2, Gauge, BookOpenCheck } from "lucide-react";
+import { ChevronLeft, Lock, RotateCcw, FileCheck2, Gauge, BookOpenCheck } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { demoQuestions } from "@/data/demoQuestions";
 import { useInView } from "@/hooks/useInView";
@@ -45,11 +45,7 @@ export function DemoPractice() {
       >
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div className="lg:sticky lg:top-24">
-            <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
-              <Sparkles className="h-4 w-4" />
-              טעימה חינם
-            </span>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
+            <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
               5 שאלות לדוגמה — ללא הרשמה
             </h2>
             <p className="mt-3 text-lg text-muted-foreground">
