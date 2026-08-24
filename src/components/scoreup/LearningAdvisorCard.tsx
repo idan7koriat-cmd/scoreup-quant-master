@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Rocket, Sparkles, Target, TrendingUp } from "lucide-react";
 import { getLearningAdvice } from "@/lib/advisor.functions";
-import type { AdvisorTone } from "@/lib/learningAdvisorRules";
+import { buildSessionReaction, type AdvisorTone } from "@/lib/learningAdvisorRules";
 import type { PracticeConfig } from "@/data/questions";
+
+type SessionResult = { score: number; total: number; topic: string | null };
 
 const TONE_ICON: Record<AdvisorTone, typeof Sparkles> = {
   "no-data": Rocket,
@@ -34,10 +36,12 @@ export function LearningAdvisorCard({
   isPremium,
   onStart,
   onUpgrade,
+  justFinished,
 }: {
   isPremium: boolean;
   onStart: (config: PracticeConfig) => void;
   onUpgrade: () => void;
+  justFinished?: SessionResult | null;
 }) {
   const { data, isPending } = useQuery({
     queryKey: ["learning-advice"],
@@ -46,13 +50,23 @@ export function LearningAdvisorCard({
     retry: false,
   });
 
+  // תגובה מיידית לתרגול שהרגע הסתיים — מחושבת פעם אחת (לא בכל רינדור), כדי שהניסוח לא יתחלף תוך כדי.
+  const sessionLine = useMemo(
+    () =>
+      justFinished
+        ? buildSessionReaction(justFinished.score, justFinished.total, justFinished.topic)
+        : null,
+    [justFinished],
+  );
+
   const [phase, setPhase] = useState<"typing" | "reveal">("reveal");
 
   useEffect(() => {
     if (!data) return;
+    // כשיש תגובה מיידית להציג ממילא, מדלגים על "מקליד…" — כבר יש למה להגיב עכשיו.
     const alreadySeen = sessionStorage.getItem(TYPING_SEEN_KEY);
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (alreadySeen || reducedMotion) {
+    if (alreadySeen || reducedMotion || sessionLine) {
       setPhase("reveal");
       return;
     }
@@ -62,7 +76,7 @@ export function LearningAdvisorCard({
       sessionStorage.setItem(TYPING_SEEN_KEY, "1");
     }, TYPING_DURATION_MS);
     return () => clearTimeout(timer);
-  }, [data]);
+  }, [data, sessionLine]);
 
   if (isPending || !data) return null;
 
@@ -107,11 +121,26 @@ export function LearningAdvisorCard({
         <span className="text-xs font-bold text-muted-foreground">היועץ שלך</span>
       </div>
 
-      <div className="mt-1.5 flex items-end gap-2">
+      {sessionLine && (
+        <div className="mt-1.5 flex items-end gap-2">
+          <div className="w-7 shrink-0" />
+          <div
+            className="su-rise-in max-w-[92%] rounded-[18px] rounded-ss-[4px] border border-border px-4 py-2.5 sm:max-w-[80%]"
+            style={{ background: "var(--accent)" }}
+          >
+            <p className="text-sm font-bold text-foreground">{sessionLine}</p>
+          </div>
+        </div>
+      )}
+
+      <div
+        className="flex items-end gap-2"
+        style={{ marginTop: sessionLine ? "0.5rem" : "0.375rem" }}
+      >
         <div className="w-7 shrink-0" />
         <div
           className="su-rise-in max-w-[92%] rounded-[18px] rounded-ss-[4px] border border-border px-4 py-3 sm:max-w-[80%]"
-          style={{ background: "var(--accent)" }}
+          style={{ background: "var(--accent)", animationDelay: sessionLine ? "0.15s" : undefined }}
         >
           {phase === "typing" ? (
             <TypingDots />

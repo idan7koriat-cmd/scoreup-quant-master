@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sigma, Flame, LogOut, Zap, Loader2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,8 +12,21 @@ import { ContactButton } from "@/components/scoreup/ContactButton";
 import { LearningAdvisorCard } from "@/components/scoreup/LearningAdvisorCard";
 import { Footer } from "@/components/scoreup/Footer";
 
+type DashboardSearch = {
+  justFinished?: boolean;
+  score?: number;
+  total?: number;
+  topic?: string | null;
+};
+
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>): DashboardSearch => ({
+    justFinished: search.justFinished === true || search.justFinished === "true",
+    score: Number(search.score) > 0 ? Number(search.score) : 0,
+    total: Number(search.total) > 0 ? Number(search.total) : 0,
+    topic: typeof search.topic === "string" && search.topic ? search.topic : null,
+  }),
   head: () => ({
     meta: [
       { title: "הדשבורד שלי — ScoreUp" },
@@ -36,6 +50,21 @@ function Dashboard() {
   const { session, loading } = useSession();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const search = Route.useSearch();
+
+  // נלכד פעם אחת ברגע הכניסה מה-URL, ואז מנקים את הפרמטרים כדי שרענון לא יחזור על אותה תגובה.
+  const [justFinished] = useState(() =>
+    search.justFinished && (search.total ?? 0) > 0
+      ? { score: search.score ?? 0, total: search.total ?? 0, topic: search.topic ?? null }
+      : null,
+  );
+
+  useEffect(() => {
+    if (search.justFinished) {
+      navigate({ to: "/dashboard", search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.justFinished]);
 
   const { data: profile, isPending: profileLoading } = useQuery({
     queryKey: ["profile"],
@@ -193,8 +222,17 @@ function Dashboard() {
           </p>
         )}
 
+        <div className="su-rise-in" style={{ animationDelay: "140ms" }}>
+          <LearningAdvisorCard
+            isPremium={isPremium}
+            onStart={start}
+            onUpgrade={() => navigate({ to: "/pricing" })}
+            justFinished={justFinished}
+          />
+        </div>
+
         {/* Account status */}
-        <div className="su-rise-in mt-8" style={{ animationDelay: "140ms" }}>
+        <div className="su-rise-in mt-8" style={{ animationDelay: "210ms" }}>
           <div
             className="rounded-[20px] border border-border bg-card p-6"
             style={{ boxShadow: "var(--shadow-elegant)" }}
@@ -233,14 +271,6 @@ function Dashboard() {
               )}
             </div>
           </div>
-        </div>
-
-        <div className="su-rise-in" style={{ animationDelay: "210ms" }}>
-          <LearningAdvisorCard
-            isPremium={isPremium}
-            onStart={start}
-            onUpgrade={() => navigate({ to: "/pricing" })}
-          />
         </div>
 
         {/* Practice engine */}

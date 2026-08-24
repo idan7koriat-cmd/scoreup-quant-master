@@ -135,7 +135,22 @@ function PracticePage() {
       </header>
 
       <main className="container mx-auto px-4 pb-16">
-        <PracticeSession config={config} onExit={() => navigate({ to: "/dashboard" })} />
+        <PracticeSession
+          config={config}
+          onExit={(result) =>
+            navigate({
+              to: "/dashboard",
+              search: result
+                ? {
+                    justFinished: true,
+                    score: result.score,
+                    total: result.total,
+                    topic: result.topic,
+                  }
+                : undefined,
+            })
+          }
+        />
       </main>
     </div>
   );
