@@ -23,6 +23,7 @@ import {
   updateMyProfile,
 } from "@/lib/profile.functions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { AccuracyRing } from "@/components/scoreup/AccuracyRing";
 import { Footer } from "@/components/scoreup/Footer";
 import {
   AlertDialog,
@@ -99,6 +100,51 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint?:
       <p className="text-sm font-semibold text-muted-foreground">{label}</p>
       <p className="mt-1 text-3xl font-black text-foreground">{value}</p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+function TopicBar({
+  topic,
+  correct,
+  total,
+  delayMs,
+}: {
+  topic: string;
+  correct: number;
+  total: number;
+  delayMs: number;
+}) {
+  const pct = total ? Math.round((correct / total) * 100) : 0;
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setWidth(pct);
+      return;
+    }
+    const id = requestAnimationFrame(() => setWidth(pct));
+    return () => cancelAnimationFrame(id);
+  }, [pct]);
+
+  return (
+    <div className="rounded-[16px] border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-bold text-foreground">{topic}</span>
+        <span className="text-sm font-semibold text-muted-foreground">
+          {correct}/{total} · {pct}%
+        </span>
+      </div>
+      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
+        <div
+          className="h-full rounded-full transition-[width] duration-500 ease-out"
+          style={{
+            width: `${width}%`,
+            background: "var(--gradient-primary)",
+            transitionDelay: `${delayMs}ms`,
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -262,13 +308,18 @@ function ProfilePage() {
       </header>
 
       <main className="container mx-auto max-w-4xl px-4 py-10">
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">הפרופיל שלי</h1>
-        <p className="mt-2 text-muted-foreground">
-          נהל את פרטי החשבון שלך ועקוב אחרי ההתקדמות בתרגול.
-        </p>
+        <div className="su-rise-in" style={{ animationDelay: "0ms" }}>
+          <h1 className="text-4xl font-black tracking-tight text-foreground">הפרופיל שלי</h1>
+          <p className="mt-2 text-muted-foreground">
+            נהל את פרטי החשבון שלך ועקוב אחרי ההתקדמות בתרגול.
+          </p>
+        </div>
 
         {/* פרטי חשבון */}
-        <section className="mt-8 rounded-[20px] border border-border bg-card p-6">
+        <section
+          className="su-rise-in mt-8 rounded-[20px] border border-border bg-card p-6"
+          style={{ animationDelay: "70ms" }}
+        >
           <h2 className="text-xl font-extrabold text-foreground">פרטי חשבון</h2>
 
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -350,34 +401,37 @@ function ProfilePage() {
         </section>
 
         {/* סטטוס מנוי */}
-        <section className="mt-8 rounded-[20px] border border-border bg-card p-6">
+        <section
+          className="su-rise-in mt-8 rounded-[20px] border border-border bg-card p-6"
+          style={{ animationDelay: "140ms" }}
+        >
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold text-muted-foreground">סוג החשבון</p>
-              <p className="mt-1 flex items-center gap-2 text-xl font-extrabold text-foreground">
-                {isPremium ? (
-                  <>
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    מנוי פעיל — מסלול 700+
-                  </>
-                ) : (
-                  <>
-                    <Target className="h-5 w-5 text-muted-foreground" />
-                    מסלול חינמי
-                  </>
-                )}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {isPremium
-                  ? cancelAtPeriodEnd
-                    ? `המנוי בוטל ולא יחודש. תיהנה/י מהגישה המלאה ${
-                        currentPeriodEnd
-                          ? `עד ${new Date(currentPeriodEnd).toLocaleDateString("he-IL")}`
-                          : "עד תום מחזור החיוב הנוכחי ששולם"
-                      }.`
-                    : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
-                  : "גישה חלקית למאגר. שדרג כדי לפתוח את הכל."}
-              </p>
+            <div className="flex items-center gap-4">
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[16px] ${
+                  isPremium ? "text-primary-foreground" : "text-muted-foreground"
+                }`}
+                style={{ background: isPremium ? "var(--gradient-primary)" : "var(--secondary)" }}
+              >
+                {isPremium ? <Sparkles className="h-5 w-5" /> : <Target className="h-5 w-5" />}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-muted-foreground">סוג החשבון</p>
+                <p className="mt-1 text-xl font-extrabold text-foreground">
+                  {isPremium ? "מנוי פעיל — מסלול 700+" : "מסלול חינמי"}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {isPremium
+                    ? cancelAtPeriodEnd
+                      ? `המנוי בוטל ולא יחודש. תיהנה/י מהגישה המלאה ${
+                          currentPeriodEnd
+                            ? `עד ${new Date(currentPeriodEnd).toLocaleDateString("he-IL")}`
+                            : "עד תום מחזור החיוב הנוכחי ששולם"
+                        }.`
+                      : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                    : "גישה חלקית למאגר. שדרג כדי לפתוח את הכל."}
+                </p>
+              </div>
             </div>
             {!isPremium && (
               <Link
@@ -423,7 +477,7 @@ function ProfilePage() {
         </section>
 
         {/* סיכום תרגול */}
-        <section className="mt-8">
+        <section className="su-rise-in mt-8" style={{ animationDelay: "210ms" }}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-xl font-extrabold text-foreground">סיכום התרגול שלי</h2>
             <button
@@ -462,13 +516,17 @@ function ProfilePage() {
           ) : (
             <>
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div className="flex items-center gap-5 rounded-[16px] border border-border bg-card p-6">
+                  <AccuracyRing percent={accuracy} />
+                  <div>
+                    <p className="text-sm font-semibold text-muted-foreground">אחוז דיוק</p>
+                    {!total && (
+                      <p className="mt-1 text-xs text-muted-foreground">עדיין אין נתונים</p>
+                    )}
+                  </div>
+                </div>
                 <StatCard label="שאלות שנפתרו" value={String(total)} />
                 <StatCard label="תשובות נכונות" value={String(correct)} />
-                <StatCard
-                  label="אחוז דיוק"
-                  value={`${accuracy}%`}
-                  hint={total ? undefined : "עדיין אין נתונים"}
-                />
               </div>
 
               <h3 className="mt-8 text-lg font-extrabold text-foreground">פילוח לפי נושאים</h3>
@@ -476,28 +534,15 @@ function ProfilePage() {
           )}
           {!statsError && data && data.byTopic.length > 0 ? (
             <div className="mt-4 space-y-3">
-              {data.byTopic.map((t) => {
-                const pct = t.total ? Math.round((t.correct / t.total) * 100) : 0;
-                return (
-                  <div key={t.topic} className="rounded-[16px] border border-border bg-card p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-bold text-foreground">{t.topic}</span>
-                      <span className="text-sm font-semibold text-muted-foreground">
-                        {t.correct}/{t.total} · {pct}%
-                      </span>
-                    </div>
-                    <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
-                      <div
-                        className="h-full rounded-full transition-[width] duration-300 ease-out"
-                        style={{
-                          width: `${pct}%`,
-                          background: "var(--gradient-primary)",
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+              {data.byTopic.map((t, i) => (
+                <TopicBar
+                  key={t.topic}
+                  topic={t.topic}
+                  correct={t.correct}
+                  total={t.total}
+                  delayMs={i * 60}
+                />
+              ))}
             </div>
           ) : !statsError ? (
             <p className="mt-3 text-sm text-muted-foreground">
