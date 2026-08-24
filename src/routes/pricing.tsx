@@ -16,8 +16,10 @@ import {
   LineChart,
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
+import { useInView } from "@/hooks/useInView";
 import { getMyProfile, recordPaymentConsent } from "@/lib/profile.functions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { Faq } from "@/components/scoreup/Faq";
 import { Footer } from "@/components/scoreup/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -88,7 +90,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-slate-950/70 p-4 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
           onOpenAutoFocus={(e) => e.preventDefault()}
-          className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-border bg-card p-8"
+          className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-[20px] border border-border bg-card p-8"
           style={{ boxShadow: "var(--shadow-elegant)" }}
         >
           <DialogPrimitive.Close
@@ -101,7 +103,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
           {sent ? (
             <div className="text-center">
               <span
-                className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-white"
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-[16px] text-white"
                 style={{ background: "var(--gradient-primary)" }}
               >
                 <Check className="h-7 w-7" />
@@ -114,7 +116,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full rounded-2xl bg-secondary py-3.5 text-sm font-bold text-secondary-foreground"
+                className="mt-6 w-full rounded-[10px] bg-secondary py-3.5 text-sm font-bold text-secondary-foreground"
               >
                 סגור
               </button>
@@ -122,7 +124,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
           ) : (
             <>
               <span
-                className="flex h-14 w-14 items-center justify-center rounded-2xl text-white"
+                className="flex h-14 w-14 items-center justify-center rounded-[16px] text-white"
                 style={{ background: "var(--gradient-primary)" }}
               >
                 <Sparkles className="h-7 w-7" />
@@ -133,7 +135,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
               <p className="mt-2 text-sm text-muted-foreground">
                 {plan === "monthly"
                   ? "מנוי חודשי גמיש — ₪99 לחודש, ביטול בכל עת."
-                  : "חבילת מרתון 60 יום — ₪149 בתשלום חד-פעמי."}{" "}
+                  : "מנוי מרתון — ₪149 ל-60 יום גישה מלאה."}{" "}
                 השאר פרטים והסליקה תישלח אליך.
               </p>
               <form
@@ -161,7 +163,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="אימייל"
-                  className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full rounded-[10px] border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
                 />
                 <label htmlFor="lead-phone" className="sr-only">
                   טלפון
@@ -173,7 +175,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="טלפון"
-                  className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full rounded-[10px] border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
                 />
                 <div className="flex items-start gap-2.5 pt-1">
                   <Checkbox
@@ -193,7 +195,7 @@ function LeadModal({ onClose, plan }: { onClose: () => void; plan: Plan }) {
                 <button
                   type="submit"
                   disabled={!purchaseConsent || submitting}
-                  className="w-full rounded-2xl py-4 text-base font-bold text-white shadow-md transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{ background: "var(--gradient-cta)" }}
                 >
                   {submitting ? "שולח…" : "שלח ופתח גישה"}
@@ -212,8 +214,12 @@ function PricingPage() {
   const navigate = useNavigate();
   const [plan, setPlan] = useState<Plan>("marathon");
   const [modal, setModal] = useState(false);
+  const { ref: heroRef, inView: heroInView } = useInView<HTMLDivElement>();
+  const { ref: cardsRef, inView: cardsInView } = useInView<HTMLDivElement>();
+  const { ref: valueRef, inView: valueInView } = useInView<HTMLDivElement>();
 
-  const openUpgrade = () => {
+  const openUpgrade = (selectedPlan: Plan) => {
+    setPlan(selectedPlan);
     if (!session) {
       navigate({ to: "/auth", search: { mode: "signup" as const } });
       return;
@@ -270,8 +276,11 @@ function PricingPage() {
       </header>
 
       <main className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+        <div
+          ref={heroRef}
+          className={`mx-auto max-w-2xl text-center ${heroInView ? "su-rise-in" : "opacity-0"}`}
+        >
+          <h1 className="text-5xl font-black tracking-tight text-foreground sm:text-6xl">
             בחר את המסלול שלך ל-
             <span
               className="bg-clip-text text-transparent"
@@ -285,14 +294,22 @@ function PricingPage() {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-4xl gap-6 lg:grid-cols-[1fr_1.25fr]">
+        <div
+          ref={cardsRef}
+          className="mx-auto mt-12 grid max-w-5xl items-start gap-6 lg:grid-cols-3"
+        >
           {/* Free */}
-          <div className="rounded-[20px] border border-border bg-card p-8">
-            <p className="text-sm font-bold text-muted-foreground">מסלול חינמי</p>
+          <div
+            className={`rounded-[20px] border border-border bg-card p-8 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
+            style={{ animationDelay: "0ms" }}
+          >
+            <p className="text-sm font-bold text-muted-foreground">מנוי חינמי</p>
             <p className="mt-3 text-4xl font-extrabold text-foreground">₪0</p>
-            <p className="mt-1 text-sm text-muted-foreground">להתחלה ולהיכרות עם המערכת</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              להתחלה ולהיכרות עם המערכת — בלי כרטיס אשראי
+            </p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
-              {["חימום מהיר — 3 שאלות ביום", "ניתוח ביצועים בסיסי"].map((t) => (
+              {["3 שאלות תרגול ביום", "ניתוח ביצועים בסיסי"].map((t) => (
                 <li key={t} className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   {t}
@@ -306,17 +323,52 @@ function PricingPage() {
               {loading ? (
                 <Loader2 className="mx-auto h-4 w-4 animate-spin" />
               ) : isPremium ? (
-                "מסלול חינמי"
+                "מנוי חינמי"
               ) : (
                 "המסלול הנוכחי שלך"
               )}
             </button>
           </div>
 
-          {/* Premium */}
+          {/* Monthly (flexible) */}
           <div
-            className="relative overflow-hidden rounded-[20px] border-2 border-primary/30 bg-card p-8"
-            style={{ boxShadow: "var(--shadow-elegant)" }}
+            className={`rounded-[20px] border border-border bg-card p-8 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
+            style={{ animationDelay: "80ms" }}
+          >
+            <p className="text-sm font-bold text-primary">מנוי גמיש</p>
+            <p className="mt-3 text-4xl font-extrabold text-foreground">
+              ₪99<span className="text-base font-semibold text-muted-foreground"> / חודש</span>
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              לתרגול שוטף בלי להתחייב קדימה — ללא התחייבות, ביטול בכל עת
+            </p>
+            <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
+              {premiumFeatures.map((t) => (
+                <li key={t} className="flex items-start gap-2">
+                  <Zap className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+
+            {isPremium ? (
+              <div className="mt-8 w-full rounded-[10px] bg-accent py-4 text-center text-sm font-bold text-accent-foreground">
+                המנוי שלך פעיל 🎉
+              </div>
+            ) : (
+              <button
+                onClick={() => openUpgrade("monthly")}
+                className="mt-8 w-full rounded-[10px] border border-primary bg-transparent py-4 text-base font-bold text-primary shadow-sm transition-transform duration-150 ease-snappy hover:scale-[1.01] hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                בחר במנוי הגמיש
+              </button>
+            )}
+          </div>
+
+          {/* Marathon — the emphasized plan */}
+          <div
+            className={`relative overflow-hidden rounded-[20px] border-2 border-primary/40 bg-card p-8 lg:-mt-3 lg:mb-3 ${cardsInView ? "su-rise-in" : "opacity-0"}`}
+            style={{ boxShadow: "var(--shadow-elegant)", animationDelay: "160ms" }}
           >
             <span
               className="absolute start-8 top-0 rounded-b-xl px-3 py-1 text-xs font-bold text-white"
@@ -325,46 +377,17 @@ function PricingPage() {
               המסלול המומלץ
             </span>
 
-            <p className="mt-4 text-sm font-bold text-primary">מסלול 700+</p>
-
-            {/* Plan selector */}
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={() => setPlan("monthly")}
-                className={`rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                  plan === "monthly"
-                    ? "border-primary bg-accent"
-                    : "border-border hover:bg-secondary"
-                }`}
-              >
-                <p className="text-sm font-bold text-foreground">מנוי חודשי גמיש</p>
-                <p className="mt-1 text-2xl font-extrabold text-foreground">
-                  ₪99
-                  <span className="text-sm font-semibold text-muted-foreground"> / חודש</span>
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">ללא התחייבות, ביטול בכל עת</p>
-              </button>
-
-              <button
-                onClick={() => setPlan("marathon")}
-                className={`relative rounded-[10px] border p-4 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                  plan === "marathon"
-                    ? "border-primary bg-accent"
-                    : "border-border hover:bg-secondary"
-                }`}
-              >
-                <span className="absolute end-3 top-3 rounded-full bg-success px-2 py-0.5 text-[10px] font-bold text-success-foreground">
-                  חיסכון 25%
-                </span>
-                <p className="text-sm font-bold text-foreground">מרתון 60 יום</p>
-                <p className="mt-1 text-2xl font-extrabold text-foreground">
-                  ₪149
-                  <span className="text-sm font-semibold text-muted-foreground"> חד-פעמי</span>
-                </p>
-                <p className="mt-1 text-xs font-semibold text-primary">המסלול הכי פופולרי</p>
-              </button>
+            <p className="mt-4 text-sm font-bold text-primary">מנוי מרתון</p>
+            <p className="mt-3 text-4xl font-extrabold text-foreground">₪149</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-success px-2 py-0.5 text-[10px] font-bold text-success-foreground">
+                חיסכון 25%
+              </span>
+              <p className="text-sm text-muted-foreground">60 יום גישה מלאה</p>
             </div>
-
+            <p className="mt-2 text-sm text-muted-foreground">
+              המסלול הכי משתלם אם המבחן כבר מתקרב — גישה מלאה לאורך כל תקופת ההכנה.
+            </p>
             <ul className="mt-6 space-y-3 text-sm font-semibold text-foreground">
               {premiumFeatures.map((t) => (
                 <li key={t} className="flex items-start gap-2">
@@ -380,22 +403,22 @@ function PricingPage() {
               </div>
             ) : (
               <button
-                onClick={openUpgrade}
+                onClick={() => openUpgrade("marathon")}
                 className="mt-8 w-full rounded-[10px] py-4 text-base font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 style={{ background: "var(--gradient-cta)" }}
               >
-                שדרג עכשיו ל-700+
+                בחר במסלול המרתון
               </button>
             )}
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              תשלום מאובטח • ביטול בכל עת • תמיכה אישית בוואטסאפ
-            </p>
+            <p className="mt-3 text-center text-xs text-muted-foreground">תשלום מאובטח</p>
           </div>
         </div>
 
         {/* Value grid */}
-        <section className="mx-auto mt-20 max-w-5xl">
-          <h2 className="text-center text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+        <section ref={valueRef} className="mx-auto mt-20 max-w-5xl">
+          <h2
+            className={`text-center text-4xl font-black tracking-tight text-foreground sm:text-5xl ${valueInView ? "su-rise-in" : "opacity-0"}`}
+          >
             מה בדיוק אתה מקבל במנוי ל-
             <span
               className="bg-clip-text text-transparent"
@@ -406,10 +429,11 @@ function PricingPage() {
             ?
           </h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {valueCards.map((c) => (
+            {valueCards.map((c, i) => (
               <div
                 key={c.title}
-                className="glass-panel rounded-[20px] p-7 transition-transform duration-200 ease-out hover:-translate-y-1"
+                className={`glass-panel rounded-[20px] p-7 transition-transform duration-200 ease-out hover:-translate-y-1 ${valueInView ? "su-rise-in" : "opacity-0"}`}
+                style={{ animationDelay: `${i * 80}ms` }}
               >
                 <span
                   className="flex h-12 w-12 items-center justify-center rounded-[16px] text-white"
@@ -424,6 +448,7 @@ function PricingPage() {
           </div>
         </section>
       </main>
+      <Faq />
       <Footer />
     </div>
   );
