@@ -4,6 +4,7 @@ import { Sigma, Loader2 } from "lucide-react";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { useSession } from "@/hooks/useSession";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { identifyTikTokUser, trackTikTokEvent } from "@/lib/tiktokPixel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/scoreup/Footer";
 
@@ -114,6 +115,10 @@ function AuthPage() {
         });
 
         if (error) throw error;
+        // מזהים מול הפיקסל לפני האירוע כדי ש-TikTok ישייך את ה-conversion למשתמש (AAM),
+        // ולא רק לעוגיית הדפדפן.
+        await identifyTikTokUser(email);
+        trackTikTokEvent("SubmitForm");
         navigate({ to: "/dashboard" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
