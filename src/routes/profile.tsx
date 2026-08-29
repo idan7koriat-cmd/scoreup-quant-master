@@ -203,6 +203,10 @@ function ProfilePage() {
   const correct = data?.correct ?? 0;
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
   const isPremium = data?.isPremium ?? false;
+  const trialDaysLeft =
+    !data?.isPaid && data?.trialEndsAt
+      ? Math.max(0, Math.ceil((new Date(data.trialEndsAt).getTime() - Date.now()) / 86400000))
+      : null;
   const cancelAtPeriodEnd = data?.cancelAtPeriodEnd ?? false;
   const currentPeriodEnd = data?.currentPeriodEnd ?? null;
   const statsError = data?.statsError ?? null;
@@ -374,22 +378,30 @@ function ProfilePage() {
               <div>
                 <p className="text-sm font-semibold text-muted-foreground">סוג החשבון</p>
                 <p className="mt-1 text-xl font-extrabold text-foreground">
-                  {isPremium ? "מנוי פעיל — מסלול 700+" : "מסלול חינמי"}
+                  {isPremium
+                    ? trialDaysLeft != null
+                      ? "ניסיון חינם — מסלול 700+"
+                      : "מנוי פעיל — מסלול 700+"
+                    : "מסלול חינמי"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {isPremium
-                    ? cancelAtPeriodEnd
-                      ? `המנוי בוטל ולא יחודש. תיהנה/י מהגישה המלאה ${
-                          currentPeriodEnd
-                            ? `עד ${new Date(currentPeriodEnd).toLocaleDateString("he-IL")}`
-                            : "עד תום מחזור החיוב הנוכחי ששולם"
-                        }.`
-                      : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                    ? trialDaysLeft != null
+                      ? trialDaysLeft > 0
+                        ? `יש לך גישה מלאה לכל המאגר — נותרו ${trialDaysLeft} ${trialDaysLeft === 1 ? "יום" : "ימים"} לניסיון החינם.`
+                        : "יש לך גישה מלאה לכל המאגר — הניסיון החינם מסתיים היום."
+                      : cancelAtPeriodEnd
+                        ? `המנוי בוטל ולא יחודש. תיהנה/י מהגישה המלאה ${
+                            currentPeriodEnd
+                              ? `עד ${new Date(currentPeriodEnd).toLocaleDateString("he-IL")}`
+                              : "עד תום מחזור החיוב הנוכחי ששולם"
+                          }.`
+                        : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
                     : "גישה חלקית למאגר. שדרג כדי לפתוח את הכל."}
                 </p>
               </div>
             </div>
-            {!isPremium && (
+            {(!isPremium || trialDaysLeft != null) && (
               <Link
                 to="/pricing"
                 className="flex items-center gap-2 rounded-[10px] px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -399,7 +411,7 @@ function ProfilePage() {
                 שדרג למסלול 700+ ⚡
               </Link>
             )}
-            {isPremium && !cancelAtPeriodEnd && (
+            {isPremium && trialDaysLeft == null && !cancelAtPeriodEnd && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <button className="inline-flex items-center gap-1.5 rounded-[10px] border border-destructive/40 px-4 py-2.5 text-sm font-semibold text-destructive transition-colors duration-150 hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">

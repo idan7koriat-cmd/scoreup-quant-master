@@ -107,6 +107,10 @@ function Dashboard() {
     : null;
 
   const isPremium = profile?.isPremium ?? false;
+  const trialDaysLeft =
+    !profile?.isPaid && profile?.trialEndsAt
+      ? Math.max(0, Math.ceil((new Date(profile.trialEndsAt).getTime() - Date.now()) / 86400000))
+      : null;
   const today = new Date().toISOString().slice(0, 10);
   const quickLocked = !isPremium && profile?.lastQuickPractice === today;
 
@@ -250,16 +254,24 @@ function Dashboard() {
                 <div>
                   <p className="text-sm font-semibold text-muted-foreground">סטטוס חשבון</p>
                   <p className="mt-1 text-xl font-extrabold text-foreground">
-                    {isPremium ? "סטטוס: מסלול 700+" : "סטטוס: מסלול בסיסי"}
+                    {isPremium
+                      ? trialDaysLeft != null
+                        ? "סטטוס: ניסיון חינם — מסלול 700+"
+                        : "סטטוס: מסלול 700+"
+                      : "סטטוס: מסלול בסיסי"}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {isPremium
-                      ? "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
+                      ? trialDaysLeft != null
+                        ? trialDaysLeft > 0
+                          ? `יש לך גישה מלאה לכל המאגר — נותרו ${trialDaysLeft} ${trialDaysLeft === 1 ? "יום" : "ימים"} לניסיון החינם.`
+                          : "יש לך גישה מלאה לכל המאגר — הניסיון החינם מסתיים היום."
+                        : "יש לך גישה מלאה לכל המאגר, לסימולציות ולניתוח AI."
                       : "יש לך גישה חלקית למאגר. שדרג כדי לפתוח הכל."}
                   </p>
                 </div>
               </div>
-              {!isPremium && (
+              {(!isPremium || trialDaysLeft != null) && (
                 <Link
                   to="/pricing"
                   className="flex items-center gap-2 rounded-[10px] px-5 py-3.5 text-sm font-bold text-white shadow-md transition-transform duration-150 ease-snappy hover:scale-[1.01] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"

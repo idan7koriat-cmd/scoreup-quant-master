@@ -6,6 +6,7 @@ export type Profile = {
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
+  isPaid: boolean;
   trialEndsAt: string | null;
   lastQuickPractice: string | null;
   streak: number;
@@ -73,12 +74,14 @@ export const getMyProfile = createServerFn({ method: "GET" })
     }
 
     const trialEndsAt = (data as any)?.trial_ends_at ?? null;
+    const isPaid = Boolean((data as any)?.is_premium);
 
     return {
       fullName,
       examDate: (data as any)?.exam_date ?? null,
       targetDegree: (data as any)?.target_degree ?? null,
-      isPremium: hasPremiumAccess(Boolean((data as any)?.is_premium), trialEndsAt),
+      isPremium: hasPremiumAccess(isPaid, trialEndsAt),
+      isPaid,
       trialEndsAt,
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
       streak: computeStreak(practicedDates),
@@ -177,6 +180,7 @@ export type ProfilePage = {
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
+  isPaid: boolean;
   trialEndsAt: string | null;
   cancelAtPeriodEnd: boolean;
   currentPeriodEnd: string | null;
@@ -215,13 +219,15 @@ export const getProfilePage = createServerFn({ method: "POST" })
     const stats = await getUserTopicStats(context, { from: payload.from, to: payload.to });
 
     const trialEndsAt = (row as any)?.trial_ends_at ?? null;
+    const isPaid = Boolean((row as any)?.is_premium);
 
     return {
       email: user?.email ?? null,
       fullName,
       examDate: (row as any)?.exam_date ?? null,
       targetDegree: (row as any)?.target_degree ?? null,
-      isPremium: hasPremiumAccess(Boolean((row as any)?.is_premium), trialEndsAt),
+      isPremium: hasPremiumAccess(isPaid, trialEndsAt),
+      isPaid,
       trialEndsAt,
       cancelAtPeriodEnd: Boolean((row as any)?.cancel_at_period_end),
       currentPeriodEnd: (row as any)?.current_period_end ?? null,
