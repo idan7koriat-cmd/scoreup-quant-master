@@ -13,8 +13,14 @@
 -- future service_role billing webhook — the same pattern already used for
 -- questions.correct_index/explanation (see 20260817101500_restrict_questions_answer_columns.sql).
 
+-- daily_checks_date/daily_checks_count were meant to already exist from
+-- 20260817101600_check_answers_rpc.sql, but given the payment_consent_at surprise above, this
+-- migration no longer assumes any earlier migration actually ran against this database — it
+-- re-declares (idempotently) everything check_answers() below depends on.
 ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS trial_ends_at timestamptz;
+  ADD COLUMN IF NOT EXISTS trial_ends_at timestamptz,
+  ADD COLUMN IF NOT EXISTS daily_checks_date date,
+  ADD COLUMN IF NOT EXISTS daily_checks_count integer NOT NULL DEFAULT 0;
 
 -- New signups get a 7-day trial. Existing users are left with trial_ends_at = NULL (no
 -- retroactive trial) — this only affects users created from this migration onward.
@@ -118,30 +124,44 @@ GRANT EXECUTE ON FUNCTION public.check_answers(jsonb) TO authenticated;
 -- Lock down which profiles columns a logged-in user can write to directly (the app's own
 -- upserts in src/lib/profile.functions.ts run with the user's own JWT, not service_role, so
 -- whatever is grantable here is also directly reachable via a raw PostgREST call).
+--
+-- Column lists are applied defensively (only if the column actually exists on this database)
+-- because the live schema has drifted from the tracked migrations before in both directions —
+-- e.g. full_name was added outside any tracked migration, while columns from
+-- 20260823120000_legal_consent_and_cancellation.sql (payment_consent_at, cancel_at_period_end,
+-- cancelled_at, terms_accepted_at) may never actually have been run against this database. This
+-- way the migration succeeds and grants whatever is really there, instead of failing outright on
+-- "column does not exist" for a column this environment happens not to have.
 REVOKE INSERT, UPDATE ON public.profiles FROM authenticated;
 
-GRANT INSERT (
-  id, exam_date, target_degree, last_quick_practice, payment_consent_at
-) ON public.profiles TO authenticated;
-
-GRANT UPDATE (
-  exam_date, target_degree, last_quick_practice,
-  payment_consent_at, cancel_at_period_end, cancelled_at
-) ON public.profiles TO authenticated;
-
--- full_name isn't in any tracked migration (known schema drift — it was added directly via the
--- Supabase dashboard at some point). Grant it conditionally so this migration doesn't fail with
--- "column does not exist" on a live schema where it's missing; if it's present, keep it writable
--- by the user exactly like today (src/lib/profile.functions.ts upserts it).
 DO $$
+DECLARE
+  insertable text[] := ARRAY[
+    'id', 'exam_date', 'target_degree', 'full_name', 'last_quick_practice', 'payment_consent_at'
+  ];
+  updatable text[] := ARRAY[
+    'exam_date', 'target_degree', 'full_name', 'last_quick_practice',
+    'payment_consent_at', 'cancel_at_period_end', 'cancelled_at'
+  ];
+  col text;
 BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'full_name'
-  ) THEN
-    EXECUTE 'GRANT INSERT (full_name) ON public.profiles TO authenticated';
-    EXECUTE 'GRANT UPDATE (full_name) ON public.profiles TO authenticated';
-  END IF;
+  FOREACH col IN ARRAY insertable LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = col
+    ) THEN
+      EXECUTE format('GRANT INSERT (%I) ON public.profiles TO authenticated', col);
+    END IF;
+  END LOOP;
+
+  FOREACH col IN ARRAY updatable LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = col
+    ) THEN
+      EXECUTE format('GRANT UPDATE (%I) ON public.profiles TO authenticated', col);
+    END IF;
+  END LOOP;
 END $$;
 
 -- is_premium, trial_ends_at, daily_checks_date, daily_checks_count, current_period_end,
