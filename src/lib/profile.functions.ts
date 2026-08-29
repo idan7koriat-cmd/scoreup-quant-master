@@ -6,9 +6,15 @@ export type Profile = {
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
+  trialEndsAt: string | null;
   lastQuickPractice: string | null;
   streak: number;
 };
+
+/** פרימיום בפועל: מנוי בתשלום, או עדיין בתוך חלון הניסיון של שבוע מההרשמה. */
+function hasPremiumAccess(isPremium: boolean, trialEndsAt: string | null): boolean {
+  return isPremium || (trialEndsAt != null && new Date(trialEndsAt).getTime() > Date.now());
+}
 
 /** ימי רצף רצופים שבהם נפתרה לפחות שאלה אחת, כולל "יום חסד": אם עוד לא תרגלת היום, הרצף עדיין נספר עד חצות. */
 function computeStreak(practicedDates: Set<string>): number {
@@ -35,7 +41,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
     try {
       const res = await context.supabase
         .from("profiles")
-        .select("full_name, exam_date, target_degree, is_premium, last_quick_practice")
+        .select("full_name, exam_date, target_degree, is_premium, trial_ends_at, last_quick_practice")
         .eq("id", context.userId)
         .maybeSingle();
       data = res.data;
@@ -66,11 +72,14 @@ export const getMyProfile = createServerFn({ method: "GET" })
       // רצף שלא ניתן לחישוב עדיף על הפלת כל הפרופיל.
     }
 
+    const trialEndsAt = (data as any)?.trial_ends_at ?? null;
+
     return {
       fullName,
       examDate: (data as any)?.exam_date ?? null,
       targetDegree: (data as any)?.target_degree ?? null,
-      isPremium: Boolean((data as any)?.is_premium),
+      isPremium: hasPremiumAccess(Boolean((data as any)?.is_premium), trialEndsAt),
+      trialEndsAt,
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
       streak: computeStreak(practicedDates),
     };
@@ -168,6 +177,7 @@ export type ProfilePage = {
   examDate: string | null;
   targetDegree: string | null;
   isPremium: boolean;
+  trialEndsAt: string | null;
   cancelAtPeriodEnd: boolean;
   currentPeriodEnd: string | null;
   total: number;
@@ -204,12 +214,15 @@ export const getProfilePage = createServerFn({ method: "POST" })
 
     const stats = await getUserTopicStats(context, { from: payload.from, to: payload.to });
 
+    const trialEndsAt = (row as any)?.trial_ends_at ?? null;
+
     return {
       email: user?.email ?? null,
       fullName,
       examDate: (row as any)?.exam_date ?? null,
       targetDegree: (row as any)?.target_degree ?? null,
-      isPremium: Boolean((row as any)?.is_premium),
+      isPremium: hasPremiumAccess(Boolean((row as any)?.is_premium), trialEndsAt),
+      trialEndsAt,
       cancelAtPeriodEnd: Boolean((row as any)?.cancel_at_period_end),
       currentPeriodEnd: (row as any)?.current_period_end ?? null,
       total: stats.total,
