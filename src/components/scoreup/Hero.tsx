@@ -1,9 +1,8 @@
-import { ArrowLeft, TrendingUp, Database, Timer, Zap } from "lucide-react";
+import { ArrowLeft, Database, Timer, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PhoneMockup } from "./PhoneMockup";
 
 const stats = [
-  { icon: TrendingUp, label: "מ-85 ל-120+ בכמותי" },
   { icon: Database, label: "מאגר שאלות מעודכן" },
   { icon: Timer, label: "תרגול בזמן אמת" },
 ];
@@ -73,7 +72,7 @@ export function Hero() {
           </div>
 
           <div
-            className="su-rise-in mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3"
+            className="su-rise-in mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2"
             style={{ animationDelay: "280ms" }}
           >
             {stats.map((s) => (

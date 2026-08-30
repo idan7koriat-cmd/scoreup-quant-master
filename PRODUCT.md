@@ -42,7 +42,7 @@ Users choose ScoreUp over a private tutor, an old paper practice book, or a comp
 ## Evidence on Hand
 
 - Real pricing/plan copy exists in `src/routes/pricing.tsx` (₪99/month, ₪149/60-day marathon) — usable as-is.
-- The hero stat badge reads "מ-85 ל-120+ בכמותי" — a specific score-jump claim, replacing the old "+20-40 נקודות לשיפור" wording (dropped 2026-08-30 over legal concern about an unqualified improvement statistic). The user explicitly removed the "לדוגמה" (for example) hedge this was first shipped with; that was a deliberate call, not an oversight — don't re-add the hedge on your own initiative if asked to touch this copy again.
+- The hero stats row is now 2 badges, not 3: "מאגר שאלות מעודכן" and "תרגול בזמן אמת". The old score-improvement badge ("+20-40 נקודות לשיפור", then briefly "לדוגמה: מ-85 ל-120+ בכמותי", then "מ-85 ל-120+ בכמותי") was removed entirely 2026-08-30 over legal concern about improvement/score claims — don't reintroduce a numeric score-improvement claim in this spot without explicit sign-off.
 - No testimonials, case studies, press mentions, or customer logos exist anywhere in the codebase — future work must not invent them.
 
 ## Product Principles
