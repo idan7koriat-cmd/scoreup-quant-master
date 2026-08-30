@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { PhoneMockup } from "./PhoneMockup";
 
 const stats = [
-  { icon: TrendingUp, label: "+20-40 נקודות לשיפור" },
+  { icon: TrendingUp, label: "לדוגמה: מ-85 ל-120+ בכמותי" },
   { icon: Database, label: "מאגר שאלות מעודכן" },
   { icon: Timer, label: "תרגול בזמן אמת" },
 ];
