@@ -5,6 +5,12 @@ import { getExtSupabase } from "@/lib/extAuthClient";
 import { useSession } from "@/hooks/useSession";
 import { ContactButton } from "@/components/scoreup/ContactButton";
 import { identifyTikTokUser, trackTikTokEvent } from "@/lib/tiktokPixel";
+import {
+  identifyMetaUser,
+  trackMetaEvent,
+  hasTrackedMetaRegistration,
+  markMetaRegistrationTracked,
+} from "@/lib/metaPixel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/scoreup/Footer";
 
@@ -41,6 +47,18 @@ function AuthPage() {
 
   useEffect(() => {
     if (!session) return;
+    const user = session.user;
+    const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
+    const lastSignInAt = user.last_sign_in_at ? new Date(user.last_sign_in_at).getTime() : 0;
+    // בהרשמה דרך OAuth (Google) אין נקודת קוד ייעודית אחרי ה-redirect בחזרה לאתר, אז
+    // מזהים "משתמש טרי" לפי הפרש קטן בין created_at ל-last_sign_in_at כדי לשלוח
+    // CompleteRegistration גם בנתיב הזה, לא רק בהרשמת אימייל/סיסמה.
+    const isFreshOAuthSignup = createdAt > 0 && Math.abs(lastSignInAt - createdAt) < 10_000;
+    if (isFreshOAuthSignup && !hasTrackedMetaRegistration(user.id)) {
+      markMetaRegistrationTracked(user.id);
+      identifyMetaUser({ email: user.email ?? undefined });
+      trackMetaEvent("CompleteRegistration");
+    }
     let dest = "/dashboard";
     try {
       const saved = window.sessionStorage.getItem("scoreup-post-auth");
@@ -101,7 +119,7 @@ function AuthPage() {
           setLoading(false);
           return;
         }
-        const { error } = await supabase.auth.signUp({
+        const { error, data } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -119,6 +137,9 @@ function AuthPage() {
         // ולא רק לעוגיית הדפדפן.
         await identifyTikTokUser(email);
         trackTikTokEvent("SubmitForm");
+        await identifyMetaUser({ email });
+        trackMetaEvent("CompleteRegistration");
+        if (data.user) markMetaRegistrationTracked(data.user.id);
         navigate({ to: "/dashboard" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
