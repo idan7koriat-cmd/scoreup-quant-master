@@ -16,10 +16,10 @@ SELECT
   p.email,
   sq.question_id,
   sq.is_correct,
-  sq.created_at
+  sq.solved_at
 FROM public.solved_questions sq
 LEFT JOIN public.profiles p ON p.id = sq.user_id
-ORDER BY sq.created_at DESC;
+ORDER BY sq.solved_at DESC;
 
 COMMENT ON VIEW public.solved_questions_with_user IS
   'Admin/Studio convenience view: solved_questions joined to profiles for full_name/email. Not exposed to authenticated/anon.';
