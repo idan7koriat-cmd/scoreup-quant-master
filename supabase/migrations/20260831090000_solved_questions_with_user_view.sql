@@ -23,3 +23,13 @@ ORDER BY sq.solved_at DESC;
 
 COMMENT ON VIEW public.solved_questions_with_user IS
   'Admin/Studio convenience view: solved_questions joined to profiles for full_name/email. Not exposed to authenticated/anon.';
+
+-- Belt-and-suspenders: Supabase's linter flagged this view as "publicly accessible via API"
+-- even with no explicit GRANT to anon/authenticated, because a plain Postgres view runs with
+-- its owner's (postgres) privileges by default, which bypasses the base tables' RLS entirely —
+-- the exact leak this comment warned about above. security_invoker makes the view re-check RLS
+-- as the querying role instead, and the REVOKE removes any implicit/inherited access, so even
+-- if this view is ever granted to authenticated by mistake, RLS on solved_questions/profiles
+-- still confines each user to their own rows.
+ALTER VIEW public.solved_questions_with_user SET (security_invoker = on);
+REVOKE ALL ON public.solved_questions_with_user FROM PUBLIC, anon, authenticated;
