@@ -13,6 +13,7 @@ import {
 } from "@/lib/metaPixel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/scoreup/Footer";
+import { EXAM_DATE_OPTIONS } from "@/lib/examDates";
 
 type AuthMode = "signin" | "signup";
 
@@ -114,6 +115,11 @@ function AuthPage() {
     try {
       const supabase = await getExtSupabase();
       if (mode === "signup") {
+        if (!examDate) {
+          setErr("יש לבחור מועד בחינה מתוכנן.");
+          setLoading(false);
+          return;
+        }
         if (!agreedToTerms) {
           setErr("יש לאשר את התקנון ומדיניות הפרטיות כדי להשלים את ההרשמה.");
           setLoading(false);
@@ -305,20 +311,25 @@ function AuthPage() {
             {mode === "signup" && (
               <>
                 <div>
-                  <label
-                    htmlFor="auth-exam-date"
-                    className="mb-1.5 block text-sm font-semibold text-foreground"
-                  >
-                    תאריך בחינה מתוכנן
-                  </label>
-                  <input
-                    id="auth-exam-date"
-                    type="date"
-                    required
-                    value={examDate}
-                    onChange={(e) => setExamDate(e.target.value)}
-                    className="w-full rounded-[10px] border-2 border-border bg-background px-4 py-3 text-foreground outline-none transition-colors duration-150 focus:border-primary"
-                  />
+                  <span className="mb-1.5 block text-sm font-semibold text-foreground">
+                    מועד בחינה מתוכנן
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {EXAM_DATE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setExamDate(opt.value)}
+                        className={`rounded-[10px] border-2 px-4 py-3 text-sm font-bold transition-colors duration-150 ${
+                          examDate === opt.value
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <label

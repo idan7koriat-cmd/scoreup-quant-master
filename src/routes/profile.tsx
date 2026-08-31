@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { getExtSupabase } from "@/lib/extAuthClient";
+import { EXAM_DATE_OPTIONS } from "@/lib/examDates";
 import {
   cancelSubscription,
   getProfilePage,
@@ -312,16 +313,25 @@ function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="examDate" className="text-sm font-semibold text-muted-foreground">
-                תאריך הבחינה הקרוב
-              </label>
-              <input
-                id="examDate"
-                type="date"
-                value={examDate}
-                onChange={(e) => setExamDate(e.target.value)}
-                className="mt-1.5 w-full rounded-[10px] border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none transition-colors duration-150 focus:border-primary"
-              />
+              <span className="text-sm font-semibold text-muted-foreground">
+                מועד הבחינה הקרוב
+              </span>
+              <div className="mt-1.5 grid grid-cols-2 gap-2">
+                {EXAM_DATE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setExamDate(opt.value)}
+                    className={`rounded-[10px] border-2 px-4 py-3 text-sm font-bold transition-colors duration-150 ${
+                      examDate === opt.value
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>
