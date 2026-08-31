@@ -53,8 +53,10 @@ function AuthPage() {
     const lastSignInAt = user.last_sign_in_at ? new Date(user.last_sign_in_at).getTime() : 0;
     // בהרשמה דרך OAuth (Google) אין נקודת קוד ייעודית אחרי ה-redirect בחזרה לאתר, אז
     // מזהים "משתמש טרי" לפי הפרש קטן בין created_at ל-last_sign_in_at כדי לשלוח
-    // CompleteRegistration גם בנתיב הזה, לא רק בהרשמת אימייל/סיסמה.
-    const isFreshOAuthSignup = createdAt > 0 && Math.abs(lastSignInAt - createdAt) < 10_000;
+    // CompleteRegistration גם בנתיב הזה, לא רק בהרשמת אימייל/סיסמה. חלון של 10 שניות
+    // היה צר מדי וגרם לפספוס אירועים כשעיבוד ה-triggers בסופאבייס (יצירת profile וכו')
+    // לוקח יותר זמן; 2 דקות משאירות מרווח בטוח בלי לסכן false positive על משתמש חוזר.
+    const isFreshOAuthSignup = createdAt > 0 && Math.abs(lastSignInAt - createdAt) < 120_000;
     if (isFreshOAuthSignup && !hasTrackedMetaRegistration(user.id)) {
       markMetaRegistrationTracked(user.id);
       identifyMetaUser({ email: user.email ?? undefined });
