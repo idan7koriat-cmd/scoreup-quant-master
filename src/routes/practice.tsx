@@ -1,9 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Sigma, Loader2 } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { PracticeSession } from "@/components/scoreup/PracticeSession";
 import type { PracticeConfig, PracticeMode, LauncherMode } from "@/data/questions";
 import { ContactButton } from "@/components/scoreup/ContactButton";
+import { getMyProfile } from "@/lib/profile.functions";
+import { CONSENT_FLOW_LAUNCH_DATE } from "@/lib/authConsent";
 
 type PracticeSearch = {
   mode: LauncherMode;
@@ -49,6 +52,12 @@ function PracticePage() {
   const search = Route.useSearch();
   const { session, loading } = useSession();
   const navigate = useNavigate();
+  const { data: consentProfile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getMyProfile(),
+    enabled: !!session,
+    staleTime: 60 * 1000,
+  });
 
   if (loading) {
     return (
@@ -60,6 +69,17 @@ function PracticePage() {
 
   if (!session) {
     navigate({ to: "/auth", search: { mode: "signin" as const }, replace: true });
+    return null;
+  }
+
+  // רשת ביטחון: מי שנרשם אחרי פריסת מסך הסכמת ה-OAuth אבל לא השלים אותו נשלח להשלים
+  // לפני שממשיכים (ראו הסבר מלא ב-dashboard.tsx).
+  if (
+    consentProfile &&
+    consentProfile.termsAcceptedAt == null &&
+    new Date(session.user.created_at) >= CONSENT_FLOW_LAUNCH_DATE
+  ) {
+    navigate({ to: "/complete-signup", replace: true });
     return null;
   }
 

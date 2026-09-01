@@ -2,7 +2,7 @@ import { createMiddleware } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 
-function extClient(token?: string) {
+export function extClient(token?: string) {
   const key = process.env["EXT_SUPABASE_ANON_KEY"]!;
   return createClient<any>(process.env["EXT_SUPABASE_URL"]!, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },

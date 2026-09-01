@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireExtAuth } from "@/lib/extAuth.middleware";
+import { sendServiceEmail } from "@/lib/email";
 
 export type Profile = {
   fullName: string;
@@ -10,6 +11,7 @@ export type Profile = {
   trialEndsAt: string | null;
   lastQuickPractice: string | null;
   streak: number;
+  termsAcceptedAt: string | null;
 };
 
 /** פרימיום בפועל: מנוי בתשלום, או עדיין בתוך חלון הניסיון של שבוע מההרשמה. */
@@ -42,7 +44,9 @@ export const getMyProfile = createServerFn({ method: "GET" })
     try {
       const res = await context.supabase
         .from("profiles")
-        .select("full_name, exam_date, target_degree, is_premium, trial_ends_at, last_quick_practice")
+        .select(
+          "full_name, exam_date, target_degree, is_premium, trial_ends_at, last_quick_practice, terms_accepted_at",
+        )
         .eq("id", context.userId)
         .maybeSingle();
       data = res.data;
@@ -85,6 +89,7 @@ export const getMyProfile = createServerFn({ method: "GET" })
       trialEndsAt,
       lastQuickPractice: (data as any)?.last_quick_practice ?? null,
       streak: computeStreak(practicedDates),
+      termsAcceptedAt: (data as any)?.terms_accepted_at ?? null,
     };
   });
 
@@ -288,6 +293,21 @@ export const recordPaymentConsent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** נקרא ממסך ההסכמה החוסם שאחרי Google OAuth (complete-signup). מפעיל RPC ולא כתיבה
+ *  ישירה כי terms_accepted_at מכוונת שלא ניתנת לכתיבה ישירה מהקליינט (ראו המיגרציה
+ *  20260830120000_trial_subscription.sql). */
+export const recordOAuthConsent = createServerFn({ method: "POST" })
+  .middleware([requireExtAuth])
+  .inputValidator((input: { marketingConsent: boolean }) => input)
+  .handler(async ({ data, context }) => {
+    const payload = (data as any)?.data ?? data;
+    const { error } = await context.supabase.rpc("record_oauth_consent", {
+      p_marketing: Boolean(payload.marketingConsent),
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export type CancelSubscriptionResult =
   | { ok: true; periodEnd: string | null }
   | { ok: false; reason: string };
@@ -310,24 +330,16 @@ export const cancelSubscription = createServerFn({ method: "POST" })
 
     const periodEnd = (row as any)?.current_period_end ?? null;
     const email = (context as any).user?.email as string | undefined;
-    const apiKey = process.env["RESEND_API_KEY"];
 
-    if (email && apiKey) {
+    if (email) {
       const untilText = periodEnd ? `עד ${periodEnd}` : "עד תום מחזור החיוב הנוכחי ששולם";
       try {
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            from: "ScoreUp <onboarding@resend.dev>",
-            to: [email],
-            subject: "אישור ביטול מנוי — ScoreUp",
-            text: `היי,\n\nביטול המנוי שלך ל-ScoreUp נקלט בהצלחה. המנוי לא יחודש ולא תחויב/י שוב במחזור החיוב הבא.\nתמשיך/י ליהנות מהגישה המלאה ${untilText}.\n\nאם זו לא היית את/ה, אנא צור/י איתנו קשר בהקדם: ${process.env["VITE_SUPPORT_EMAIL"] ?? ""}\n\nצוות ScoreUp`,
-          }),
+        // הודעת שירות (אישור ביטול) — נשלחת תמיד, לא תלויה ב-marketing_consent.
+        await sendServiceEmail({
+          to: email,
+          subject: "אישור ביטול מנוי — ScoreUp",
+          text: `היי,\n\nביטול המנוי שלך ל-ScoreUp נקלט בהצלחה. המנוי לא יחודש ולא תחויב/י שוב במחזור החיוב הבא.\nתמשיך/י ליהנות מהגישה המלאה ${untilText}.\n\nאם זו לא היית את/ה, אנא צור/י איתנו קשר בהקדם: ${process.env["VITE_SUPPORT_EMAIL"] ?? ""}\n\nצוות ScoreUp`,
         });
-        if (!res.ok) {
-          console.error("[cancelSubscription] Resend error:", res.status, await res.text());
-        }
       } catch (e) {
         // כשל בשליחת המייל לא אמור לחסום את הביטול עצמו.
         console.error("[cancelSubscription] failed to send confirmation email", e);

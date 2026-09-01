@@ -4,6 +4,7 @@ import { Sigma, Flame, LogOut, Zap, Loader2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getExtSupabase } from "@/lib/extAuthClient";
 import { getMyProfile, markQuickPractice } from "@/lib/profile.functions";
+import { CONSENT_FLOW_LAUNCH_DATE } from "@/lib/authConsent";
 
 import { useSession } from "@/hooks/useSession";
 import { PracticeSetup } from "@/components/scoreup/PracticeSetup";
@@ -83,6 +84,18 @@ function Dashboard() {
 
   if (!session) {
     navigate({ to: "/auth", search: { mode: "signin" as const }, replace: true });
+    return null;
+  }
+
+  // רשת ביטחון: מי שנרשם אחרי פריסת מסך הסכמת ה-OAuth אבל לא השלים אותו (למשל סגר
+  // טאב וחזר ישירות ל-URL הזה) נשלח להשלים לפני שממשיכים. משתמשים שנרשמו לפני התאריך
+  // הזה לא נחסמים — הם מעולם לא קיבלו את המסך הזה (טיפול בדיעבד, מחוץ לסקופ).
+  if (
+    profile &&
+    profile.termsAcceptedAt == null &&
+    new Date(session.user.created_at) >= CONSENT_FLOW_LAUNCH_DATE
+  ) {
+    navigate({ to: "/complete-signup", replace: true });
     return null;
   }
 

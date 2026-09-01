@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
@@ -16,9 +17,15 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as HowToLearnRouteImport } from './routes/how-to-learn'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CompleteSignupRouteImport } from './routes/complete-signup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -54,6 +61,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompleteSignupRoute = CompleteSignupRouteImport.update({
+  id: '/complete-signup',
+  path: '/complete-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -68,6 +80,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complete-signup': typeof CompleteSignupRoute
   '/dashboard': typeof DashboardRoute
   '/how-to-learn': typeof HowToLearnRoute
   '/practice': typeof PracticeRoute
@@ -75,10 +88,12 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complete-signup': typeof CompleteSignupRoute
   '/dashboard': typeof DashboardRoute
   '/how-to-learn': typeof HowToLearnRoute
   '/practice': typeof PracticeRoute
@@ -86,11 +101,13 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complete-signup': typeof CompleteSignupRoute
   '/dashboard': typeof DashboardRoute
   '/how-to-learn': typeof HowToLearnRoute
   '/practice': typeof PracticeRoute
@@ -98,12 +115,14 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/complete-signup'
     | '/dashboard'
     | '/how-to-learn'
     | '/practice'
@@ -111,10 +130,12 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/terms'
+    | '/unsubscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/complete-signup'
     | '/dashboard'
     | '/how-to-learn'
     | '/practice'
@@ -122,10 +143,12 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/terms'
+    | '/unsubscribe'
   id:
     | '__root__'
     | '/'
     | '/auth'
+    | '/complete-signup'
     | '/dashboard'
     | '/how-to-learn'
     | '/practice'
@@ -133,11 +156,13 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/terms'
+    | '/unsubscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  CompleteSignupRoute: typeof CompleteSignupRoute
   DashboardRoute: typeof DashboardRoute
   HowToLearnRoute: typeof HowToLearnRoute
   PracticeRoute: typeof PracticeRoute
@@ -145,10 +170,18 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRoute
   TermsRoute: typeof TermsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -198,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complete-signup': {
+      id: '/complete-signup'
+      path: '/complete-signup'
+      fullPath: '/complete-signup'
+      preLoaderRoute: typeof CompleteSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -218,6 +258,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  CompleteSignupRoute: CompleteSignupRoute,
   DashboardRoute: DashboardRoute,
   HowToLearnRoute: HowToLearnRoute,
   PracticeRoute: PracticeRoute,
@@ -225,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRoute,
   TermsRoute: TermsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

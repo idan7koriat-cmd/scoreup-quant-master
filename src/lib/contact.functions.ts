@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sendServiceEmail } from "@/lib/email";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,32 +18,19 @@ export const sendContactMessage = createServerFn({ method: "POST" })
       return { ok: false, reason: "invalid" };
     }
 
-    const apiKey = process.env["RESEND_API_KEY"];
     const supportEmail = process.env["VITE_SUPPORT_EMAIL"];
-    if (!apiKey || !supportEmail) {
-      console.error("[sendContactMessage] RESEND_API_KEY or VITE_SUPPORT_EMAIL missing");
+    if (!supportEmail) {
+      console.error("[sendContactMessage] VITE_SUPPORT_EMAIL missing");
       return { ok: false, reason: "not_configured" };
     }
 
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "ScoreUp <onboarding@resend.dev>",
-        to: [supportEmail],
-        reply_to: email,
-        subject: `פנייה חדשה מ-${name || email} — ScoreUp`,
-        text: `מאת: ${name || "(לא צוין שם)"} <${email}>\n\n${message}`,
-      }),
+    const result = await sendServiceEmail({
+      to: supportEmail,
+      replyTo: email,
+      subject: `פנייה חדשה מ-${name || email} — ScoreUp`,
+      text: `מאת: ${name || "(לא צוין שם)"} <${email}>\n\n${message}`,
     });
 
-    if (!res.ok) {
-      console.error("[sendContactMessage] Resend error:", res.status, await res.text());
-      return { ok: false, reason: "send_failed" };
-    }
-
+    if (!result.ok) return result;
     return { ok: true };
   });

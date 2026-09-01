@@ -19,10 +19,12 @@ import { getExtSupabase } from "@/lib/extAuthClient";
 import { EXAM_DATE_OPTIONS } from "@/lib/examDates";
 import {
   cancelSubscription,
+  getMyProfile,
   getProfilePage,
   resetMyStats,
   updateMyProfile,
 } from "@/lib/profile.functions";
+import { CONSENT_FLOW_LAUNCH_DATE } from "@/lib/authConsent";
 import { ContactButton } from "@/components/scoreup/ContactButton";
 import { AccuracyRing } from "@/components/scoreup/AccuracyRing";
 import { TopicBar } from "@/components/scoreup/TopicBar";
@@ -123,6 +125,12 @@ function ProfilePage() {
     queryFn: () => getProfilePage({ data: { from, to } }),
     enabled: !!session,
   });
+  const { data: consentProfile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => getMyProfile(),
+    enabled: !!session,
+    staleTime: 60 * 1000,
+  });
 
   useEffect(() => {
     if (!data) return;
@@ -190,6 +198,17 @@ function ProfilePage() {
 
   if (!session) {
     navigate({ to: "/auth", search: { mode: "signin" as const }, replace: true });
+    return null;
+  }
+
+  // רשת ביטחון: מי שנרשם אחרי פריסת מסך הסכמת ה-OAuth אבל לא השלים אותו נשלח להשלים
+  // לפני שממשיכים (ראו הסבר מלא ב-dashboard.tsx).
+  if (
+    consentProfile &&
+    consentProfile.termsAcceptedAt == null &&
+    new Date(session.user.created_at) >= CONSENT_FLOW_LAUNCH_DATE
+  ) {
+    navigate({ to: "/complete-signup", replace: true });
     return null;
   }
 

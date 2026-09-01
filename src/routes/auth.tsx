@@ -14,6 +14,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/scoreup/Footer";
 import { EXAM_DATE_OPTIONS } from "@/lib/examDates";
+import { isFreshOAuthSignup } from "@/lib/authConsent";
+import { getMyProfile } from "@/lib/profile.functions";
 
 type AuthMode = "signin" | "signup";
 
@@ -49,15 +51,13 @@ function AuthPage() {
   useEffect(() => {
     if (!session) return;
     const user = session.user;
-    const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
-    const lastSignInAt = user.last_sign_in_at ? new Date(user.last_sign_in_at).getTime() : 0;
     // בהרשמה דרך OAuth (Google) אין נקודת קוד ייעודית אחרי ה-redirect בחזרה לאתר, אז
     // מזהים "משתמש טרי" לפי הפרש קטן בין created_at ל-last_sign_in_at כדי לשלוח
     // CompleteRegistration גם בנתיב הזה, לא רק בהרשמת אימייל/סיסמה. חלון של 10 שניות
     // היה צר מדי וגרם לפספוס אירועים כשעיבוד ה-triggers בסופאבייס (יצירת profile וכו')
     // לוקח יותר זמן; 2 דקות משאירות מרווח בטוח בלי לסכן false positive על משתמש חוזר.
-    const isFreshOAuthSignup = createdAt > 0 && Math.abs(lastSignInAt - createdAt) < 120_000;
-    if (isFreshOAuthSignup && !hasTrackedMetaRegistration(user.id)) {
+    const isFreshSignup = isFreshOAuthSignup(user);
+    if (isFreshSignup && !hasTrackedMetaRegistration(user.id)) {
       markMetaRegistrationTracked(user.id);
       identifyMetaUser({ email: user.email ?? undefined });
       trackMetaEvent("CompleteRegistration");
@@ -70,7 +70,37 @@ function AuthPage() {
     } catch {
       /* ללא אחסון — יעד ברירת המחדל */
     }
-    navigate({ to: dest, replace: true });
+
+    if (!isFreshSignup) {
+      navigate({ to: dest, replace: true });
+      return;
+    }
+
+    // הרשמה טרייה (כולל Google OAuth שאין לו נקודת קוד ייעודית משלו): לפני מעבר ליעד
+    // בודקים שהמשתמש בפועל אישר תקנון/מדיניות פרטיות. הרשמת אימייל/סיסמה כבר תמיד
+    // תעבור כאן חלק (terms_accepted_at נכתב סינכרונית ע"י הטריגר לפני שיש session
+    // בקליינט), אבל הרשמת Google עוד לא — עבורה מפנים למסך הביניים החוסם. אם השליפה
+    // נכשלת מסיבה כלשהי, ברירת המחדל היא לחסום ולא לתת מעבר.
+    let cancelled = false;
+    const redirectToConsentScreen = () => {
+      if (cancelled) return;
+      try {
+        window.sessionStorage.setItem("scoreup-post-auth", dest);
+      } catch {
+        /* ללא אחסון — /complete-signup ייפול חזרה ל-/dashboard בעצמו */
+      }
+      navigate({ to: "/complete-signup", replace: true });
+    };
+    getMyProfile()
+      .then((profile) => {
+        if (cancelled) return;
+        if (profile.termsAcceptedAt) navigate({ to: dest, replace: true });
+        else redirectToConsentScreen();
+      })
+      .catch(redirectToConsentScreen);
+    return () => {
+      cancelled = true;
+    };
   }, [session, navigate]);
   const setMode = (m: AuthMode) => navigate({ to: "/auth", search: { mode: m } });
   const [email, setEmail] = useState("");
@@ -82,6 +112,7 @@ function AuthPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
 
   const googleSignIn = async () => {
     setErr(null);
@@ -136,6 +167,7 @@ function AuthPage() {
               exam_date: examDate,
               target_degree: targetDegree,
               terms_accepted: "true",
+              marketing_consent: marketingConsent ? "true" : "false",
             },
           },
         });
@@ -380,6 +412,23 @@ function AuthPage() {
                   >
                     מדיניות הפרטיות
                   </Link>
+                </label>
+              </div>
+            )}
+
+            {mode === "signup" && (
+              <div className="flex items-start gap-2.5">
+                <Checkbox
+                  id="auth-marketing"
+                  checked={marketingConsent}
+                  onCheckedChange={(v) => setMarketingConsent(v === true)}
+                  className="mt-0.5"
+                />
+                <label
+                  htmlFor="auth-marketing"
+                  className="text-sm leading-relaxed text-foreground"
+                >
+                  אני מעוניין/ת לקבל עדכונים ותזכורות תרגול בדוא"ל
                 </label>
               </div>
             )}
